@@ -17,7 +17,7 @@ import { type AdapterAccount } from "next-auth/adapters";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const mysqlTable = mysqlTableCreator((name) => `crm_${name}`);
+export const mysqlTable = mysqlTableCreator((name) => name);
 
 export const posts = mysqlTable(
   "post",
