@@ -1,8 +1,9 @@
 import { relations, sql } from "drizzle-orm";
 import { text, integer, sqliteTable, primaryKey, index } from "drizzle-orm/sqlite-core";
 import { type AdapterAccount } from "next-auth/adapters";
+import { createId } from '@paralleldrive/cuid2';
 
-
+// #region NextAuth
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name", { length: 255 }),
@@ -69,3 +70,14 @@ export const verificationTokens = sqliteTable(
   })
 );
 
+// #endregion
+
+// #region Timetable
+export const contacts = sqliteTable("contact", {
+  id: text("id").$defaultFn(() => createId()).primaryKey(),
+  firstName: text("firstName"),
+  lastName: text("lastName").notNull(),
+  company: text("companyId"),
+  email: text("email", {length: 255}),
+  mobile: text("mobile")
+})
