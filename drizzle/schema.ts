@@ -91,14 +91,18 @@ export const contacts = sqliteTable("contact", {
     .primaryKey(),
   firstName: text("firstName"),
   lastName: text("lastName").notNull(),
-  company: text("companyId"),
+  companyId: text("companyId"),
   email: text("email", { length: 255 }),
   mobile: text("mobile"),
-  userId: text("userId").notNull(),
+  userId: text("userId"),
 });
 
 export const contactRelations = relations(contacts, ({ one }) => ({
   users: one(users, { fields: [contacts.userId], references: [users.id] }),
+  companies: one(companies, {
+    fields: [contacts.companyId],
+    references: [companies.id],
+  }),
 }));
 
 export const companies = sqliteTable("company", {
@@ -109,3 +113,7 @@ export const companies = sqliteTable("company", {
   info: text("info"),
   field: text("field"),
 });
+
+export const companyRelations = relations(companies, ({ many }) => ({
+  contacts: many(contacts),
+}));
