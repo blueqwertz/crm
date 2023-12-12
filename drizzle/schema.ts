@@ -126,7 +126,7 @@ export const companies = sqliteTable("company", {
 export const companyRelations = relations(companies, ({ many }) => ({
   contact: many(contacts),
   projects: many(companiesToProjects),
-  acitivities: many(contactsToActivities),
+  acitivities: many(companiesToAcitities),
 }));
 
 // #endregion
