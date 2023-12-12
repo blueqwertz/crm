@@ -21,6 +21,11 @@ export const postRouter = createTRPCRouter({
         contact: {
           with: {
             company: true,
+            acitivities: {
+              with: {
+                acitivity: true,
+              },
+            },
             projects: {
               with: {
                 project: {

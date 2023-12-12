@@ -126,7 +126,7 @@ export const companies = sqliteTable("company", {
 export const companyRelations = relations(companies, ({ many }) => ({
   contact: many(contacts),
   projects: many(companiesToProjects),
-  acitivities: many(companiesToAcitities),
+  acitivities: many(companiesToActivities),
 }));
 
 // #endregion
@@ -144,7 +144,7 @@ export const projects = sqliteTable("project", {
 export const projectRelations = relations(projects, ({ many }) => ({
   companies: many(companiesToProjects),
   contacts: many(contactsToProjects),
-  activities: many(projectsToActivies),
+  activities: many(projectsToActivities),
 }));
 
 // #endregion
@@ -227,7 +227,7 @@ export const contactsToProjectsRelations = relations(
 
 // #region Acitivities
 
-export const acitivities = sqliteTable("acitivity", {
+export const activities = sqliteTable("activity", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -236,10 +236,10 @@ export const acitivities = sqliteTable("acitivity", {
   date: integer("date", { mode: "timestamp" }).default(sql`CURRENT_TIME`),
 });
 
-export const activityRelations = relations(acitivities, ({ many }) => ({
-  companies: many(companiesToAcitities),
+export const activityRelations = relations(activities, ({ many }) => ({
+  companies: many(companiesToActivities),
   contacts: many(contactsToActivities),
-  projects: many(projectsToActivies),
+  projects: many(projectsToActivities),
 }));
 
 // #endregion
@@ -247,7 +247,7 @@ export const activityRelations = relations(acitivities, ({ many }) => ({
 // #region Activity-Relations
 
 // Company
-export const companiesToAcitities = sqliteTable(
+export const companiesToActivities = sqliteTable(
   "companiesToActivities",
   {
     companyId: text("companyId")
@@ -258,7 +258,7 @@ export const companiesToAcitities = sqliteTable(
       }),
     activityId: text("activityId")
       .notNull()
-      .references(() => acitivities.id, {
+      .references(() => activities.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
@@ -268,16 +268,16 @@ export const companiesToAcitities = sqliteTable(
   }),
 );
 
-export const companiesToAcititiesRelations = relations(
-  companiesToAcitities,
+export const companiesToActivitiesRelations = relations(
+  companiesToActivities,
   ({ one }) => ({
     company: one(companies, {
-      fields: [companiesToAcitities.companyId],
+      fields: [companiesToActivities.companyId],
       references: [companies.id],
     }),
-    activity: one(acitivities, {
-      fields: [companiesToAcitities.activityId],
-      references: [acitivities.id],
+    activity: one(activities, {
+      fields: [companiesToActivities.activityId],
+      references: [activities.id],
     }),
   }),
 );
@@ -294,7 +294,7 @@ export const contactsToActivities = sqliteTable(
       }),
     activityId: text("activityId")
       .notNull()
-      .references(() => acitivities.id, {
+      .references(() => activities.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
@@ -311,15 +311,15 @@ export const contactsToActivitiesRelations = relations(
       fields: [contactsToActivities.contactId],
       references: [contacts.id],
     }),
-    acitivity: one(acitivities, {
+    acitivity: one(activities, {
       fields: [contactsToActivities.activityId],
-      references: [acitivities.id],
+      references: [activities.id],
     }),
   }),
 );
 
 // Project
-export const projectsToActivies = sqliteTable(
+export const projectsToActivities = sqliteTable(
   "projectsToActivies",
   {
     projectId: text("projectId")
@@ -330,7 +330,7 @@ export const projectsToActivies = sqliteTable(
       }),
     activityId: text("activityId")
       .notNull()
-      .references(() => acitivities.id, {
+      .references(() => activities.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
@@ -340,16 +340,16 @@ export const projectsToActivies = sqliteTable(
   }),
 );
 
-export const projectsToActiviesRelations = relations(
-  projectsToActivies,
+export const projectsToActivitiesRelations = relations(
+  projectsToActivities,
   ({ one }) => ({
     project: one(projects, {
-      fields: [projectsToActivies.projectId],
+      fields: [projectsToActivities.projectId],
       references: [projects.id],
     }),
-    acitivity: one(acitivities, {
-      fields: [projectsToActivies.activityId],
-      references: [acitivities.id],
+    acitivity: one(activities, {
+      fields: [projectsToActivities.activityId],
+      references: [activities.id],
     }),
   }),
 );
