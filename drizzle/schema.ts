@@ -23,7 +23,7 @@ export const users = sqliteTable("user", {
 export const userRelations = relations(users, ({ one, many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
-  contacts: one(contacts, {
+  contact: one(contacts, {
     fields: [users.id],
     references: [contacts.userId],
   }),
@@ -102,12 +102,13 @@ export const contacts = sqliteTable("contact", {
 });
 
 export const contactRelations = relations(contacts, ({ one, many }) => ({
-  users: one(users, { fields: [contacts.userId], references: [users.id] }),
-  companies: one(companies, {
+  user: one(users, { fields: [contacts.userId], references: [users.id] }),
+  company: one(companies, {
     fields: [contacts.companyId],
     references: [companies.id],
   }),
-  contactsToProjects: many(contactsToProjects),
+  projects: many(contactsToProjects),
+  acitivities: many(contactsToActivities),
 }));
 
 // #endregion
@@ -123,8 +124,9 @@ export const companies = sqliteTable("company", {
 });
 
 export const companyRelations = relations(companies, ({ many }) => ({
-  contacts: many(contacts),
-  companiesToProjects: many(companiesToProjects),
+  contact: many(contacts),
+  projects: many(companiesToProjects),
+  acitivities: many(contactsToActivities),
 }));
 
 // #endregion
@@ -140,8 +142,9 @@ export const projects = sqliteTable("project", {
 });
 
 export const projectRelations = relations(projects, ({ many }) => ({
-  companiesToProjects: many(companiesToProjects),
-  contactsToProjects: many(contactsToProjects),
+  companies: many(companiesToProjects),
+  contacts: many(contactsToProjects),
+  activities: many(projectsToActivies),
 }));
 
 // #endregion
@@ -154,10 +157,16 @@ export const companiesToProjects = sqliteTable(
   {
     companyId: text("companyId")
       .notNull()
-      .references(() => companies.id),
+      .references(() => companies.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
     projectId: text("projectId")
       .notNull()
-      .references(() => projects.id),
+      .references(() => projects.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.companyId, t.projectId] }),
@@ -184,10 +193,16 @@ export const contactsToProjects = sqliteTable(
   {
     contactId: text("contactId")
       .notNull()
-      .references(() => contacts.id),
+      .references(() => contacts.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
     projectId: text("projectId")
       .notNull()
-      .references(() => projects.id),
+      .references(() => projects.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.contactId, t.projectId] }),
@@ -204,6 +219,137 @@ export const contactsToProjectsRelations = relations(
     project: one(projects, {
       fields: [contactsToProjects.projectId],
       references: [projects.id],
+    }),
+  }),
+);
+
+// #endregion
+
+// #region Acitivities
+
+export const acitivities = sqliteTable("acitivity", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  description: text("description"),
+  type: text("type"),
+  date: integer("date", { mode: "timestamp" }).default(sql`CURRENT_TIME`),
+});
+
+export const activityRelations = relations(acitivities, ({ many }) => ({
+  companies: many(companiesToAcitities),
+  contacts: many(contactsToActivities),
+  projects: many(projectsToActivies),
+}));
+
+// #endregion
+
+// #region Activity-Relations
+
+// Company
+export const companiesToAcitities = sqliteTable(
+  "companiesToActivities",
+  {
+    companyId: text("companyId")
+      .notNull()
+      .references(() => companies.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    activityId: text("activityId")
+      .notNull()
+      .references(() => acitivities.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.companyId, t.activityId] }),
+  }),
+);
+
+export const companiesToAcititiesRelations = relations(
+  companiesToAcitities,
+  ({ one }) => ({
+    company: one(companies, {
+      fields: [companiesToAcitities.companyId],
+      references: [companies.id],
+    }),
+    activity: one(acitivities, {
+      fields: [companiesToAcitities.activityId],
+      references: [acitivities.id],
+    }),
+  }),
+);
+
+// Contact
+export const contactsToActivities = sqliteTable(
+  "contactsToActivities",
+  {
+    contactId: text("contactId")
+      .notNull()
+      .references(() => contacts.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    activityId: text("activityId")
+      .notNull()
+      .references(() => acitivities.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.contactId, t.activityId] }),
+  }),
+);
+
+export const contactsToActivitiesRelations = relations(
+  contactsToActivities,
+  ({ one }) => ({
+    contact: one(contacts, {
+      fields: [contactsToActivities.contactId],
+      references: [contacts.id],
+    }),
+    acitivity: one(acitivities, {
+      fields: [contactsToActivities.activityId],
+      references: [acitivities.id],
+    }),
+  }),
+);
+
+// Project
+export const projectsToActivies = sqliteTable(
+  "projectsToActivies",
+  {
+    projectId: text("projectId")
+      .notNull()
+      .references(() => projects.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    activityId: text("activityId")
+      .notNull()
+      .references(() => acitivities.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.projectId, t.activityId] }),
+  }),
+);
+
+export const projectsToActiviesRelations = relations(
+  projectsToActivies,
+  ({ one }) => ({
+    project: one(projects, {
+      fields: [projectsToActivies.projectId],
+      references: [projects.id],
+    }),
+    acitivity: one(acitivities, {
+      fields: [projectsToActivies.activityId],
+      references: [acitivities.id],
     }),
   }),
 );

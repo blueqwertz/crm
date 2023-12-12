@@ -74,7 +74,7 @@ function AuthShowcase() {
         {/* {secretMessage && <span> - {secretMessage}</span>} */}
       </p>
       <span className="text-center text-xs">
-        {JSON.stringify(secretMessage)}
+        {JSON.stringify(secretMessage ?? "No message")}
       </span>
       <button
         className="rounded-full bg-slate-200 px-10 py-3 font-semibold text-black no-underline transition hover:bg-slate-200"

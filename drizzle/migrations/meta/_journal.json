@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1702302621652,
-      "tag": "0000_curious_norrin_radd",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1702302674566,
-      "tag": "0001_gray_paladin",
+      "when": 1702381033946,
+      "tag": "0000_safe_richard_fisk",
       "breakpoints": true
     }
   ]
