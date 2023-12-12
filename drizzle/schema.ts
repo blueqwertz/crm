@@ -2,22 +2,21 @@ import { relations, sql } from "drizzle-orm";
 import {
   text,
   integer,
-  sqliteTable,
+  pgTable,
   primaryKey,
   index,
-} from "drizzle-orm/sqlite-core";
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
 
 // #region NextAuth
-export const users = sqliteTable("user", {
+export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
-  name: text("name", { length: 255 }),
-  email: text("email", { length: 255 }),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }).default(
-    sql`CURRENT_TIME`,
-  ),
-  image: text("image", { length: 255 }),
+  name: text("name"),
+  email: text("email"),
+  emailVerified: timestamp("emailVerified", { mode: "date" }).defaultNow(),
+  image: text("image"),
 });
 
 export const userRelations = relations(users, ({ one, many }) => ({
@@ -29,20 +28,20 @@ export const userRelations = relations(users, ({ one, many }) => ({
   }),
 }));
 
-export const accounts = sqliteTable(
+export const accounts = pgTable(
   "account",
   {
     userId: text("userId").notNull(),
     type: text("type").$type<AdapterAccount["type"]>().notNull(),
-    provider: text("provider", { length: 255 }).notNull(),
-    providerAccountId: text("providerAccountId", { length: 255 }).notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
     expires_at: integer("expires_at"),
-    token_type: text("token_type", { length: 255 }),
-    scope: text("scope", { length: 255 }),
+    token_type: text("token_type"),
+    scope: text("scope"),
     id_token: text("id_token"),
-    session_state: text("session_state", { length: 255 }),
+    session_state: text("session_state"),
   },
   (account) => ({
     compoundKey: primaryKey({
@@ -56,12 +55,12 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
 
-export const sessions = sqliteTable(
+export const sessions = pgTable(
   "session",
   {
-    sessionToken: text("sessionToken", { length: 255 }).notNull().primaryKey(),
-    userId: text("userId", { length: 255 }).notNull(),
-    expires: integer("expires", { mode: "timestamp" }).notNull(),
+    sessionToken: text("sessionToken").notNull().primaryKey(),
+    userId: text("userId").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
     userIdIdx: index("userId_idx").on(session.userId),
@@ -72,12 +71,12 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
-export const verificationTokens = sqliteTable(
+export const verificationTokens = pgTable(
   "verificationToken",
   {
-    identifier: text("identifier", { length: 255 }).notNull(),
-    token: text("token", { length: 255 }).notNull(),
-    expires: integer("expires", { mode: "timestamp" }).notNull(),
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
     compoundKey: primaryKey(vt.identifier, vt.token),
@@ -89,14 +88,14 @@ export const verificationTokens = sqliteTable(
 // #region External
 
 // #region Contacts
-export const contacts = sqliteTable("contact", {
+export const contacts = pgTable("contact", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
   firstName: text("firstName"),
   lastName: text("lastName").notNull(),
   companyId: text("companyId"),
-  email: text("email", { length: 255 }),
+  email: text("email"),
   mobile: text("mobile"),
   userId: text("userId"),
 });
@@ -114,7 +113,7 @@ export const contactRelations = relations(contacts, ({ one, many }) => ({
 // #endregion
 
 // #region Companies
-export const companies = sqliteTable("company", {
+export const companies = pgTable("company", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -132,7 +131,7 @@ export const companyRelations = relations(companies, ({ many }) => ({
 // #endregion
 
 // #region Projects
-export const projects = sqliteTable("project", {
+export const projects = pgTable("project", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -152,7 +151,7 @@ export const projectRelations = relations(projects, ({ many }) => ({
 // #region Project-Relations
 
 // Company
-export const companiesToProjects = sqliteTable(
+export const companiesToProjects = pgTable(
   "companiesToProjects",
   {
     companyId: text("companyId")
@@ -188,7 +187,7 @@ export const companiesToProjectsRelations = relations(
 );
 
 // Contact
-export const contactsToProjects = sqliteTable(
+export const contactsToProjects = pgTable(
   "contactsToProjects",
   {
     contactId: text("contactId")
@@ -227,13 +226,13 @@ export const contactsToProjectsRelations = relations(
 
 // #region Acitivities
 
-export const activities = sqliteTable("activity", {
+export const activities = pgTable("activity", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
   description: text("description"),
   type: text("type"),
-  date: integer("date", { mode: "timestamp" }).default(sql`CURRENT_TIME`),
+  date: timestamp("date", { mode: "date" }).defaultNow(),
 });
 
 export const activityRelations = relations(activities, ({ many }) => ({
@@ -247,7 +246,7 @@ export const activityRelations = relations(activities, ({ many }) => ({
 // #region Activity-Relations
 
 // Company
-export const companiesToActivities = sqliteTable(
+export const companiesToActivities = pgTable(
   "companiesToActivities",
   {
     companyId: text("companyId")
@@ -283,7 +282,7 @@ export const companiesToActivitiesRelations = relations(
 );
 
 // Contact
-export const contactsToActivities = sqliteTable(
+export const contactsToActivities = pgTable(
   "contactsToActivities",
   {
     contactId: text("contactId")
@@ -319,7 +318,7 @@ export const contactsToActivitiesRelations = relations(
 );
 
 // Project
-export const projectsToActivities = sqliteTable(
+export const projectsToActivities = pgTable(
   "projectsToActivies",
   {
     projectId: text("projectId")

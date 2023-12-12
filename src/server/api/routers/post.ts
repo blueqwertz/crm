@@ -28,11 +28,7 @@ export const postRouter = createTRPCRouter({
             },
             projects: {
               with: {
-                project: {
-                  columns: {
-                    name: true,
-                  },
-                },
+                project: true,
               },
             },
           },
