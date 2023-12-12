@@ -16,9 +16,9 @@ export const postRouter = createTRPCRouter({
     }),
 
   getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.companies.findFirst({
+    return ctx.db.query.contacts.findFirst({
       with: {
-        contacts: true,
+        companies: true,
       },
     });
   }),

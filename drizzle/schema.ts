@@ -45,7 +45,9 @@ export const accounts = sqliteTable(
     session_state: text("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
     userIdIdx: index("account_userId_idx").on(account.userId),
   }),
 );
@@ -84,7 +86,9 @@ export const verificationTokens = sqliteTable(
 
 // #endregion
 
-// #region Timetable
+// #region External
+
+// #region Contacts
 export const contacts = sqliteTable("contact", {
   id: text("id")
     .$defaultFn(() => createId())
@@ -97,14 +101,18 @@ export const contacts = sqliteTable("contact", {
   userId: text("userId"),
 });
 
-export const contactRelations = relations(contacts, ({ one }) => ({
+export const contactRelations = relations(contacts, ({ one, many }) => ({
   users: one(users, { fields: [contacts.userId], references: [users.id] }),
   companies: one(companies, {
     fields: [contacts.companyId],
     references: [companies.id],
   }),
+  contactsToProjects: many(contactsToProjects),
 }));
 
+// #endregion
+
+// #region Companies
 export const companies = sqliteTable("company", {
   id: text("id")
     .$defaultFn(() => createId())
@@ -116,4 +124,90 @@ export const companies = sqliteTable("company", {
 
 export const companyRelations = relations(companies, ({ many }) => ({
   contacts: many(contacts),
+  companiesToProjects: many(companiesToProjects),
 }));
+
+// #endregion
+
+// #region Projects
+export const projects = sqliteTable("project", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  name: text("name"),
+  description: text("description"),
+  value: integer("value"),
+});
+
+export const projectRelations = relations(projects, ({ many }) => ({
+  companiesToProjects: many(companiesToProjects),
+  contactsToProjects: many(contactsToProjects),
+}));
+
+// #endregion
+
+// #region Project-Relations
+
+// Company
+export const companiesToProjects = sqliteTable(
+  "companiesToProjects",
+  {
+    companyId: text("companyId")
+      .notNull()
+      .references(() => companies.id),
+    projectId: text("projectId")
+      .notNull()
+      .references(() => projects.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.companyId, t.projectId] }),
+  }),
+);
+
+export const companiesToProjectsRelations = relations(
+  companiesToProjects,
+  ({ one }) => ({
+    company: one(companies, {
+      fields: [companiesToProjects.companyId],
+      references: [companies.id],
+    }),
+    project: one(projects, {
+      fields: [companiesToProjects.projectId],
+      references: [projects.id],
+    }),
+  }),
+);
+
+// Contact
+export const contactsToProjects = sqliteTable(
+  "contactsToProjects",
+  {
+    contactId: text("contactId")
+      .notNull()
+      .references(() => contacts.id),
+    projectId: text("projectId")
+      .notNull()
+      .references(() => projects.id),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.contactId, t.projectId] }),
+  }),
+);
+
+export const contactsToProjectsRelations = relations(
+  contactsToProjects,
+  ({ one }) => ({
+    contact: one(contacts, {
+      fields: [contactsToProjects.contactId],
+      references: [contacts.id],
+    }),
+    project: one(projects, {
+      fields: [contactsToProjects.projectId],
+      references: [projects.id],
+    }),
+  }),
+);
+
+// #endregion
+
+// #endregion
