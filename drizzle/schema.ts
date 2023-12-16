@@ -123,7 +123,7 @@ export const companies = pgTable("company", {
 });
 
 export const companyRelations = relations(companies, ({ many }) => ({
-  contact: many(contacts),
+  contacts: many(contacts),
   projects: many(companiesToProjects),
   acitivities: many(companiesToActivities),
 }));

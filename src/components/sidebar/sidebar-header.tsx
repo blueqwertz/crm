@@ -13,7 +13,7 @@ export const SidebarHeader = () => {
           >
             <BadgeDollarSign className="h-4 w-4 text-blue-800" />
           </Button> */}
-          <span className="font-medium">Arco Inc.</span>
+          <span className="font-medium">Demo Inc.</span>
         </div>
       </div>
     </>
