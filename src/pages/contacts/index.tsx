@@ -1,13 +1,11 @@
-import React from "react";
 import Head from "next/head";
-
-import { api } from "~/utils/api";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
-import { usePathname } from "next/navigation";
+import { Button } from "~/components/ui/button";
+import { Plus } from "lucide-react";
+import { ContactPageTable } from "~/components/contact-page/contact-page-table";
+import { Breadcrumbs } from "~/components/breadcrumbs";
 
 export default function Contacts() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
   return (
     <>
       <Head>
@@ -17,9 +15,22 @@ export default function Contacts() {
       </Head>
       <div className="flex min-h-screen">
         <Sidebar />
-        <div className="flex flex-grow flex-col items-center justify-center">
-          <span>{usePathname()}</span>
-          <span>{hello.data?.greeting}</span>
+        <div className="flex flex-grow flex-col p-5">
+          {/* HEADER */}
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold">Contacts</h1>
+              <span className="text-sm text-muted-foreground">
+                View all of your contacts.
+              </span>
+            </div>
+            <Button size={"sm"}>
+              <Plus className="mr-1 h-4 w-4" />
+              New
+            </Button>
+          </div>
+          <Breadcrumbs />
+          <ContactPageTable />
         </div>
       </div>
     </>

@@ -6,8 +6,6 @@ import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { usePathname } from "next/navigation";
 
 export default function Teams() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
   return (
     <>
       <Head>
@@ -19,7 +17,6 @@ export default function Teams() {
         <Sidebar />
         <div className="flex flex-grow flex-col items-center justify-center">
           <span>{usePathname()}</span>
-          <span>{hello.data?.greeting}</span>
         </div>
       </div>
     </>

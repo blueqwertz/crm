@@ -1,3 +1,4 @@
+import { asc, desc } from "drizzle-orm";
 import { z } from "zod";
 
 import {
@@ -6,14 +7,18 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-export const postRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
+export const contactRotuer = createTRPCRouter({
+  getAll: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.contacts.findMany({
+      with: {
+        company: true,
+        user: true,
+      },
+      limit: 50,
+      offset: 0,
+      orderBy: (contacts) => [desc(contacts.createdAt)],
+    });
+  }),
 
   getLatest: publicProcedure.query(({ ctx }) => {
     return ctx.db.query.users.findFirst({

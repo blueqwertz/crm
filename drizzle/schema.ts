@@ -6,9 +6,19 @@ import {
   primaryKey,
   index,
   timestamp,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
+
+// ENUMS
+export const projectStatusEnum = pgEnum("projectStatus", [
+  "NotStarted",
+  "InProgress",
+  "OnHold",
+  "Completed",
+  "Cancelled",
+]);
 
 // #region NextAuth
 export const users = pgTable("user", {
@@ -17,6 +27,8 @@ export const users = pgTable("user", {
   email: text("email"),
   emailVerified: timestamp("emailVerified", { mode: "date" }).defaultNow(),
   image: text("image"),
+  headId: text("headId"),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const userRelations = relations(users, ({ one, many }) => ({
@@ -25,6 +37,10 @@ export const userRelations = relations(users, ({ one, many }) => ({
   contact: one(contacts, {
     fields: [users.id],
     references: [contacts.userId],
+  }),
+  head: one(heads, {
+    fields: [users.headId],
+    references: [heads.id],
   }),
 }));
 
@@ -94,10 +110,13 @@ export const contacts = pgTable("contact", {
     .primaryKey(),
   firstName: text("firstName"),
   lastName: text("lastName").notNull(),
+  image: text("image"),
+  info: text("info"),
   companyId: text("companyId"),
   email: text("email"),
   mobile: text("mobile"),
   userId: text("userId"),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const contactRelations = relations(contacts, ({ one, many }) => ({
@@ -108,7 +127,51 @@ export const contactRelations = relations(contacts, ({ one, many }) => ({
   }),
   projects: many(contactsToProjects),
   acitivities: many(contactsToActivities),
+  outgoingRelation: many(contactsToContacts, {
+    relationName: "outgoingContact",
+  }),
+  receivingRelation: many(contactsToContacts, {
+    relationName: "receivingContact",
+  }),
 }));
+
+export const contactsToContacts = pgTable(
+  "contactsToContacts",
+  {
+    outgoingContactId: text("outgoingContactId")
+      .notNull()
+      .references(() => contacts.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    receivingContactId: text("receivingContactId")
+      .notNull()
+      .references(() => contacts.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    createdAt: timestamp("createdAt").defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.outgoingContactId, t.receivingContactId] }),
+  }),
+);
+
+export const contactsToContactsRelations = relations(
+  contactsToContacts,
+  ({ one }) => ({
+    outgoingContact: one(contacts, {
+      fields: [contactsToContacts.outgoingContactId],
+      references: [contacts.id],
+      relationName: "outgoingContact",
+    }),
+    receivingContact: one(contacts, {
+      fields: [contactsToContacts.receivingContactId],
+      references: [contacts.id],
+      relationName: "receivingContact",
+    }),
+  }),
+);
 
 // #endregion
 
@@ -118,8 +181,10 @@ export const companies = pgTable("company", {
     .$defaultFn(() => createId())
     .primaryKey(),
   name: text("name"),
+  image: text("image"),
   info: text("info"),
   field: text("field"),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const companyRelations = relations(companies, ({ many }) => ({
@@ -136,8 +201,11 @@ export const projects = pgTable("project", {
     .$defaultFn(() => createId())
     .primaryKey(),
   name: text("name"),
+  image: text("image"),
   description: text("description"),
   value: integer("value"),
+  status: projectStatusEnum("status").default("NotStarted"),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const projectRelations = relations(projects, ({ many }) => ({
@@ -166,6 +234,7 @@ export const companiesToProjects = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    createdAt: timestamp("createdAt").defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.companyId, t.projectId] }),
@@ -202,6 +271,7 @@ export const contactsToProjects = pgTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    createdAt: timestamp("createdAt").defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.contactId, t.projectId] }),
@@ -233,6 +303,7 @@ export const activities = pgTable("activity", {
   description: text("description"),
   type: text("type"),
   date: timestamp("date", { mode: "date" }).defaultNow(),
+  createdAt: timestamp("createdAt").defaultNow(),
 });
 
 export const activityRelations = relations(activities, ({ many }) => ({
@@ -352,6 +423,27 @@ export const projectsToActivitiesRelations = relations(
     }),
   }),
 );
+
+// #endregion
+
+// #endregion
+
+// #region Interal
+
+// #region Head
+
+export const heads = pgTable("head", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  name: text("name"),
+  info: text("info"),
+  createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export const headRealtions = relations(heads, ({ many }) => ({
+  users: many(users),
+}));
 
 // #endregion
 
