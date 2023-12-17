@@ -22,17 +22,21 @@ export const projectRotuer = createTRPCRouter({
       orderBy: (project) => [desc(project.createdAt)],
     });
   }),
+
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.query.projects.findFirst({
         where: eq(projects.id, input.id),
+      });
+    }),
+
+  getProjectContacts: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.projects.findFirst({
+        where: eq(projects.id, input.id),
         with: {
-          companies: {
-            with: {
-              company: true,
-            },
-          },
           contacts: {
             with: {
               contact: true,

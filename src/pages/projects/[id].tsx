@@ -1,11 +1,12 @@
 import Head from "next/head";
-
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/project-indiviual-page";
+import { Button } from "~/components/ui/button";
+import { Wrench } from "lucide-react";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: projectData } = api.project.getOne.useQuery({ id });
@@ -32,9 +33,13 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                 View project details.
               </span>
             </div>
+            <Button size={"sm"} variant={"outline"}>
+              <Wrench className="mr-1 h-4 w-4" />
+              Configure
+            </Button>
           </div>
           <Breadcrumbs lastItem={projectData?.name ?? "..."} />
-          <ProjectIndividualPage projectId={id} projectData={projectData} />
+          <ProjectIndividualPage projectId={id} />
         </div>
       </div>
     </>

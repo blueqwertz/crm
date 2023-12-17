@@ -16,13 +16,28 @@ export const companyRotuer = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.db.query.companies.findFirst({
         where: eq(companies.id, input.id),
+      });
+    }),
+
+  getCompanyContacts: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.contacts.findMany({
+        where: eq(contacts.companyId, input.id),
+      });
+    }),
+
+  getCompanyProjects: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.companies.findFirst({
+        where: eq(companies.id, input.id),
         with: {
           projects: {
             with: {
               project: true,
             },
           },
-          contacts: true,
         },
       });
     }),

@@ -28,7 +28,7 @@ export const ProjectPageTable = () => {
               className="flex gap-2 border-b px-3 py-2 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50"
             >
               <div className="flex flex-col gap-1">
-                <div className="flex h-7 items-center gap-2 text-sm">
+                <div className="flex h-7 items-center gap-2 text-base">
                   <span className="font-semibold">{project.name}</span>
                   <Badge
                     className={cn(

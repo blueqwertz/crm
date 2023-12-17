@@ -1,37 +1,23 @@
 import React from "react";
-import { RouterOutputs } from "~/utils/api";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import Link from "next/link";
-
-type CompanyWithContactsProjectsActivities = RouterOutputs["contact"]["getOne"];
+import { RouterOutputs, api } from "~/utils/api";
+import { ProjectsTable } from "./projects-table";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;
-  contactData: CompanyWithContactsProjectsActivities;
-}> = ({ contactId, contactData }) => {
+}> = ({ contactId }) => {
+  const { data: projectData } = api.contact.getContactProjects.useQuery({
+    id: contactId,
+  });
   return (
-    <div className="mt-3 flex flex-wrap gap-6">
+    <div className="mt-3 grid grid-cols-2 gap-6">
       <div className="flex flex-grow flex-col gap-3">
         <span className="font-semibold">Projects</span>
-        <div className="w-full rounded-md border">
-          {contactData?.projects.map((project) => {
-            return (
-              <Link
-                href={`/projects/${project.projectId}`}
-                className="flex items-center gap-2 border-b px-3 py-2 transition-colors last:border-none hover:bg-slate-50"
-              >
-                <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={project.project.image!} />
-                  <AvatarFallback className="text-[11px]">
-                    {project.project.name?.[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm">
-                  <span className="font-semibold">{project.project.name}</span>
-                </span>
-              </Link>
-            );
-          })}
+        <div className="w-full overflow-hidden rounded-md border">
+          <ProjectsTable
+            projectData={
+              projectData?.projects.map((project) => project.project)!
+            }
+          />
         </div>
       </div>
       <div className="flex flex-grow flex-col gap-3">

@@ -6,6 +6,8 @@ import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { CompanyIndividualPage } from "~/components/company-individual-page";
+import { Button } from "~/components/ui/button";
+import { Settings, Wrench } from "lucide-react";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: companyData } = api.company.getOne.useQuery({ id });
@@ -32,9 +34,13 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
                 View company details.
               </span>
             </div>
+            <Button size={"sm"} variant={"outline"}>
+              <Wrench className="mr-1 h-4 w-4" />
+              Configure
+            </Button>
           </div>
           <Breadcrumbs lastItem={companyData?.name ?? id} />
-          <CompanyIndividualPage companyId={id} companyData={companyData} />
+          <CompanyIndividualPage companyId={id} />
         </div>
       </div>
     </>

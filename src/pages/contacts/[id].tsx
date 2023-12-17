@@ -5,8 +5,9 @@ import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { CompanyIndividualPage } from "~/components/company-individual-page";
 import { ContactIndividualPage } from "~/components/contact-individual-page";
+import { Button } from "~/components/ui/button";
+import { Wrench } from "lucide-react";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: contactData } = api.contact.getOne.useQuery({ id });
@@ -34,6 +35,10 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
                 View contact details.
               </span>
             </div>
+            <Button size={"sm"} variant={"outline"}>
+              <Wrench className="mr-1 h-4 w-4" />
+              Configure
+            </Button>
           </div>
           <Breadcrumbs
             lastItem={
@@ -42,7 +47,7 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
               } ${contactData?.firstName!}` ?? id
             }
           />
-          <ContactIndividualPage contactId={id} contactData={contactData} />
+          <ContactIndividualPage contactId={id} />
         </div>
       </div>
     </>

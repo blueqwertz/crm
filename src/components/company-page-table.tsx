@@ -25,7 +25,7 @@ export const CompanyPageTable = () => {
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col gap-1">
-                <div className="flex h-7 items-center gap-2 text-sm">
+                <div className="flex h-7 items-center gap-2 text-base">
                   <span className="font-semibold">{company.name}</span>
                 </div>
                 {}

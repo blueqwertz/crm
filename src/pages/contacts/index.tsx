@@ -1,9 +1,21 @@
 import Head from "next/head";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
-import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { ContactPageTable } from "~/components/contact-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { AddContact } from "~/components/add-contact";
 
 export default function Contacts() {
   return (
@@ -24,10 +36,7 @@ export default function Contacts() {
                 View all of your contacts.
               </span>
             </div>
-            <Button size={"sm"}>
-              <Plus className="mr-1 h-4 w-4" />
-              New
-            </Button>
+            <AddContact />
           </div>
           <Breadcrumbs />
           <ContactPageTable />
