@@ -6,7 +6,7 @@ import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { usePathname } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
-import { CompanyPageTable } from "~/components/company-page/company-page-table";
+import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 
 export default function Companies() {

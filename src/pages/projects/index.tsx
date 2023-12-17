@@ -3,9 +3,9 @@ import Head from "next/head";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
-import { CompanyPageTable } from "~/components/company-page/company-page-table";
+import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { ProjectPageTable } from "~/components/project-page/project-page-table";
+import { ProjectPageTable } from "~/components/project-page-table";
 
 export default function Projects() {
   return (

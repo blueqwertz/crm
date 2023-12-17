@@ -1,15 +1,11 @@
-import React from "react";
 import Head from "next/head";
 
 import { api } from "~/utils/api";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
-import { usePathname } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
-import { CompanyPageTable } from "~/components/company-page/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
+import { CompanyIndividualPage } from "~/components/company-individual-page";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: companyData } = api.company.getOne.useQuery({ id });
@@ -38,6 +34,7 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
             </div>
           </div>
           <Breadcrumbs lastItem={companyData?.name ?? id} />
+          <CompanyIndividualPage companyId={id} companyData={companyData} />
         </div>
       </div>
     </>

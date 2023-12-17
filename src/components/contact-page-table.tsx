@@ -14,7 +14,8 @@ export const ContactPageTable = () => {
       <div className="mt-3 flex flex-col overflow-hidden rounded-md border">
         {contactData?.map((contact) => {
           return (
-            <div
+            <Link
+              href={`/contacts/${contact.id}`}
               key={contact.id}
               className="flex gap-2 border-b px-3 py-2 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50"
             >
@@ -94,7 +95,7 @@ export const ContactPageTable = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

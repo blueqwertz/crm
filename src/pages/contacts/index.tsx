@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
-import { ContactPageTable } from "~/components/contact-page/contact-page-table";
+import { ContactPageTable } from "~/components/contact-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 
 export default function Contacts() {

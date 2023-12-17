@@ -1,6 +1,6 @@
 import { api } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Badge } from "../ui/badge";
+import { Badge } from "./ui/badge";
 import { Building, Building2, CalendarClock } from "lucide-react";
 import Link from "next/link";
 import {

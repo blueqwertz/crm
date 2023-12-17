@@ -16,6 +16,14 @@ export const companyRotuer = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.db.query.companies.findFirst({
         where: eq(companies.id, input.id),
+        with: {
+          projects: {
+            with: {
+              project: true,
+            },
+          },
+          contacts: true,
+        },
       });
     }),
 });
