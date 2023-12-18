@@ -39,15 +39,21 @@ export const users = pgTable("user", {
 });
 
 export const userRelations = relations(users, ({ one, many }) => ({
+  head: one(heads, {
+    fields: [users.headId],
+    references: [heads.id],
+  }),
   accounts: many(accounts),
   sessions: many(sessions),
   contact: one(contacts, {
     fields: [users.id],
     references: [contacts.userId],
   }),
-  head: one(heads, {
-    fields: [users.headId],
-    references: [heads.id],
+  usedInvitations: many(headInvitationLinks, {
+    relationName: "usedBy",
+  }),
+  createdInvitations: many(headInvitationLinks, {
+    relationName: "createdBy",
   }),
 }));
 
@@ -115,7 +121,9 @@ export const contacts = pgTable("contact", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
-  headId: text("headId").notNull(),
+  headId: text("headId")
+    .references(() => heads.id)
+    .notNull(),
   firstName: text("firstName"),
   lastName: text("lastName").notNull(),
   image: text("image"),
@@ -192,7 +200,9 @@ export const companies = pgTable("company", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
-  headId: text("headId").notNull(),
+  headId: text("headId")
+    .references(() => heads.id)
+    .notNull(),
   name: text("name"),
   image: text("image"),
   info: text("info"),
@@ -217,7 +227,9 @@ export const projects = pgTable("project", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
-  headId: text("headId").notNull(),
+  headId: text("headId")
+    .references(() => heads.id)
+    .notNull(),
   name: text("name"),
   image: text("image"),
   description: text("description"),
@@ -322,7 +334,9 @@ export const activities = pgTable("activity", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
-  headId: text("headId").notNull(),
+  headId: text("headId")
+    .references(() => heads.id)
+    .notNull(),
   description: text("description"),
   type: activityTypeEnum("type").default("Call"),
   date: timestamp("date", { mode: "date" }).defaultNow(),
@@ -474,7 +488,49 @@ export const headRealtions = relations(heads, ({ many }) => ({
   companies: many(companies),
   projects: many(projects),
   activities: many(activities),
+  invitationLinks: many(headInvitationLinks),
 }));
+
+export const headInvitationLinks = pgTable("headInvitationLinks", {
+  id: text("id")
+    .$defaultFn(() => createId())
+    .primaryKey(),
+  headId: text("headId")
+    .references(() => heads.id, { onDelete: "cascade", onUpdate: "cascade" })
+    .notNull(),
+  createdById: text("createdById")
+    .references(() => users.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    })
+    .notNull(),
+  usedById: text("usedById").references(() => users.id, {
+    onDelete: "no action",
+    onUpdate: "cascade",
+  }),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow(),
+});
+
+export const headInvitationLinksRelations = relations(
+  headInvitationLinks,
+  ({ one }) => ({
+    head: one(heads, {
+      fields: [headInvitationLinks.headId],
+      references: [heads.id],
+    }),
+    createdBy: one(users, {
+      fields: [headInvitationLinks.createdById],
+      references: [users.id],
+      relationName: "createdBy",
+    }),
+    usedById: one(users, {
+      fields: [headInvitationLinks.usedById],
+      references: [users.id],
+      relationName: "usedBy",
+    }),
+  }),
+);
 
 // #endregion
 
