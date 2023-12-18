@@ -6,12 +6,11 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import { users } from "../../drizzle/schema";
-
 import { env } from "~/env";
 import { db } from "~/server/db";
-import { InferSelectModel, eq } from "drizzle-orm";
 import { Adapter } from "next-auth/adapters";
+import { eq } from "drizzle-orm";
+import { users } from "drizzle/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -19,32 +18,43 @@ import { Adapter } from "next-auth/adapters";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      head: {
-        id: string;
-        name: string;
-      };
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
+export interface Token {
+  id: string;
+  accessToken: string;
+  refreshToken: string;
+  randomKey: string;
+}
 
-  interface User {
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  head: {
+    id: string;
+    name: string;
+  };
+  randomKey: string;
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
     head: {
       id: string;
       name: string;
     };
-    // ...other properties
-    // role: UserRole;
   }
+}
 
-  interface AdapterUser {
-    head: {
+declare module "next-auth" {
+  interface Session {
+    user: User & {
       id: string;
-      name: string;
+      image: string;
+      head: {
+        id: string;
+        name: string;
+      };
     };
   }
 }
@@ -55,37 +65,51 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  session: {
-    maxAge: 365 * 24 * 60 * 60, // 1 Year
-  },
   callbacks: {
-    async session({ session, user }) {
+    session({ session, token }) {
+      if (token) {
+        session.user.id = token.id;
+        session.user.name = token.name ?? "";
+        session.user.email = token.email ?? "";
+        session.user.head = {
+          id: token.head.id ?? "",
+          name: token.head.name ?? "",
+        };
+        if (token.image) session.user.image = token.image as string;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
       const dbUser = await db.query.users.findFirst({
-        where: eq(users.id, user.id),
-        with: { head: true },
+        where: eq(users.id, token.id),
+        with: {
+          head: true,
+        },
       });
+
+      if (!dbUser) {
+        return token;
+      }
+
       return {
-        ...session,
-        user: {
-          ...session.user,
-          id: user.id,
-          head: {
-            id: dbUser?.headId,
-            name: dbUser?.head?.name,
-          },
+        ...token,
+        id: dbUser.id,
+        name: dbUser.name,
+        email: dbUser.email,
+        image: dbUser.image,
+        head: {
+          id: dbUser.headId ?? "",
+          name: dbUser?.head?.name ?? "",
         },
       };
     },
-    signIn({ user }) {
-      if (!user.email) return false;
-
-      return true;
-    },
-    // signIn
   },
   events: {
     // signIn
     // createUser
+  },
+  session: {
+    strategy: "jwt",
   },
   pages: {
     signIn: "/auth/login",
