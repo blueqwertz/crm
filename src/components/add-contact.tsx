@@ -28,7 +28,7 @@ import { useState } from "react";
 export const AddContact = () => {
   const formSchema = z.object({
     firstName: z.string().optional(),
-    lastName: z.string(),
+    lastName: z.string().min(2).max(50),
     info: z.string().optional(),
     email: z.string().email().optional(),
     mobile: z.string().optional(),
@@ -55,7 +55,7 @@ export const AddContact = () => {
   return (
     <>
       <AlertDialog open={open}>
-        <AlertDialogTrigger>
+        <AlertDialogTrigger asChild>
           <Button
             size={"sm"}
             onClick={() => {

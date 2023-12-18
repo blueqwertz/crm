@@ -6,9 +6,11 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import type { users } from "../../drizzle/schema";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { InferSelectModel } from "drizzle-orm";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,6 +22,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      headId: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -37,14 +40,23 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    maxAge: 365 * 24 * 60 * 60, // 1 Year
+  },
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
         id: user.id,
+        headId: (user as InferSelectModel<typeof users>).headId,
       },
     }),
+    // signIn
+  },
+  events: {
+    // signIn
+    // createUser
   },
   adapter: DrizzleAdapter(db),
   providers: [

@@ -20,6 +20,13 @@ export const projectStatusEnum = pgEnum("projectStatus", [
   "Cancelled",
 ]);
 
+export const activityTypeEnum = pgEnum("activityType", [
+  "Call",
+  "Meeting",
+  "Task",
+  "FollowUp",
+]);
+
 // #region NextAuth
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
@@ -301,7 +308,7 @@ export const activities = pgTable("activity", {
     .$defaultFn(() => createId())
     .primaryKey(),
   description: text("description"),
-  type: text("type"),
+  type: activityTypeEnum("type").default("Call"),
   date: timestamp("date", { mode: "date" }).defaultNow(),
   createdAt: timestamp("createdAt").defaultNow(),
 });
