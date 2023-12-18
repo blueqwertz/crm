@@ -1,4 +1,5 @@
 import NextAuth, { DefaultSession } from "next-auth";
+import { AdapterSession } from "next-auth/adapters";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -11,12 +12,15 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      headId: string;
+      head: {
+        id: string;
+        name: string;
+      };
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    // ...other properties
+    headId: string;
+  }
 }

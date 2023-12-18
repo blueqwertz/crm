@@ -6,11 +6,12 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import type { users } from "../../drizzle/schema";
+import { users } from "../../drizzle/schema";
 
 import { env } from "~/env";
 import { db } from "~/server/db";
-import { InferSelectModel } from "drizzle-orm";
+import { InferSelectModel, eq } from "drizzle-orm";
+import { Adapter } from "next-auth/adapters";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -22,16 +23,30 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      headId: string;
+      head: {
+        id: string;
+        name: string;
+      };
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    head: {
+      id: string;
+      name: string;
+    };
+    // ...other properties
+    // role: UserRole;
+  }
+
+  interface AdapterUser {
+    head: {
+      id: string;
+      name: string;
+    };
+  }
 }
 
 /**
@@ -44,21 +59,38 @@ export const authOptions: NextAuthOptions = {
     maxAge: 365 * 24 * 60 * 60, // 1 Year
   },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-        headId: (user as InferSelectModel<typeof users>).headId,
-      },
-    }),
+    async session({ session, user }) {
+      const dbUser = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        with: { head: true },
+      });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          head: {
+            id: dbUser?.headId,
+            name: dbUser?.head?.name,
+          },
+        },
+      };
+    },
+    signIn({ user }) {
+      if (!user.email) return false;
+
+      return true;
+    },
     // signIn
   },
   events: {
     // signIn
     // createUser
   },
-  adapter: DrizzleAdapter(db),
+  pages: {
+    signIn: "/auth/login",
+  },
+  adapter: DrizzleAdapter(db) as Adapter,
   providers: [
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,

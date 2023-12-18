@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { companies, contacts } from "drizzle/schema";
 import { z } from "zod";
 
@@ -15,7 +15,10 @@ export const companyRotuer = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.query.companies.findFirst({
-        where: eq(companies.id, input.id),
+        where: and(
+          eq(companies.id, input.id),
+          eq(companies.headId, ctx.session.user.head.id),
+        ),
       });
     }),
 
@@ -23,7 +26,10 @@ export const companyRotuer = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.query.contacts.findMany({
-        where: eq(contacts.companyId, input.id),
+        where: and(
+          eq(contacts.companyId, input.id),
+          eq(contacts.headId, ctx.session.user.head.id),
+        ),
       });
     }),
 
@@ -31,7 +37,10 @@ export const companyRotuer = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       return ctx.db.query.companies.findFirst({
-        where: eq(companies.id, input.id),
+        where: and(
+          eq(companies.id, input.id),
+          eq(companies.headId, ctx.session.user.head.id),
+        ),
         with: {
           projects: {
             with: {

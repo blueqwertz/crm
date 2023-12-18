@@ -30,11 +30,11 @@ export const activityTypeEnum = pgEnum("activityType", [
 // #region NextAuth
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
+  headId: text("headId"),
   name: text("name"),
   email: text("email"),
   emailVerified: timestamp("emailVerified", { mode: "date" }).defaultNow(),
   image: text("image"),
-  headId: text("headId"),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
@@ -115,6 +115,7 @@ export const contacts = pgTable("contact", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
+  headId: text("headId").notNull(),
   firstName: text("firstName"),
   lastName: text("lastName").notNull(),
   image: text("image"),
@@ -139,6 +140,10 @@ export const contactRelations = relations(contacts, ({ one, many }) => ({
   }),
   receivingRelation: many(contactsToContacts, {
     relationName: "receivingContact",
+  }),
+  head: one(heads, {
+    fields: [contacts.headId],
+    references: [heads.id],
   }),
 }));
 
@@ -187,6 +192,7 @@ export const companies = pgTable("company", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
+  headId: text("headId").notNull(),
   name: text("name"),
   image: text("image"),
   info: text("info"),
@@ -194,10 +200,14 @@ export const companies = pgTable("company", {
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const companyRelations = relations(companies, ({ many }) => ({
+export const companyRelations = relations(companies, ({ one, many }) => ({
   contacts: many(contacts),
   projects: many(companiesToProjects),
   acitivities: many(companiesToActivities),
+  head: one(heads, {
+    fields: [companies.headId],
+    references: [heads.id],
+  }),
 }));
 
 // #endregion
@@ -207,6 +217,7 @@ export const projects = pgTable("project", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
+  headId: text("headId").notNull(),
   name: text("name"),
   image: text("image"),
   description: text("description"),
@@ -215,10 +226,14 @@ export const projects = pgTable("project", {
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const projectRelations = relations(projects, ({ many }) => ({
+export const projectRelations = relations(projects, ({ one, many }) => ({
   companies: many(companiesToProjects),
   contacts: many(contactsToProjects),
   activities: many(projectsToActivities),
+  head: one(heads, {
+    fields: [projects.headId],
+    references: [heads.id],
+  }),
 }));
 
 // #endregion
@@ -307,16 +322,21 @@ export const activities = pgTable("activity", {
   id: text("id")
     .$defaultFn(() => createId())
     .primaryKey(),
+  headId: text("headId").notNull(),
   description: text("description"),
   type: activityTypeEnum("type").default("Call"),
   date: timestamp("date", { mode: "date" }).defaultNow(),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 
-export const activityRelations = relations(activities, ({ many }) => ({
+export const activityRelations = relations(activities, ({ one, many }) => ({
   companies: many(companiesToActivities),
   contacts: many(contactsToActivities),
   projects: many(projectsToActivities),
+  head: one(heads, {
+    fields: [activities.headId],
+    references: [heads.id],
+  }),
 }));
 
 // #endregion
@@ -450,6 +470,10 @@ export const heads = pgTable("head", {
 
 export const headRealtions = relations(heads, ({ many }) => ({
   users: many(users),
+  contacts: many(contacts),
+  companies: many(companies),
+  projects: many(projects),
+  activities: many(activities),
 }));
 
 // #endregion

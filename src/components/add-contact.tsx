@@ -46,7 +46,6 @@ export const AddContact = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     setOpen(false);
   }
 

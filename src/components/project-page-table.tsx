@@ -23,6 +23,7 @@ export const ProjectPageTable = () => {
         {projectData?.map((project) => {
           return (
             <Link
+              passHref={true}
               href={`/projects/${project.id}`}
               key={project.id}
               className="flex gap-2 border-b px-3 py-2 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50"
@@ -46,17 +47,18 @@ export const ProjectPageTable = () => {
                 <div className="flex items-center gap-2">
                   {project.companies.map((company) => {
                     return (
-                      <>
-                        <Link href={`/companies/${company.companyId}`}>
-                          <Badge
-                            className="truncate text-xs font-normal hover:underline"
-                            variant="outline"
-                          >
-                            <Building2 className="mr-1 h-3 w-3" />
-                            {company.company.name}
-                          </Badge>
-                        </Link>
-                      </>
+                      <Link
+                        key={company.companyId}
+                        href={`/companies/${company.companyId}`}
+                      >
+                        <Badge
+                          className="truncate text-xs font-normal hover:underline"
+                          variant="outline"
+                        >
+                          <Building2 className="mr-1 h-3 w-3" />
+                          {company.company.name}
+                        </Badge>
+                      </Link>
                     );
                   })}
                   <div className="flex gap-0">
@@ -69,30 +71,28 @@ export const ProjectPageTable = () => {
                       )
                       .map((contact) => {
                         return (
-                          <>
-                            <TooltipProvider>
-                              <Tooltip delayDuration={100}>
-                                <TooltipTrigger asChild>
-                                  <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
-                                    <AvatarImage src={contact.contact.image!} />
-                                    <AvatarFallback className="bg-white text-[10px]">
-                                      {contact.contact.lastName?.[0]}
-                                      {contact.contact.firstName?.[0]}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <span>
-                                    <span className="font-semibold">
-                                      {contact.contact.lastName}
-                                    </span>
-                                    {!!contact.contact.lastName &&
-                                      ", " + contact.contact.firstName}
+                          <TooltipProvider key={contact.contactId}>
+                            <Tooltip delayDuration={100}>
+                              <TooltipTrigger asChild>
+                                <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                                  <AvatarImage src={contact.contact.image!} />
+                                  <AvatarFallback className="bg-white text-[10px]">
+                                    {contact.contact.lastName?.[0]}
+                                    {contact.contact.firstName?.[0]}
+                                  </AvatarFallback>
+                                </Avatar>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <span>
+                                  <span className="font-semibold">
+                                    {contact.contact.lastName}
                                   </span>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </>
+                                  {!!contact.contact.lastName &&
+                                    ", " + contact.contact.firstName}
+                                </span>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         );
                       })}
                     {project.contacts.length > MAX_CONTACTS && (

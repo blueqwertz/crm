@@ -4,10 +4,14 @@ import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "../ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GetServerSideProps } from "next";
+import { getServerAuthSession } from "~/server/auth";
 
 export const SidebarAuth = () => {
   const { data: sessionData, status } = useSession();
+
   console.log(sessionData);
+
   return (
     <>
       <div className="mt-auto flex flex-col">
