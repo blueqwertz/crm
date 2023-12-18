@@ -140,15 +140,15 @@ export const AddContact = () => {
                 )}
               />
               <div className="grid grid-cols-2 justify-end gap-3">
-                <Button
-                  variant={"outline"}
+                <div
+                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-slate-50"
                   onClick={() => {
                     setOpen(false);
                   }}
                 >
                   Close
-                </Button>
-                <Button type="submit">Add</Button>
+                </div>
+                <Button>Add</Button>
               </div>
             </form>
           </Form>
