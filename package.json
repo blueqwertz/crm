@@ -55,6 +55,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.2",
+    "react-hot-toast": "^2.4.1",
     "shadcn-ui": "^0.4.1",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.1.0",

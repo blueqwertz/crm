@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
+import { AddCompany } from "~/components/add-company";
 
 export default function Companies() {
   return (
@@ -28,10 +29,7 @@ export default function Companies() {
                 View all companies.
               </span>
             </div>
-            <Button size={"sm"}>
-              <Plus className="mr-1 h-4 w-4" />
-              New
-            </Button>
+            <AddCompany />
           </div>
           <Breadcrumbs />
           <CompanyPageTable />

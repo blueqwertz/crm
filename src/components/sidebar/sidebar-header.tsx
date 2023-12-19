@@ -1,8 +1,10 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BadgeDollarSign, Building2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { useSession } from "next-auth/react";
 
 export const SidebarHeader = () => {
+  const { data: sessionData } = useSession();
   return (
     <>
       <div className="flex gap-2">
@@ -13,7 +15,11 @@ export const SidebarHeader = () => {
           >
             <BadgeDollarSign className="h-4 w-4 text-blue-800" />
           </Button> */}
-          <span className="font-medium">Demo Inc.</span>
+          <Avatar className="h-8 w-8 border text-sm">
+            <AvatarImage />
+            <AvatarFallback>{sessionData?.user.head.name?.[0]}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{sessionData?.user.head.name}</span>
         </div>
       </div>
     </>

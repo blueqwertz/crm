@@ -83,7 +83,7 @@ export const SidebarNavigation = () => {
   const pathname = usePathname();
   return (
     <>
-      <div className="flex flex-col gap-2 overflow-scroll">
+      <div className="flex flex-col gap-1 overflow-scroll">
         {NavItemArray.map((item) => {
           return !item.children ? (
             <Link
@@ -118,7 +118,7 @@ export const SidebarNavigation = () => {
                     {item.title}
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-1 pb-0">
+                <AccordionContent className="mt-1 flex flex-col gap-1 pb-0">
                   {item.children.map((item) => {
                     return (
                       <Link key={item.title} href={item.path}>

@@ -30,7 +30,7 @@ export const projectRotuer = createTRPCRouter({
       return ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, input.id),
-          eq(projects.headId, ctx.session.user.id),
+          eq(projects.headId, ctx.session.user.head.id),
         ),
       });
     }),
@@ -51,5 +51,35 @@ export const projectRotuer = createTRPCRouter({
           },
         },
       });
+    }),
+
+  addOne: protectedProcedure
+    .input(
+      z.object({
+        projectData: z.object({
+          name: z.string().min(2).max(50),
+          info: z.string().max(200).optional(),
+        }),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.insert(projects).values({
+        headId: ctx.session.user.head.id,
+        name: input.projectData.name,
+        description: input.projectData.info,
+      });
+    }),
+
+  deleteOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.db
+        .delete(projects)
+        .where(
+          and(
+            eq(projects.headId, ctx.session.user.head.id),
+            eq(projects.id, input.id),
+          ),
+        );
     }),
 });

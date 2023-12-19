@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { ProjectPageTable } from "~/components/project-page-table";
+import { AddProject } from "~/components/add-project";
 
 export default function Projects() {
   return (
@@ -26,10 +27,7 @@ export default function Projects() {
                 View all projects.
               </span>
             </div>
-            <Button size={"sm"}>
-              <Plus className="mr-1 h-4 w-4" />
-              New
-            </Button>
+            <AddProject />
           </div>
           <Breadcrumbs />
           <ProjectPageTable />

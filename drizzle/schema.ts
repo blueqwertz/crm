@@ -60,7 +60,9 @@ export const userRelations = relations(users, ({ one, many }) => ({
 export const accounts = pgTable(
   "account",
   {
-    userId: text("userId").notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
     type: text("type").$type<AdapterAccount["type"]>().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -88,7 +90,9 @@ export const sessions = pgTable(
   "session",
   {
     sessionToken: text("sessionToken").notNull().primaryKey(),
-    userId: text("userId").notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
@@ -500,7 +504,7 @@ export const headInvitationLinks = pgTable("headInvitationLinks", {
     .notNull(),
   createdById: text("createdById")
     .references(() => users.id, {
-      onDelete: "cascade",
+      onDelete: "no action",
       onUpdate: "cascade",
     })
     .notNull(),
@@ -524,7 +528,7 @@ export const headInvitationLinksRelations = relations(
       references: [users.id],
       relationName: "createdBy",
     }),
-    usedById: one(users, {
+    usedBy: one(users, {
       fields: [headInvitationLinks.usedById],
       references: [users.id],
       relationName: "usedBy",

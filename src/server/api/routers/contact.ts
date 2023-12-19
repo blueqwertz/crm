@@ -50,4 +50,43 @@ export const contactRotuer = createTRPCRouter({
         },
       });
     }),
+
+  addOne: protectedProcedure
+    .input(
+      z.object({
+        contactData: z.object({
+          firstName: z.union([
+            z.string().min(2).max(50).optional(),
+            z.literal(""),
+          ]),
+          lastName: z.string().min(2).max(50),
+          info: z.union([z.string().max(200).optional(), z.literal("")]),
+          email: z.union([z.string().email().optional(), z.literal("")]),
+          mobile: z.string().optional(),
+        }),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.insert(contacts).values({
+        headId: ctx.session.user.head.id,
+        firstName: input.contactData.firstName,
+        lastName: input.contactData.lastName,
+        info: input.contactData.info,
+        email: input.contactData.email,
+        mobile: input.contactData.mobile,
+      });
+    }),
+
+  deleteOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.db
+        .delete(contacts)
+        .where(
+          and(
+            eq(contacts.headId, ctx.session.user.head.id),
+            eq(contacts.id, input.id),
+          ),
+        );
+    }),
 });

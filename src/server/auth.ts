@@ -38,7 +38,6 @@ export interface User {
 
 declare module "next-auth/jwt" {
   interface JWT {
-    id: string;
     head: {
       id: string;
       name: string;
@@ -68,7 +67,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
+        session.user.id = token.sub ?? "";
         session.user.name = token.name ?? "";
         session.user.email = token.email ?? "";
         session.user.head = {
@@ -79,9 +78,9 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token }) {
       const dbUser = await db.query.users.findFirst({
-        where: eq(users.id, token.id),
+        where: eq(users.id, token.sub!),
         with: {
           head: true,
         },
@@ -93,7 +92,6 @@ export const authOptions: NextAuthOptions = {
 
       return {
         ...token,
-        id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
         image: dbUser.image,
@@ -111,6 +109,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/login",
   },

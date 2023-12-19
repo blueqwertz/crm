@@ -27,27 +27,24 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 
-export const AddContact = () => {
+export const AddProject = () => {
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
 
   const formSchema = z.object({
-    firstName: z.union([z.string().min(2).max(50).optional(), z.literal("")]),
-    lastName: z.string().min(2).max(50),
-    info: z.union([z.string().max(200).optional(), z.literal("")]),
-    email: z.union([z.string().email().optional(), z.literal("")]),
-    mobile: z.string().optional(),
+    name: z.string().min(2).max(50),
+    description: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addProject } = api.project.addOne.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
       setLoading(false);
       setOpen(false);
-      void ctx.contact.getAll.invalidate();
+      void ctx.project.getAll.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -58,16 +55,13 @@ export const AddContact = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      info: "",
-      email: "",
-      mobile: "",
+      name: "",
+      description: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    addContact({ contactData: values });
+    addProject({ projectData: values });
     form.reset();
   }
 
@@ -93,42 +87,14 @@ export const AddContact = () => {
           </AlertDialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="First Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Last Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
-                name="info"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Info</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Info" {...field} />
+                      <Input placeholder="Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -136,25 +102,12 @@ export const AddContact = () => {
               />
               <FormField
                 control={form.control}
-                name="email"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="mobile"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mobile</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Mobile" {...field} />
+                      <Input placeholder="Description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

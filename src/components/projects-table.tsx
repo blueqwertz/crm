@@ -26,12 +26,19 @@ export const ProjectsTable: React.FC<{
       {!projectData && (
         <>
           <div className="flex items-center gap-2 border-b px-3 py-2">
-            <Skeleton className="h-7 w-7 rounded-full" />
-            <Skeleton className="h-7 flex-grow rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
           <div className="flex items-center gap-2 px-3 py-2">
-            <Skeleton className="h-7 w-7 rounded-full" />
-            <Skeleton className="h-7 flex-grow rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+        </>
+      )}
+      {!!projectData && !projectData.length && (
+        <>
+          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
+            No contacts
           </div>
         </>
       )}
