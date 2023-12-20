@@ -53,6 +53,24 @@ export const projectRotuer = createTRPCRouter({
       });
     }),
 
+  getProjectActivities: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.projects.findFirst({
+        where: and(
+          eq(projects.id, input.id),
+          eq(projects.headId, ctx.session.user.head.id),
+        ),
+        with: {
+          activities: {
+            with: {
+              acitivity: true,
+            },
+          },
+        },
+      });
+    }),
+
   addOne: protectedProcedure
     .input(
       z.object({

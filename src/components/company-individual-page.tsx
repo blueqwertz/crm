@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { ProjectsTable } from "./projects-table";
 import { ContactsTable } from "./contacts-table";
+import { ActivitiesTable } from "./activities-table";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
@@ -16,17 +17,31 @@ export const CompanyIndividualPage: React.FC<{
     id: companyId,
   });
 
+  const { data: activityData } = api.company.getCompanyActivities.useQuery({
+    id: companyId,
+  });
+
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Contacts</span>
         <div className="w-full overflow-hidden rounded-md border">
-          <ContactsTable contactData={contactData!} />
+          <ContactsTable
+            contactData={
+              contactData?.contacts.map((contact) => contact.contact)!
+            }
+          />
         </div>
       </div>
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Activities</span>
-        <div className="w-full rounded-md border"></div>
+        <div className="w-full rounded-md border">
+          <ActivitiesTable
+            activityData={
+              activityData?.acitivities.map((activity) => activity.activity)!
+            }
+          />
+        </div>
       </div>
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Projects</span>

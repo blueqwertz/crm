@@ -7,6 +7,7 @@ import {
 import { Button } from "../ui/button";
 import {
   Book,
+  Briefcase,
   Building2,
   Contact,
   Contact2,
@@ -51,7 +52,7 @@ export const NavItemArray: NavItem[] = [
   {
     title: "Companies",
     path: "/companies",
-    icon: <Building2 className="h-4 w-4" />,
+    icon: <Briefcase className="h-4 w-4" />,
   },
   {
     title: "Projects",

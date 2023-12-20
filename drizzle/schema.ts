@@ -132,7 +132,6 @@ export const contacts = pgTable("contact", {
   lastName: text("lastName").notNull(),
   image: text("image"),
   info: text("info"),
-  companyId: text("companyId"),
   email: text("email"),
   mobile: text("mobile"),
   userId: text("userId"),
@@ -141,10 +140,7 @@ export const contacts = pgTable("contact", {
 
 export const contactRelations = relations(contacts, ({ one, many }) => ({
   user: one(users, { fields: [contacts.userId], references: [users.id] }),
-  company: one(companies, {
-    fields: [contacts.companyId],
-    references: [companies.id],
-  }),
+  companies: many(contactsToCompanies),
   projects: many(contactsToProjects),
   acitivities: many(contactsToActivities),
   outgoingRelation: many(contactsToContacts, {
@@ -158,6 +154,43 @@ export const contactRelations = relations(contacts, ({ one, many }) => ({
     references: [heads.id],
   }),
 }));
+
+export const contactsToCompanies = pgTable(
+  "contactsToCompanies",
+  {
+    contactId: text("contactId")
+      .notNull()
+      .references(() => contacts.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    companyId: text("companyId")
+      .notNull()
+      .references(() => companies.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+  },
+  (t) => ({
+    pk: primaryKey({
+      columns: [t.contactId, t.companyId],
+    }),
+  }),
+);
+
+export const contactsToCompaniesRelations = relations(
+  contactsToCompanies,
+  ({ one }) => ({
+    contact: one(contacts, {
+      fields: [contactsToCompanies.contactId],
+      references: [contacts.id],
+    }),
+    company: one(companies, {
+      fields: [contactsToCompanies.companyId],
+      references: [companies.id],
+    }),
+  }),
+);
 
 export const contactsToContacts = pgTable(
   "contactsToContacts",
@@ -215,8 +248,8 @@ export const companies = pgTable("company", {
 });
 
 export const companyRelations = relations(companies, ({ one, many }) => ({
-  contacts: many(contacts),
   projects: many(companiesToProjects),
+  contacts: many(contactsToCompanies),
   acitivities: many(companiesToActivities),
   head: one(heads, {
     fields: [companies.headId],

@@ -2,23 +2,21 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
+import { activityTypeEnum } from "drizzle/schema";
 
-export const ContactsTable: React.FC<{
-  contactData: {
+export const ActivitiesTable: React.FC<{
+  activityData: {
+    date: Date | null;
     id: string;
-    email: string | null;
-    image: string | null;
+    headId: string;
     createdAt: Date | null;
-    userId: string | null;
-    firstName: string | null;
-    lastName: string;
-    info: string | null;
-    mobile: string | null;
+    description: string | null;
+    type: "Call" | "Meeting" | "Task" | "FollowUp" | null;
   }[];
-}> = ({ contactData }) => {
+}> = ({ activityData }) => {
   return (
     <>
-      {!contactData && (
+      {!activityData && (
         <>
           <div className="flex items-center gap-2 border-b px-3 py-2">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -30,32 +28,21 @@ export const ContactsTable: React.FC<{
           </div>
         </>
       )}
-      {!!contactData && !contactData.length && (
+      {!!activityData && !activityData.length && (
         <>
           <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No contacts
+            No activities
           </div>
         </>
       )}
-      {!!contactData &&
-        contactData.map((contact) => {
+      {!!activityData &&
+        activityData.map((activity) => {
           return (
             <Link
-              key={contact.id}
-              href={`/contacts/${contact.id}`}
+              href={`#`}
               className="flex items-center gap-2 border-b px-3 py-2 transition-colors last:border-none hover:bg-slate-50"
             >
-              <Avatar className="h-7 w-7 border">
-                <AvatarImage src={contact.image!} />
-                <AvatarFallback className="text-[11px]">
-                  {contact.lastName?.[0]}
-                  {contact.firstName?.[0]}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-base">
-                <span className="font-semibold">{contact.lastName}</span>
-                {contact.firstName && ", " + contact.firstName}
-              </span>
+              <span className="text-base">{activity.description}</span>
             </Link>
           );
         })}

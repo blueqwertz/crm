@@ -25,11 +25,18 @@ export const companyRotuer = createTRPCRouter({
   getCompanyContacts: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.db.query.contacts.findMany({
+      return ctx.db.query.companies.findFirst({
         where: and(
-          eq(contacts.companyId, input.id),
-          eq(contacts.headId, ctx.session.user.head.id),
+          eq(companies.id, input.id),
+          eq(companies.headId, ctx.session.user.head.id),
         ),
+        with: {
+          contacts: {
+            with: {
+              contact: true,
+            },
+          },
+        },
       });
     }),
 
@@ -45,6 +52,24 @@ export const companyRotuer = createTRPCRouter({
           projects: {
             with: {
               project: true,
+            },
+          },
+        },
+      });
+    }),
+
+  getCompanyActivities: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.companies.findFirst({
+        where: and(
+          eq(companies.id, input.id),
+          eq(companies.headId, ctx.session.user.head.id),
+        ),
+        with: {
+          acitivities: {
+            with: {
+              activity: true,
             },
           },
         },

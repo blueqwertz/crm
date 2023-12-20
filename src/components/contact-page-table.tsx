@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
-import { Building2, Mail, Voicemail } from "lucide-react";
+import { Briefcase, Building2, Mail, Voicemail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
@@ -37,9 +37,8 @@ export const ContactPageTable = () => {
           return (
             <div
               key={contact.id}
-              className="group relative border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-50"
+              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-50"
             >
-              <ContactPageTableEdit contactId={contact.id} />
               <Link
                 passHref={true}
                 href={`/contacts/${contact.id}`}
@@ -86,7 +85,7 @@ export const ContactPageTable = () => {
                   )}
                   {(!!contact.user ||
                     !!contact.email ||
-                    !!contact.company ||
+                    !!contact.companies.length ||
                     !!contact.mobile) && (
                     <div className="flex flex-wrap gap-2 text-xs">
                       {(!!contact.email || !!contact.user?.email) && (
@@ -106,19 +105,26 @@ export const ContactPageTable = () => {
                           </Link>
                         </div>
                       )}
-                      {!!contact.company && (
-                        <div className="flex items-center gap-1">
-                          <Link href={`/companies/${contact.companyId}`}>
-                            <Badge
-                              className="truncate hover:underline"
-                              variant={"outline"}
-                            >
-                              <Building2 className="mr-1 h-3 w-3" />
-                              {contact.company.name}
-                            </Badge>
-                          </Link>
-                        </div>
-                      )}
+                      {!!contact.companies.length &&
+                        contact.companies.map((company) => {
+                          return (
+                            <>
+                              <div className="flex items-center gap-1">
+                                <Link
+                                  href={`/companies/${company.company?.id}`}
+                                >
+                                  <Badge
+                                    className="truncate hover:underline"
+                                    variant={"outline"}
+                                  >
+                                    <Briefcase className="mr-1 h-3 w-3" />
+                                    {company.company?.name}
+                                  </Badge>
+                                </Link>
+                              </div>
+                            </>
+                          );
+                        })}
                       {!!contact.mobile && (
                         <div className="flex items-center gap-1">
                           <Badge variant={"outline"} className="truncate">
@@ -131,6 +137,7 @@ export const ContactPageTable = () => {
                   )}
                 </div>
               </Link>
+              <ContactPageTableEdit contactId={contact.id} />
             </div>
           );
         })}

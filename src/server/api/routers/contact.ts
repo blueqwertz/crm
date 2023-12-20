@@ -13,7 +13,11 @@ export const contactRotuer = createTRPCRouter({
     return ctx.db.query.contacts.findMany({
       where: eq(contacts.headId, ctx.session.user.head.id),
       with: {
-        company: true,
+        companies: {
+          with: {
+            company: true,
+          },
+        },
         user: true,
       },
       limit: 50,
@@ -45,6 +49,24 @@ export const contactRotuer = createTRPCRouter({
           projects: {
             with: {
               project: true,
+            },
+          },
+        },
+      });
+    }),
+
+  getContactActivities: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.contacts.findFirst({
+        where: and(
+          eq(contacts.id, input.id),
+          eq(contacts.headId, ctx.session.user.head.id),
+        ),
+        with: {
+          acitivities: {
+            with: {
+              acitivity: true,
             },
           },
         },

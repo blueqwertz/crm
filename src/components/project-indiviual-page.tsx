@@ -1,6 +1,7 @@
 import React from "react";
 import { api } from "~/utils/api";
 import { ContactsTable } from "./contacts-table";
+import { ActivitiesTable } from "./activities-table";
 
 export const ProjectIndividualPage: React.FC<{
   projectId: string;
@@ -8,6 +9,11 @@ export const ProjectIndividualPage: React.FC<{
   const { data: contactsData } = api.project.getProjectContacts.useQuery({
     id: projectId,
   });
+
+  const { data: activityData } = api.project.getProjectActivities.useQuery({
+    id: projectId,
+  });
+
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">
       <div className="flex flex-grow flex-col gap-3">
@@ -22,7 +28,13 @@ export const ProjectIndividualPage: React.FC<{
       </div>
       <div className="flex flex-grow flex-col gap-3">
         <span className="font-semibold">Activities</span>
-        <div className="w-full rounded-md border"></div>
+        <div className="w-full rounded-md border">
+          <ActivitiesTable
+            activityData={
+              activityData?.activities.map((activity) => activity.acitivity)!
+            }
+          />
+        </div>
       </div>
     </div>
   );
