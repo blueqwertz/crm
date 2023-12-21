@@ -1,7 +1,7 @@
 export const statusMaps = {
   NotStarted: {
     title: "Not started",
-    color: "bg-gray-500",
+    color: "bg-accent text-black",
   },
   InProgress: {
     title: "In progress",

@@ -31,7 +31,7 @@ export const ContactPageTableEdit: React.FC<{ contactId: string }> = ({
   });
 
   return (
-    <div className="flex flex-col items-center justify-center px-3 py-2">
+    <div className="flex flex-col items-center justify-center px-4 py-4 sm:px-6">
       <div key={`cpte-${contactId}`} className="flex">
         <div className="box-content h-4 w-4 cursor-pointer rounded-l-md border p-2 text-red-500 transition-colors hover:bg-accent">
           {!deleteLoading ? (

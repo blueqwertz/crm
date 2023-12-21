@@ -23,11 +23,11 @@ export const ProjectPageTable = () => {
       <div className="mt-3 flex flex-col overflow-hidden rounded-md border">
         {!projectData && (
           <>
-            <div className="flex items-center gap-2 border-b px-3 py-2">
+            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-3 py-2">
+            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -46,14 +46,15 @@ export const ProjectPageTable = () => {
               passHref={true}
               href={`/projects/${project.id}`}
               key={project.id}
-              className="flex gap-2 border-b px-3 py-2 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50"
+              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50 sm:px-6"
             >
               <div className="flex flex-col gap-1">
                 <div className="flex h-8 items-center gap-2 text-base">
                   <span className="font-semibold">{project.name}</span>
                   <Badge
+                    variant={"outline"}
                     className={cn(
-                      "text-[11px] leading-3",
+                      "text-[11px] leading-3 text-white",
                       statusMaps[project.status!]?.color,
                       `hover:${statusMaps[project.status!]?.color}`,
                     )}
@@ -62,7 +63,7 @@ export const ProjectPageTable = () => {
                   </Badge>
                 </div>
                 {!!project.description && (
-                  <span className="mb-1 text-xs">{project.description}</span>
+                  <span className="mb-1 text-sm">{project.description}</span>
                 )}
                 {(!!project.contacts || !!project.companies) && (
                   <>

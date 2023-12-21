@@ -20,11 +20,11 @@ export const ContactsTable: React.FC<{
     <>
       {!contactData && (
         <>
-          <div className="flex items-center gap-2 border-b px-3 py-2">
+          <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
-          <div className="flex items-center gap-2 px-3 py-2">
+          <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
@@ -43,7 +43,7 @@ export const ContactsTable: React.FC<{
             <Link
               key={contact.id}
               href={`/contacts/${contact.id}`}
-              className="flex items-center gap-2 border-b px-3 py-2 transition-colors last:border-none hover:bg-slate-50"
+              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-slate-50 sm:px-6"
             >
               <Avatar className="h-7 w-7 border">
                 <AvatarImage src={contact.image!} />

@@ -16,11 +16,11 @@ export const ContactPageTable = () => {
       <div className="mt-3 flex flex-col rounded-md border">
         {!contactData && (
           <>
-            <div className="flex items-center gap-2 border-b px-3 py-2">
+            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-3 py-2">
+            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -37,12 +37,12 @@ export const ContactPageTable = () => {
           return (
             <div
               key={contact.id}
-              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-50"
+              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-100"
             >
               <Link
                 passHref={true}
                 href={`/contacts/${contact.id}`}
-                className="flex gap-2 px-3 py-2 hover:cursor-pointer"
+                className="flex gap-2 px-4 py-4 hover:cursor-pointer sm:px-6"
               >
                 <Avatar className="h-8 w-8 border group-hover:text-sm">
                   <AvatarImage
@@ -60,20 +60,25 @@ export const ContactPageTable = () => {
                       <span className="font-semibold">{contact.lastName}</span>
                       {!!contact.firstName && <>, {contact.firstName}</>}
                     </span>
+                    {!!contact.companies?.length && (
+                      <>
+                        <span className="flex items-center text-sm text-muted-foreground">
+                          <Briefcase className="mr-1 h-4 w-4" />
+                          {contact.companies
+                            .map((company) => company.company.name)
+                            .join(", ")}
+                        </span>
+                      </>
+                    )}
                     <div className="flex gap-1">
                       {!!contact.user &&
                         contact.user.id == sessionData?.user.id && (
-                          <Badge
-                            variant={"default"}
-                            className="h-4 truncate px-1.5 py-0 text-xs"
-                          >
-                            Sie
-                          </Badge>
+                          <Badge variant={"default"}>You</Badge>
                         )}
                       {!!contact.user && (
                         <Badge
                           variant={"outline"}
-                          className="h-4 truncate px-1.5 py-0 text-xs"
+                          className="text-emphasis inline-flex items-center justify-center gap-x-1 rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
                         >
                           Internal
                         </Badge>
@@ -83,29 +88,26 @@ export const ContactPageTable = () => {
                   {!!contact.info && (
                     <span className="mb-1 text-sm">{contact.info}</span>
                   )}
-                  {(!!contact.user ||
-                    !!contact.email ||
-                    !!contact.companies.length ||
-                    !!contact.mobile) && (
+                  {(!!contact.user || !!contact.email || !!contact.mobile) && (
                     <div className="flex flex-wrap gap-2 text-xs">
                       {(!!contact.email || !!contact.user?.email) && (
                         <div className="flex items-center gap-1">
-                          <Link
-                            href={`mailto:${
-                              contact.email ?? contact.user?.email
-                            }`}
+                          <div
+                          // href={`mailto:${
+                          //   contact.email ?? contact.user?.email
+                          // }`}
                           >
                             <Badge
                               variant={"outline"}
-                              className="truncate hover:underline"
+                              className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
                             >
                               <Mail className="mr-1 h-3 w-3" />
                               {contact.email ?? contact.user?.email}
                             </Badge>
-                          </Link>
+                          </div>
                         </div>
                       )}
-                      {!!contact.companies.length &&
+                      {/* {!!contact.companies &&
                         contact.companies.map((company) => {
                           return (
                             <>
@@ -124,10 +126,13 @@ export const ContactPageTable = () => {
                               </div>
                             </>
                           );
-                        })}
+                        })} */}
                       {!!contact.mobile && (
                         <div className="flex items-center gap-1">
-                          <Badge variant={"outline"} className="truncate">
+                          <Badge
+                            variant={"outline"}
+                            className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
+                          >
                             <Voicemail className="mr-1 h-3 w-3" />
                             {contact.mobile}
                           </Badge>

@@ -14,11 +14,11 @@ export const CompanyPageTable = () => {
       <div className="mt-3 flex flex-col overflow-hidden rounded-md border">
         {!companyData && (
           <>
-            <div className="flex items-center gap-2 border-b px-3 py-2">
+            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-3 py-2">
+            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -36,7 +36,7 @@ export const CompanyPageTable = () => {
             <Link
               href={`/companies/${company.id}`}
               key={company.id}
-              className="flex gap-2 border-b px-3 py-2 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50"
+              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50 sm:px-6"
             >
               <Avatar className="h-8 w-8 border">
                 <AvatarImage src={company.image!} alt="" />
