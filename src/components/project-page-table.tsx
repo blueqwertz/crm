@@ -53,19 +53,16 @@ export const ProjectPageTable = () => {
                   <span className="font-semibold">{project.name}</span>
                   <Badge
                     variant={"outline"}
-                    className={cn(
-                      "text-[11px] leading-3 text-white",
-                      statusMaps[project.status!]?.color,
-                      `hover:${statusMaps[project.status!]?.color}`,
-                    )}
+                    className={cn("text-[11px] text-xs leading-3")}
                   >
+                    {statusMaps[project.status!].icon!}
                     {statusMaps[project.status!]?.title}
                   </Badge>
                 </div>
                 {!!project.description && (
                   <span className="mb-1 text-sm">{project.description}</span>
                 )}
-                {(!!project.contacts || !!project.companies) && (
+                {(!!project.contacts.length || !!project.companies.length) && (
                   <>
                     <div className="flex items-center gap-2">
                       {project.companies.map((company) => {

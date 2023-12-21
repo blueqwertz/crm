@@ -6,6 +6,7 @@ import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "./ui/skeleton";
+import { cn } from "~/utils/cn";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery();
@@ -35,15 +36,13 @@ export const ContactPageTable = () => {
         )}
         {contactData?.map((contact) => {
           return (
-            <div
+            <Link
+              passHref={true}
+              href={`/contacts/${contact.id}`}
               key={contact.id}
-              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-100"
+              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-50"
             >
-              <Link
-                passHref={true}
-                href={`/contacts/${contact.id}`}
-                className="flex gap-2 px-4 py-4 hover:cursor-pointer sm:px-6"
-              >
+              <div className="flex gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
                 <Avatar className="h-8 w-8 border group-hover:text-sm">
                   <AvatarImage
                     src={contact.image ?? contact.user?.image ?? ""}
@@ -62,12 +61,30 @@ export const ContactPageTable = () => {
                     </span>
                     {!!contact.companies?.length && (
                       <>
-                        <span className="flex items-center text-sm text-muted-foreground">
-                          <Briefcase className="mr-1 h-4 w-4" />
-                          {contact.companies
-                            .map((company) => company.company.name)
-                            .join(", ")}
-                        </span>
+                        <Badge
+                          className="gap-0 truncate text-xs"
+                          variant={"outline"}
+                        >
+                          <div>
+                            <Briefcase className="mr-1 h-4 w-4" />
+                          </div>
+                          {contact.companies.map((company, index) => (
+                            <>
+                              <Link
+                                href={`/companies/${company.companyId}`}
+                                className={cn(
+                                  "cursor-pointer hover:underline",
+                                  {
+                                    "ml-1": index > 0,
+                                  },
+                                )}
+                              >
+                                {company.company.name}
+                              </Link>
+                              {index + 1 < contact.companies.length && ", "}
+                            </>
+                          ))}
+                        </Badge>
                       </>
                     )}
                     <div className="flex gap-1">
@@ -141,9 +158,9 @@ export const ContactPageTable = () => {
                     </div>
                   )}
                 </div>
-              </Link>
+              </div>
               <ContactPageTableEdit contactId={contact.id} />
-            </div>
+            </Link>
           );
         })}
       </div>

@@ -1,10 +1,7 @@
 import { Loader2, Plus } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -16,7 +13,6 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -64,11 +60,13 @@ export const AddContact = () => {
       email: "",
       mobile: "",
     },
+    delayError: 600,
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     addContact({ contactData: values });
     form.reset();
+    form.clearErrors();
   }
 
   const [open, setOpen] = useState(false);
