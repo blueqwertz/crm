@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ProjectsTable } from "./projects-table";
 import { ContactsTable } from "./contacts-table";
 import { ActivitiesTable } from "./activities-table";
+import { Input } from "./ui/input";
+import { AddCompanyContact } from "./add-company-contact";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
@@ -26,6 +28,12 @@ export const CompanyIndividualPage: React.FC<{
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Contacts</span>
         <div className="w-full overflow-hidden rounded-md border">
+          <AddCompanyContact
+            companyId={companyId}
+            contactIds={
+              contactData?.contacts.map((contact) => contact.contact.id)!
+            }
+          />
           <ContactsTable
             contactData={
               contactData?.contacts.map((contact) => contact.contact)!

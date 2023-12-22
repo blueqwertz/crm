@@ -1,5 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
-import { companies, contacts } from "drizzle/schema";
+import { companies, contacts, contactsToCompanies } from "drizzle/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -106,5 +107,34 @@ export const companyRotuer = createTRPCRouter({
             eq(companies.id, input.id),
           ),
         );
+    }),
+
+  addContact: protectedProcedure
+    .input(
+      z.object({
+        contactIds: z.array(z.string()),
+        companyId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const company = await ctx.db.query.companies.findFirst({
+        where: and(
+          eq(companies.headId, ctx.session.user.head.id),
+          eq(companies.id, input.companyId),
+        ),
+      });
+
+      if (!company) {
+        return null;
+      }
+
+      return ctx.db.insert(contactsToCompanies).values(
+        input.contactIds.map((id) => {
+          return {
+            contactId: id,
+            companyId: input.companyId,
+          };
+        }),
+      );
     }),
 });
