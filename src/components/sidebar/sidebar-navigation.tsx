@@ -80,7 +80,7 @@ export const NavItemArray: NavItem[] = [
   },
 ];
 
-export const SidebarNavigation = () => {
+export const SidebarNav = () => {
   const pathname = usePathname();
   return (
     <>
@@ -94,50 +94,64 @@ export const SidebarNavigation = () => {
                 "bg-muted": pathname == item.path,
               })}
             >
-              <Button variant={"ghost"} className="h-8 w-full justify-start">
-                <div className="mr-2 h-4 w-4">{item.icon && item.icon}</div>
-                {item.title}
+              <Button
+                variant={"ghost"}
+                className="@xxs:justify-start h-8 w-full justify-center px-2.5"
+              >
+                <div className="@xxs:mr-2 h-4 w-4">
+                  {item.icon && item.icon}
+                </div>
+                <span className="@xxs:block hidden">{item.title}</span>
               </Button>
             </Link>
           ) : (
-            <Accordion
-              key={item.title}
-              type="single"
-              collapsible
-              defaultValue={
-                item.children.some((children) => {
-                  return children.path == pathname;
-                })
-                  ? "item-1"
-                  : ""
-              }
-            >
-              <AccordionItem value="item-1" className="border-none">
-                <AccordionTrigger className="inline-flex h-8 items-center justify-between whitespace-nowrap rounded-md px-4 py-0 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                  <div className="flex items-center">
-                    <div className="mr-2 h-4 w-4">{item.icon && item.icon}</div>
-                    {item.title}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="mt-1 flex flex-col gap-1 pb-0">
-                  {item.children.map((item) => {
-                    return (
-                      <Link key={item.title} href={item.path}>
-                        <Button
-                          variant={"ghost"}
-                          className={cn("h-8 w-full justify-start font-light", {
-                            "bg-muted": pathname == item.path,
-                          })}
-                        >
-                          <div className="mr-2 h-4 w-4"></div>
-                          {item.title}
-                        </Button>
-                      </Link>
-                    );
-                  })}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            <>
+              <Accordion
+                key={item.title}
+                type="single"
+                collapsible
+                defaultValue={
+                  item.children.some((children) => {
+                    return children.path == pathname;
+                  })
+                    ? "item-1"
+                    : ""
+                }
+              >
+                <AccordionItem value="item-1" className="border-none">
+                  <AccordionTrigger className="inline-flex h-8 items-center justify-between whitespace-nowrap rounded-md px-2.5 py-0 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                    <div className="flex items-center">
+                      <div className="mr-2 h-4 w-4">
+                        {item.icon && item.icon}
+                      </div>
+                      <span className="@xxs:block hidden">{item.title}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="mt-1 flex flex-col gap-1 pb-0">
+                    {item.children.map((item) => {
+                      return (
+                        <Link key={item.title} href={item.path}>
+                          <Button
+                            variant={"ghost"}
+                            className={cn(
+                              "h-8 w-full justify-start px-2.5 font-light",
+                              {
+                                "bg-muted": pathname == item.path,
+                              },
+                            )}
+                          >
+                            <div className="mr-2 h-4 w-4"></div>
+                            <span className="@xxs:block hidden">
+                              {item.title}
+                            </span>
+                          </Button>
+                        </Link>
+                      );
+                    })}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </>
           );
         })}
       </div>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "~/utils/cn";
+import { buttonVariants } from "./ui/button";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery();
@@ -40,7 +41,9 @@ export const ContactPageTable = () => {
               passHref={true}
               href={`/contacts/${contact.id}`}
               key={contact.id}
-              className="group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-slate-50"
+              className={cn(
+                "group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-muted/50",
+              )}
             >
               <div className="flex gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
                 <Avatar className="h-8 w-8 border group-hover:text-sm">
@@ -49,15 +52,13 @@ export const ContactPageTable = () => {
                     alt=""
                   />
                   <AvatarFallback className="text-xs">
-                    {contact.lastName?.[0]}
-                    {contact.firstName?.[0]}
+                    {contact.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-1">
                   <div className="flex h-8 items-center gap-2 text-sm">
-                    <span className="text-base">
-                      <span className="font-semibold">{contact.lastName}</span>
-                      {!!contact.firstName && <>, {contact.firstName}</>}
+                    <span className="truncate font-semibold">
+                      {contact.name}
                     </span>
                     {!!contact.companies?.length && (
                       <>
@@ -66,14 +67,14 @@ export const ContactPageTable = () => {
                           variant={"outline"}
                         >
                           <div>
-                            <Briefcase className="mr-1 h-4 w-4" />
+                            <Briefcase className="mr-1 h-3 w-3" />
                           </div>
                           {contact.companies.map((company, index) => (
                             <>
                               <Link
                                 href={`/companies/${company.companyId}`}
                                 className={cn(
-                                  "cursor-pointer hover:underline",
+                                  "cursor-pointer leading-3 hover:underline",
                                   {
                                     "ml-1": index > 0,
                                   },
@@ -95,7 +96,7 @@ export const ContactPageTable = () => {
                       {!!contact.user && (
                         <Badge
                           variant={"outline"}
-                          className="text-emphasis inline-flex items-center justify-center gap-x-1 rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
+                          className="text-emphasis inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-1 text-xs font-medium leading-3"
                         >
                           Internal
                         </Badge>
@@ -116,10 +117,11 @@ export const ContactPageTable = () => {
                           >
                             <Badge
                               variant={"outline"}
-                              className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
+                              className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded  px-1.5 py-1 text-xs font-medium leading-3"
                             >
                               <Mail className="mr-1 h-3 w-3" />
-                              {contact.email ?? contact.user?.email}
+                              {!!contact.email && contact.email}
+                              {!contact.email && contact.user?.email}
                             </Badge>
                           </div>
                         </div>
@@ -148,7 +150,7 @@ export const ContactPageTable = () => {
                         <div className="flex items-center gap-1">
                           <Badge
                             variant={"outline"}
-                            className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded bg-slate-50 px-1.5 py-1 text-xs font-medium leading-3"
+                            className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded px-1.5 py-1 text-xs font-medium leading-3"
                           >
                             <Voicemail className="mr-1 h-3 w-3" />
                             {contact.mobile}

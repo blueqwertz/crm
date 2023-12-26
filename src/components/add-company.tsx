@@ -25,7 +25,6 @@ import {
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 
 export const AddCompany = () => {
   const ctx = api.useUtils();
@@ -47,7 +46,6 @@ export const AddCompany = () => {
       void ctx.company.getAll.invalidate();
     },
     onError: (error) => {
-      toast.error(error.message);
       setLoading(false);
     },
   });
@@ -129,7 +127,7 @@ export const AddCompany = () => {
               />
               <div className="grid grid-cols-2 justify-end gap-3">
                 <div
-                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-slate-50"
+                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors"
                   onClick={() => {
                     setOpen(false);
                     form.reset();

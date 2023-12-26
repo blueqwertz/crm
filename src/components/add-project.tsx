@@ -1,10 +1,7 @@
 import { Loader2, Plus } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -16,7 +13,6 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,7 +21,6 @@ import {
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 
 export const AddProject = () => {
   const ctx = api.useUtils();
@@ -47,7 +42,6 @@ export const AddProject = () => {
       void ctx.project.getAll.invalidate();
     },
     onError: (error) => {
-      toast.error(error.message);
       setLoading(false);
     },
   });
@@ -115,7 +109,7 @@ export const AddProject = () => {
               />
               <div className="grid grid-cols-2 justify-end gap-3">
                 <div
-                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-slate-50"
+                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-muted/50"
                   onClick={() => {
                     setOpen(false);
                     form.reset();

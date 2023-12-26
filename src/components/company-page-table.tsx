@@ -36,7 +36,7 @@ export const CompanyPageTable = () => {
             <Link
               href={`/companies/${company.id}`}
               key={company.id}
-              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50 sm:px-6"
+              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50 sm:px-6"
             >
               <Avatar className="h-8 w-8 border">
                 <AvatarImage src={company.image!} alt="" />

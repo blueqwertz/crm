@@ -25,20 +25,32 @@ export const CompanyIndividualPage: React.FC<{
 
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">
-      <div className="flex flex-col gap-3">
-        <span className="font-semibold">Contacts</span>
-        <div className="w-full overflow-hidden rounded-md border">
-          <AddCompanyContact
-            companyId={companyId}
-            contactIds={
-              contactData?.contacts.map((contact) => contact.contact.id)!
-            }
-          />
-          <ContactsTable
-            contactData={
-              contactData?.contacts.map((contact) => contact.contact)!
-            }
-          />
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Contacts</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <AddCompanyContact
+              companyId={companyId}
+              contactIds={
+                contactData?.contacts.map((contact) => contact.contact.id)!
+              }
+            />
+            <ContactsTable
+              contactData={
+                contactData?.contacts.map((contact) => contact.contact)!
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Projects</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ProjectsTable
+              projectData={
+                projectData?.projects.map((project) => project.project)!
+              }
+            />
+          </div>
         </div>
       </div>
       <div className="flex flex-col gap-3">
@@ -47,16 +59,6 @@ export const CompanyIndividualPage: React.FC<{
           <ActivitiesTable
             activityData={
               activityData?.acitivities.map((activity) => activity.activity)!
-            }
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-3">
-        <span className="font-semibold">Projects</span>
-        <div className="w-full overflow-hidden rounded-md border">
-          <ProjectsTable
-            projectData={
-              projectData?.projects.map((project) => project.project)!
             }
           />
         </div>

@@ -46,7 +46,7 @@ export const ProjectPageTable = () => {
               passHref={true}
               href={`/projects/${project.id}`}
               key={project.id}
-              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-slate-50 sm:px-6"
+              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50 sm:px-6"
             >
               <div className="flex flex-col gap-1">
                 <div className="flex h-8 items-center gap-2 text-base">
@@ -98,19 +98,16 @@ export const ProjectPageTable = () => {
                                       <AvatarImage
                                         src={contact.contact.image!}
                                       />
-                                      <AvatarFallback className="bg-white text-[10px]">
-                                        {contact.contact.lastName?.[0]}
-                                        {contact.contact.firstName?.[0]}
+                                      <AvatarFallback className="text-[10px]">
+                                        {contact.contact.name?.[0]}
                                       </AvatarFallback>
                                     </Avatar>
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <span>
                                       <span className="font-semibold">
-                                        {contact.contact.lastName}
+                                        {contact.contact.name}
                                       </span>
-                                      {!!contact.contact.lastName &&
-                                        ", " + contact.contact.firstName}
                                     </span>
                                   </TooltipContent>
                                 </Tooltip>
@@ -123,7 +120,7 @@ export const ProjectPageTable = () => {
                               <Tooltip delayDuration={100}>
                                 <TooltipTrigger asChild>
                                   <Avatar className="-ml-2.5 h-[26px] w-[26px] border first:ml-0">
-                                    <AvatarFallback className="bg-white text-[10px]">
+                                    <AvatarFallback className="text-[10px]">
                                       {project.contacts.length - MAX_CONTACTS >
                                       9
                                         ? "9+"

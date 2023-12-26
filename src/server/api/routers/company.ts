@@ -137,4 +137,36 @@ export const companyRotuer = createTRPCRouter({
         }),
       );
     }),
+
+  createAndAddContact: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        companyId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const company = await ctx.db.query.companies.findFirst({
+        where: and(
+          eq(companies.headId, ctx.session.user.head.id),
+          eq(companies.id, input.companyId),
+        ),
+      });
+
+      if (!company) {
+        return null;
+      }
+
+      return ctx.db.transaction(async (tx) => {
+        const [contactCreated] = await tx
+          .insert(contacts)
+          .values({ headId: ctx.session.user.head.id, name: input.name })
+          .returning({ id: contacts.id });
+        console.log(contactCreated);
+        await tx.insert(contactsToCompanies).values({
+          contactId: contactCreated?.id!,
+          companyId: input.companyId,
+        });
+      });
+    }),
 });

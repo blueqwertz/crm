@@ -1,21 +1,29 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { ToastBar, Toaster, toast } from "react-hot-toast";
 
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "~/components/theme-provider";
 
 const App: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <Toaster></Toaster>
-      <Component {...pageProps} />
-    </SessionProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <SessionProvider session={session}>
+        <Toaster />
+        <Component {...pageProps} />
+      </SessionProvider>
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,5 @@
-import { and, asc, desc, eq } from "drizzle-orm";
-import { contacts } from "drizzle/schema";
+import { and, asc, desc, eq, inArray, or } from "drizzle-orm";
+import { companies, contacts, contactsToCompanies } from "drizzle/schema";
 import { z } from "zod";
 
 import {
@@ -77,25 +77,53 @@ export const contactRotuer = createTRPCRouter({
     .input(
       z.object({
         contactData: z.object({
-          firstName: z.union([
-            z.string().min(2).max(50).optional(),
-            z.literal(""),
-          ]),
-          lastName: z.string().min(2).max(50),
-          info: z.union([z.string().max(200).optional(), z.literal("")]),
+          name: z.string().min(2).max(50),
           email: z.union([z.string().email().optional(), z.literal("")]),
+          companyIds: z.array(z.string()).optional(),
+          info: z.union([z.string().max(200).optional(), z.literal("")]),
           mobile: z.string().optional(),
         }),
       }),
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.insert(contacts).values({
-        headId: ctx.session.user.head.id,
-        firstName: input.contactData.firstName,
-        lastName: input.contactData.lastName,
-        info: input.contactData.info,
-        email: input.contactData.email,
-        mobile: input.contactData.mobile,
+      return ctx.db.transaction(async (tx) => {
+        const [contactCreated] = await tx
+          .insert(contacts)
+          .values({
+            headId: ctx.session.user.head.id,
+            name: input.contactData.name,
+            email: input.contactData.email,
+            info: input.contactData.info,
+            mobile: input.contactData.mobile,
+          })
+          .returning({ id: contacts.id });
+
+        if (!contactCreated) {
+          return null;
+        }
+
+        if (
+          !input.contactData.companyIds ||
+          !input.contactData.companyIds.length
+        ) {
+          return null;
+        }
+
+        const headCompanies = await tx.query.companies.findMany({
+          where: and(
+            eq(companies.headId, ctx.session.user.head.id),
+            inArray(companies.id, input.contactData.companyIds!),
+          ),
+        });
+
+        await tx.insert(contactsToCompanies).values(
+          headCompanies.map((company) => {
+            return {
+              contactId: contactCreated.id,
+              companyId: company.id,
+            };
+          }),
+        );
       });
     }),
 

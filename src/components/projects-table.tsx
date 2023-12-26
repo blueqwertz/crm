@@ -48,7 +48,7 @@ export const ProjectsTable: React.FC<{
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
-              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-slate-50 sm:px-6"
+              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50 sm:px-6"
             >
               <Avatar className="h-7 w-7 border">
                 <AvatarImage src={project.image!} />

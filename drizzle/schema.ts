@@ -23,6 +23,7 @@ export const projectStatusEnum = pgEnum("projectStatus", [
 export const activityTypeEnum = pgEnum("activityType", [
   "Call",
   "Meeting",
+  "Email",
   "Task",
   "FollowUp",
 ]);
@@ -128,8 +129,7 @@ export const contacts = pgTable("contact", {
   headId: text("headId")
     .references(() => heads.id)
     .notNull(),
-  firstName: text("firstName"),
-  lastName: text("lastName").notNull(),
+  name: text("name").notNull(),
   image: text("image"),
   info: text("info"),
   email: text("email"),
@@ -468,7 +468,7 @@ export const contactsToActivitiesRelations = relations(
 
 // Project
 export const projectsToActivities = pgTable(
-  "projectsToActivies",
+  "projectsToActivities",
   {
     projectId: text("projectId")
       .notNull()

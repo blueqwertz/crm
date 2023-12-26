@@ -11,8 +11,7 @@ export const ContactsTable: React.FC<{
     image: string | null;
     createdAt: Date | null;
     userId: string | null;
-    firstName: string | null;
-    lastName: string;
+    name: string;
     info: string | null;
     mobile: string | null;
   }[];
@@ -45,18 +44,16 @@ export const ContactsTable: React.FC<{
               <Link
                 key={contact.id}
                 href={`/contacts/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-slate-50 sm:px-6"
+                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50 sm:px-6"
               >
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={contact.image!} />
                   <AvatarFallback className="text-[11px]">
-                    {contact.lastName?.[0]}
-                    {contact.firstName?.[0]}
+                    {contact.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-base">
-                  <span className="font-semibold">{contact.lastName}</span>
-                  {contact.firstName && ", " + contact.firstName}
+                  <span className="font-medium">{contact.name}</span>
                 </span>
               </Link>
             );

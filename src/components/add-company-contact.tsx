@@ -47,6 +47,7 @@ export const AddCompanyContact: React.FC<{
   const ctx = api.useUtils();
 
   const [loading, setLoading] = React.useState(false);
+  const [loadingCreateContact, setLoadingCreateContact] = React.useState(false);
 
   const [searchInput, setSearchInput] = React.useState("");
 
@@ -65,6 +66,22 @@ export const AddCompanyContact: React.FC<{
     },
   });
 
+  const { mutate: createAndAddContactToCompany } =
+    api.company.createAndAddContact.useMutation({
+      onMutate: () => {
+        setLoadingCreateContact(true);
+      },
+      onSuccess: () => {
+        setOpen(false);
+        setSearchInput("");
+        setLoadingCreateContact(false);
+        ctx.company.getCompanyContacts.invalidate();
+      },
+      onError: () => {
+        setLoadingCreateContact(false);
+      },
+    });
+
   return (
     <div className="flex w-full items-center">
       <Popover open={open} onOpenChange={setOpen}>
@@ -77,9 +94,7 @@ export const AddCompanyContact: React.FC<{
             {!!selectedContact && selectedContact.length ? (
               <>
                 <span className="truncate">
-                  Add {selectedContact[0]?.lastName}
-                  {selectedContact[0]?.firstName &&
-                    ", " + selectedContact[0].firstName}
+                  Add {selectedContact[0]?.name}
                   {selectedContact.length > 1 &&
                     `, +${selectedContact.length - 1} more`}
                 </span>
@@ -108,7 +123,25 @@ export const AddCompanyContact: React.FC<{
                   !contactIds?.find((contactId) => contactId == option.id),
               ).length ? (
                 <>
-                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandEmpty>
+                    <div
+                      onClick={() => {
+                        createAndAddContactToCompany({
+                          name: searchInput!,
+                          companyId,
+                        });
+                      }}
+                      className={cn(
+                        "flex cursor-pointer items-center justify-center gap-2 text-center text-sm hover:underline",
+                        {
+                          "pointer-events-none text-muted-foreground":
+                            loadingCreateContact,
+                        },
+                      )}
+                    >
+                      Create contact "{searchInput}"
+                    </div>
+                  </CommandEmpty>
                   <CommandGroup>
                     {!contactData && (
                       <div className="py-6 text-center">No results found.</div>
@@ -124,7 +157,7 @@ export const AddCompanyContact: React.FC<{
                         .map((option) => (
                           <CommandItem
                             key={option.id}
-                            value={`${option.lastName}${option.firstName!}`}
+                            value={`${option.name}`}
                             className="flex items-center"
                             onSelect={() => {
                               setSelectedContact((prev) => {
@@ -133,7 +166,7 @@ export const AddCompanyContact: React.FC<{
                                     (entry) => entry.id == option.id,
                                   );
                                 }
-                                console.log(prev);
+
                                 const check = prev.find(
                                   (entry) => entry.id == option.id,
                                 );
@@ -157,19 +190,40 @@ export const AddCompanyContact: React.FC<{
                                 return option.id === entry.id;
                               }) && <CheckIcon className="h-full w-full" />}
                             </div>
-                            <span>
-                              {option.lastName}
-                              {option.firstName && ", " + option.firstName}
-                            </span>
+                            <span>{option.name}</span>
                           </CommandItem>
                         ))}
                   </CommandGroup>
                 </>
               ) : (
-                <div className="cursor-pointer py-6 text-center text-sm hover:underline">
-                  {!searchInput && <>No results found.</>}
-                  {!!searchInput && <>Add contact "{searchInput}"</>}
-                </div>
+                <>
+                  {!searchInput && (
+                    <div
+                      className={cn("cursor-pointer py-6 text-center text-sm")}
+                    >
+                      No results found.
+                    </div>
+                  )}
+                  {!!searchInput && (
+                    <div
+                      onClick={() => {
+                        createAndAddContactToCompany({
+                          name: searchInput!,
+                          companyId,
+                        });
+                      }}
+                      className={cn(
+                        "flex cursor-pointer items-center justify-center gap-2 py-6 text-center text-sm hover:underline",
+                        {
+                          "pointer-events-none text-muted-foreground":
+                            loadingCreateContact,
+                        },
+                      )}
+                    >
+                      Add contact "{searchInput}"
+                    </div>
+                  )}
+                </>
               )}
             </CommandList>
           </Command>

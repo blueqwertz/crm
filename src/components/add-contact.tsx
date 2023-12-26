@@ -1,11 +1,4 @@
-import { Loader2, Plus } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { CopySlash, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,18 +14,23 @@ import {
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
+import { ComboboxMulti } from "./ui/combobox-multi";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Skeleton } from "./ui/skeleton";
 
 export const AddContact = () => {
+  const { data: companies } = api.company.getAll.useQuery();
+
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
 
   const formSchema = z.object({
-    firstName: z.union([z.string().min(2).max(50).optional(), z.literal("")]),
-    lastName: z.string().min(2).max(50),
-    info: z.union([z.string().max(200).optional(), z.literal("")]),
+    name: z.string().min(2).max(50),
     email: z.union([z.string().email().optional(), z.literal("")]),
+    companyIds: z.array(z.string()).optional(),
+    info: z.union([z.string().max(200).optional(), z.literal("")]),
     mobile: z.string().optional(),
   });
 
@@ -43,10 +41,10 @@ export const AddContact = () => {
     onSuccess: () => {
       setLoading(false);
       setOpen(false);
+      toast("Added contact.");
       void ctx.contact.getAll.invalidate();
     },
     onError: (error) => {
-      toast.error(error.message);
       setLoading(false);
     },
   });
@@ -54,10 +52,10 @@ export const AddContact = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      info: "",
+      name: "",
       email: "",
+      companyIds: [],
+      info: "",
       mobile: "",
     },
     delayError: 600,
@@ -73,8 +71,8 @@ export const AddContact = () => {
 
   return (
     <>
-      <AlertDialog open={open}>
-        <AlertDialogTrigger asChild>
+      <Popover>
+        <PopoverTrigger asChild>
           <Button
             size={"sm"}
             onClick={() => {
@@ -84,49 +82,65 @@ export const AddContact = () => {
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
+        </PopoverTrigger>
+        <PopoverContent align="end">
+          {/* <AlertDialogHeader>
             <AlertDialogTitle>Add new contact</AlertDialogTitle>
-          </AlertDialogHeader>
+          </AlertDialogHeader> */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="First Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Last Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <FormField
                 control={form.control}
-                name="info"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Info</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Info" {...field} />
+                      <Input placeholder="Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="companyIds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company</FormLabel>
+                    <FormControl>
+                      {!!companies && companies.length ? (
+                        <ComboboxMulti
+                          placeholder={"Select company..."}
+                          options={
+                            companies?.map((company) => {
+                              return {
+                                value: company.id!,
+                                label: company.name!,
+                              };
+                            })!
+                          }
+                          value={form.getValues("companyIds")}
+                          setValue={(value, label) => {
+                            if (!value) {
+                              return;
+                            }
+                            const currentCompanyIds =
+                              form.getValues("companyIds") ?? [];
+
+                            const updatedCompanyIds =
+                              currentCompanyIds.includes(value)
+                                ? currentCompanyIds.filter(
+                                    (entry) => entry != value,
+                                  )
+                                : [...currentCompanyIds, value];
+
+                            form.setValue("companyIds", updatedCompanyIds);
+                          }}
+                        />
+                      ) : (
+                        <Skeleton className="h-10 w-full" />
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,6 +161,19 @@ export const AddContact = () => {
               />
               <FormField
                 control={form.control}
+                name="info"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Info</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Info" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="mobile"
                 render={({ field }) => (
                   <FormItem>
@@ -158,16 +185,15 @@ export const AddContact = () => {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-2 justify-end gap-3">
-                <div
-                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-slate-50"
+              <div className="grid grid-cols-1 justify-end gap-3">
+                {/* <div
+                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-muted/50"
                   onClick={() => {
-                    setOpen(false);
                     form.reset();
                   }}
                 >
                   Close
-                </div>
+                </div> */}
                 <Button type="submit" disabled={loading}>
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Add
@@ -175,8 +201,8 @@ export const AddContact = () => {
               </div>
             </form>
           </Form>
-        </AlertDialogContent>
-      </AlertDialog>
+        </PopoverContent>
+      </Popover>
     </>
   );
 };
