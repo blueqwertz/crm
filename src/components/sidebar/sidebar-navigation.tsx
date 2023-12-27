@@ -96,12 +96,12 @@ export const SidebarNav = () => {
             >
               <Button
                 variant={"ghost"}
-                className="@xxs:justify-start h-8 w-full justify-center px-2.5"
+                className="h-8 w-full justify-center px-2.5 @xxs:justify-start"
               >
-                <div className="@xxs:mr-2 h-4 w-4">
+                <div className="h-4 w-4 @xxs:mr-2">
                   {item.icon && item.icon}
                 </div>
-                <span className="@xxs:block hidden">{item.title}</span>
+                <span className="hidden @xxs:block">{item.title}</span>
               </Button>
             </Link>
           ) : (
@@ -124,7 +124,7 @@ export const SidebarNav = () => {
                       <div className="mr-2 h-4 w-4">
                         {item.icon && item.icon}
                       </div>
-                      <span className="@xxs:block hidden">{item.title}</span>
+                      <span className="hidden @xxs:block">{item.title}</span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="mt-1 flex flex-col gap-1 pb-0">
@@ -141,7 +141,7 @@ export const SidebarNav = () => {
                             )}
                           >
                             <div className="mr-2 h-4 w-4"></div>
-                            <span className="@xxs:block hidden">
+                            <span className="hidden @xxs:block">
                               {item.title}
                             </span>
                           </Button>

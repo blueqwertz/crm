@@ -11,6 +11,8 @@ import { api } from "~/utils/api";
 import dayjs from "dayjs";
 import "@/utils/relative";
 import { toast } from "sonner";
+import { cn } from "~/utils/cn";
+import { typeMaps } from "~/utils/maps";
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   return (
     <Button
       size={"icon"}
-      className="h-7 w-7 text-muted-foreground"
+      className="h-7 w-7 shrink-0 text-muted-foreground"
       variant={"ghost"}
       onClick={() => {
         deleteActivity({ id });
@@ -49,10 +51,11 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
 
 export const ActivitiesTable: React.FC<{
   activityData: InferSelectModel<typeof activities>[];
-}> = ({ activityData }) => {
+  pageData?: { type: string; id: string };
+}> = ({ activityData, pageData }) => {
   return (
     <>
-      <AddActivity />
+      <AddActivity pageData={pageData} />
       {!activityData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
@@ -80,8 +83,11 @@ export const ActivitiesTable: React.FC<{
               // href={`/activities/${activity.id}`}
               className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none sm:px-6"
             >
+              <div className="mr-1 shrink-0 rounded-md border p-1.5">
+                {typeMaps[activity.type!].icon}
+              </div>
               {!!activity.description && (
-                <span className="line-clamp-2 text-base">
+                <span className={cn("line-clamp-3 text-sm")}>
                   {activity.description}
                 </span>
               )}

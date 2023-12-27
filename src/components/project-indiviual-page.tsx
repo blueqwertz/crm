@@ -33,6 +33,7 @@ export const ProjectIndividualPage: React.FC<{
             activityData={
               activityData?.activities.map((activity) => activity.acitivity)!
             }
+            pageData={{ type: "project", id: projectId }}
           />
         </div>
       </div>

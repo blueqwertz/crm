@@ -60,6 +60,7 @@ export const CompanyIndividualPage: React.FC<{
             activityData={
               activityData?.acitivities.map((activity) => activity.activity)!
             }
+            pageData={{ type: "company", id: companyId }}
           />
         </div>
       </div>

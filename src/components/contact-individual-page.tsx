@@ -33,6 +33,7 @@ export const ContactIndividualPage: React.FC<{
             activityData={
               activityData?.acitivities.map((activity) => activity.acitivity)!
             }
+            pageData={{ type: "contact", id: contactId }}
           />
         </div>
       </div>

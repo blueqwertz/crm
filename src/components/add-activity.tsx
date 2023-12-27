@@ -1,13 +1,13 @@
 import {
-  Activity,
   CalendarCheck,
   CalendarIcon,
   Clipboard,
   Loader2,
   Mail,
   Voicemail,
+  Zap,
 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import {
   Popover,
   PopoverContent,
@@ -20,7 +20,6 @@ import { z } from "zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -36,6 +35,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ComboboxMulti } from "./ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "./ui/skeleton";
@@ -46,7 +51,8 @@ const ActivityForm: React.FC<{
     icon: React.ReactNode;
     type: "Call" | "Meeting" | "Email" | "Task" | "FollowUp";
   };
-}> = ({ entry }) => {
+  pageData?: { type: string; id: string };
+}> = ({ entry, pageData }) => {
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
@@ -64,8 +70,9 @@ const ActivityForm: React.FC<{
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
-      setLoading(false);
       toast("Activity added succesfully");
+      setLoading(false);
+      form.reset();
       setOpen(false);
     },
     onError: () => {
@@ -114,9 +121,9 @@ const ActivityForm: React.FC<{
     defaultValues: {
       type: entry.type,
       date: new Date(),
-      companyIds: [],
-      contactIds: [],
-      projectIds: [],
+      companyIds: pageData?.type == "company" ? [pageData.id] : [],
+      contactIds: pageData?.type == "contact" ? [pageData.id] : [],
+      projectIds: pageData?.type == "project" ? [pageData.id] : [],
       description: "",
     },
   });
@@ -348,7 +355,112 @@ const ActivityForm: React.FC<{
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="Description" {...field} />
+                    <div className="flex gap-2">
+                      <Input placeholder="Description" {...field} />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div
+                              className={cn(
+                                "shrink-0 cursor-pointer",
+                                buttonVariants({
+                                  variant: "outline",
+                                  size: "icon",
+                                }),
+                              )}
+                              onClick={() => {
+                                if (
+                                  !form.getValues("companyIds")?.length &&
+                                  !form.getValues("contactIds")?.length &&
+                                  !form.getValues("projectIds")?.length
+                                ) {
+                                  toast(
+                                    "Either company, contact or project is required",
+                                  );
+                                }
+
+                                const contactNames = form
+                                  .getValues("contactIds")
+                                  ?.map(
+                                    (entry) =>
+                                      contacts?.find(
+                                        (contact) => contact.id === entry,
+                                      )?.name,
+                                  );
+
+                                const companyNames = form
+                                  .getValues("companyIds")
+                                  ?.map(
+                                    (entry) =>
+                                      companies?.find(
+                                        (company) => company.id === entry,
+                                      )?.name,
+                                  );
+
+                                const projectNames = form
+                                  .getValues("projectIds")
+                                  ?.map(
+                                    (entry) =>
+                                      projects?.find(
+                                        (project) => project.id === entry,
+                                      )?.name,
+                                  );
+
+                                const generatedDescription = `${form.getValues(
+                                  "type",
+                                )}${
+                                  projectNames?.length
+                                    ? ` on ${projectNames
+                                        .slice(0, 2)
+                                        .join(", ")}${
+                                        projectNames.length > 1
+                                          ? `, (+${
+                                              projectNames.length - 1
+                                            } more)`
+                                          : ``
+                                      }`
+                                    : ``
+                                }${
+                                  contactNames?.length
+                                    ? ` with ${contactNames
+                                        .slice(0, 2)
+                                        .join(", ")}${
+                                        contactNames.length > 1
+                                          ? `, (+${
+                                              contactNames.length - 1
+                                            } more)`
+                                          : ``
+                                      }`
+                                    : ``
+                                }${
+                                  companyNames?.length
+                                    ? ` ${
+                                        contactNames?.length ? "and" : "with"
+                                      } ${companyNames.slice(0, 2).join(", ")}${
+                                        companyNames.length > 1
+                                          ? `, (+${
+                                              companyNames.length - 1
+                                            } more)`
+                                          : ``
+                                      }`
+                                    : ``
+                                }`;
+
+                                form.setValue(
+                                  "description",
+                                  generatedDescription,
+                                );
+                              }}
+                            >
+                              <Zap className="h-4 w-4" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Auto-Generate</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -365,7 +477,9 @@ const ActivityForm: React.FC<{
   );
 };
 
-export const AddActivity: React.FC = () => {
+export const AddActivity: React.FC<{
+  pageData?: { type: string; id: string };
+}> = ({ pageData }) => {
   const typeArray: {
     icon: React.ReactNode;
     type: "Call" | "Meeting" | "Email" | "Task" | "FollowUp";
@@ -391,7 +505,7 @@ export const AddActivity: React.FC = () => {
     <>
       <div className="flex text-sm">
         {typeArray.map((entry, index) => {
-          return <ActivityForm entry={entry} />;
+          return <ActivityForm entry={entry} pageData={pageData} />;
         })}
       </div>
     </>
