@@ -161,7 +161,7 @@ export const ContactPageTable = () => {
                   )}
                 </div>
               </div>
-              <ContactPageTableEdit contactId={contact.id} />
+              <ContactPageTableEdit contact={contact} />
             </Link>
           );
         })}

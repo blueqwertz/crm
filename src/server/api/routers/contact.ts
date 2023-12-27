@@ -149,4 +149,14 @@ export const contactRotuer = createTRPCRouter({
           ),
         );
     }),
+
+  addLink: protectedProcedure
+    .input(
+      z.object({
+        contactOne: z.string(),
+        contactTwo: z.string(),
+        mode: z.number(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {}),
 });
