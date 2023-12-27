@@ -14,7 +14,7 @@ export const SidebarHeader = () => {
             <AvatarImage />
             <AvatarFallback>{sessionData?.user.head.name?.[0]}</AvatarFallback>
           </Avatar>
-          <span className="truncate text-sm font-medium">
+          <span className="truncate text-sm font-semibold">
             {sessionData?.user.head.name}
           </span>
         </div>

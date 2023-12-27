@@ -3,21 +3,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import { Input } from "./ui/input";
+import { AddContactRelation } from "./add-contact-relation";
+import { InferSelectModel } from "drizzle-orm";
+import { contacts } from "drizzle/schema";
 
 export const ContactsTable: React.FC<{
-  contactData: {
-    id: string;
-    email: string | null;
-    image: string | null;
-    createdAt: Date | null;
-    userId: string | null;
-    name: string;
-    info: string | null;
-    mobile: string | null;
-  }[];
-}> = ({ contactData }) => {
+  contactData: InferSelectModel<typeof contacts>[];
+  pageData: { type: "Company" | "Project"; id: string };
+}> = ({ contactData, pageData }) => {
   return (
     <>
+      <AddContactRelation pageData={pageData} contactData={contactData!} />
       {!contactData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">

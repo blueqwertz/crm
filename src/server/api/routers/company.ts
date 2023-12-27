@@ -14,9 +14,6 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 export const companyRotuer = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.query.companies.findMany({
-      extras: {
-        contactCount: sql`lower(${companies.name})`.as("contactCount"),
-      },
       orderBy: (company) => [desc(company.createdAt)],
     });
   }),

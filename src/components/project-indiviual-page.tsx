@@ -20,6 +20,7 @@ export const ProjectIndividualPage: React.FC<{
         <span className="font-semibold">Contacts</span>
         <div className="w-full overflow-hidden rounded-md border">
           <ContactsTable
+            pageData={{ type: "Project", id: projectId }}
             contactData={
               contactsData?.contacts.map((contact) => contact.contact)!
             }

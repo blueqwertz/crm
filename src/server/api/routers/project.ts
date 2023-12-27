@@ -1,5 +1,10 @@
 import { and, asc, desc, eq } from "drizzle-orm";
-import { activities, projects, projectsToActivities } from "drizzle/schema";
+import {
+  activities,
+  contactsToProjects,
+  projects,
+  projectsToActivities,
+} from "drizzle/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -103,5 +108,34 @@ export const projectRotuer = createTRPCRouter({
             eq(projects.id, input.id),
           ),
         );
+    }),
+
+  addContact: protectedProcedure
+    .input(
+      z.object({
+        contactIds: z.array(z.string()),
+        projectId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const company = await ctx.db.query.projects.findFirst({
+        where: and(
+          eq(projects.headId, ctx.session.user.head.id),
+          eq(projects.id, input.projectId),
+        ),
+      });
+
+      if (!company) {
+        return null;
+      }
+
+      return ctx.db.insert(contactsToProjects).values(
+        input.contactIds.map((id) => {
+          return {
+            contactId: id,
+            projectId: input.projectId,
+          };
+        }),
+      );
     }),
 });

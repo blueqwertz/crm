@@ -92,7 +92,7 @@ export const ActivitiesTable: React.FC<{
                 {typeMaps[activity.type!].icon}
               </div>
               {!!activity.description && (
-                <span className={cn("line-clamp-3 text-sm")}>
+                <span className={cn("line-clamp-2 text-sm")}>
                   {activity.description}
                 </span>
               )}
@@ -102,7 +102,7 @@ export const ActivitiesTable: React.FC<{
                 </span>
               )}
               <span className="ml-auto shrink-0 truncate text-sm text-muted-foreground">
-                {dayjs().to(activity.date)}{" "}
+                {dayjs().to(activity.date)}
               </span>
               <ActivityEdit id={activity.id} />
             </div>
