@@ -25,11 +25,11 @@ export const ProjectsTable: React.FC<{
     <>
       {!projectData && (
         <>
-          <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-2 border-b px-4 py-4">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
-          <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-2 px-4 py-4">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
@@ -38,7 +38,7 @@ export const ProjectsTable: React.FC<{
       {!!projectData && !projectData.length && (
         <>
           <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No contacts
+            No projects
           </div>
         </>
       )}
@@ -48,7 +48,7 @@ export const ProjectsTable: React.FC<{
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
-              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50 sm:px-6"
+              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50"
             >
               <Avatar className="h-7 w-7 border">
                 <AvatarImage src={project.image!} />

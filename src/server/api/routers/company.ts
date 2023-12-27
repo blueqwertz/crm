@@ -12,8 +12,11 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const companyRotuer = createTRPCRouter({
-  getAll: protectedProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.query.companies.findMany({
+      extras: {
+        contactCount: sql`lower(${companies.name})`.as("contactCount"),
+      },
       orderBy: (company) => [desc(company.createdAt)],
     });
   }),
@@ -67,21 +70,38 @@ export const companyRotuer = createTRPCRouter({
 
   getCompanyActivities: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.query.companies.findFirst({
-        where: and(
-          eq(companies.id, input.id),
-          eq(companies.headId, ctx.session.user.head.id),
-        ),
-        with: {
-          activities: {
-            with: {
-              activity: true,
-            },
-            // orderBy: (activity) => [asc(activity.createdAt)],
-          },
-        },
-      });
+    .query(async ({ ctx, input }) => {
+      // return ctx.db.query.companies.findFirst({
+      //   where: and(
+      //     eq(companies.id, input.id),
+      //     eq(companies.headId, ctx.session.user.head.id),
+      //   ),
+      //   with: {
+      //     activities: {
+      //       with: {
+      //         activity: true,
+      //       },
+      //     },
+      //   },
+      // });
+
+      return ctx.db
+        .select({
+          activities: activities,
+        })
+        .from(companiesToActivities)
+        .innerJoin(
+          activities,
+          eq(companiesToActivities.activityId, activities.id),
+        )
+        .innerJoin(companies, eq(companiesToActivities.companyId, companies.id))
+        .orderBy(desc(activities.date))
+        .where(
+          and(
+            eq(companies.headId, ctx.session.user.head.id),
+            eq(companies.id, input.id),
+          ),
+        );
     }),
 
   addOne: protectedProcedure
@@ -169,7 +189,7 @@ export const companyRotuer = createTRPCRouter({
           .insert(contacts)
           .values({ headId: ctx.session.user.head.id, name: input.name })
           .returning({ id: contacts.id });
-        console.log(contactCreated);
+
         await tx.insert(contactsToCompanies).values({
           contactId: contactCreated?.id!,
           companyId: input.companyId,

@@ -70,7 +70,12 @@ const ActivityForm: React.FC<{
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
-      toast("Activity added succesfully");
+      toast("Activity added succesfully.", {
+        action: {
+          label: "Close",
+          onClick: () => {},
+        },
+      });
       setLoading(false);
       form.reset();
       setOpen(false);
@@ -132,7 +137,6 @@ const ActivityForm: React.FC<{
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     addActivity(values);
-    console.log(values);
   }
 
   return (

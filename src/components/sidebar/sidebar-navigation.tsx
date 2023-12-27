@@ -128,21 +128,21 @@ export const SidebarNav = () => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="mt-1 flex flex-col gap-1 pb-0">
-                    {item.children.map((item) => {
+                    {item.children.map((child) => {
                       return (
-                        <Link key={item.title} href={item.path}>
+                        <Link key={child.title} href={child.path}>
                           <Button
                             variant={"ghost"}
                             className={cn(
                               "h-8 w-full justify-start px-2.5 font-light",
                               {
-                                "bg-muted": pathname == item.path,
+                                "bg-muted": pathname == child.path,
                               },
                             )}
                           >
                             <div className="mr-2 h-4 w-4"></div>
                             <span className="hidden @xxs:block">
-                              {item.title}
+                              {child.title}
                             </span>
                           </Button>
                         </Link>

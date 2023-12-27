@@ -1,5 +1,11 @@
 import { and, asc, desc, eq, inArray, or } from "drizzle-orm";
-import { companies, contacts, contactsToCompanies } from "drizzle/schema";
+import {
+  activities,
+  companies,
+  contacts,
+  contactsToActivities,
+  contactsToCompanies,
+} from "drizzle/schema";
 import { z } from "zod";
 
 import {
@@ -58,19 +64,23 @@ export const contactRotuer = createTRPCRouter({
   getContactActivities: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.db.query.contacts.findFirst({
-        where: and(
-          eq(contacts.id, input.id),
-          eq(contacts.headId, ctx.session.user.head.id),
-        ),
-        with: {
-          activities: {
-            with: {
-              acitivity: true,
-            },
-          },
-        },
-      });
+      return ctx.db
+        .select({
+          activities: activities,
+        })
+        .from(contactsToActivities)
+        .innerJoin(
+          activities,
+          eq(contactsToActivities.activityId, activities.id),
+        )
+        .innerJoin(contacts, eq(contactsToActivities.contactId, contacts.id))
+        .orderBy(desc(activities.date))
+        .where(
+          and(
+            eq(contacts.headId, ctx.session.user.head.id),
+            eq(contacts.id, input.id),
+          ),
+        );
     }),
 
   addOne: protectedProcedure

@@ -26,7 +26,12 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
-      toast("Activity deleted succesfully");
+      toast("Activity deleted succesfully.", {
+        action: {
+          label: "Close",
+          onClick: () => {},
+        },
+      });
       setLoading(false);
     },
     onError: () => {
@@ -81,7 +86,7 @@ export const ActivitiesTable: React.FC<{
             <div
               key={activity.id}
               // href={`/activities/${activity.id}`}
-              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none sm:px-6"
+              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none"
             >
               <div className="mr-1 shrink-0 rounded-md border p-1.5">
                 {typeMaps[activity.type!].icon}

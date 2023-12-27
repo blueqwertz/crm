@@ -96,7 +96,6 @@ export const activityRouer = createTRPCRouter({
         if (!activityCreated) {
           return null;
         }
-        console.log(activityCreated);
 
         if (!!headCompanies && headCompanies.length) {
           await tx.insert(companiesToActivities).values(
@@ -109,8 +108,6 @@ export const activityRouer = createTRPCRouter({
           );
         }
 
-        console.log("HEADCOMPANY", headCompanies);
-
         if (!!headContacts && headContacts.length) {
           await tx.insert(contactsToActivities).values(
             headContacts?.map((c) => {
@@ -122,10 +119,6 @@ export const activityRouer = createTRPCRouter({
           );
         }
 
-        console.log("HEADCONTACT", headContacts);
-
-        console.log(headProjects);
-
         if (!!headProjects && headProjects.length) {
           await tx.insert(projectsToActivities).values(
             headProjects.map((p) => {
@@ -136,8 +129,6 @@ export const activityRouer = createTRPCRouter({
             }),
           );
         }
-
-        console.log("HEADPROJECT", headProjects);
       });
     }),
   deleteOne: protectedProcedure

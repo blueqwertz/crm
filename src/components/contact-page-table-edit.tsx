@@ -30,7 +30,12 @@ export const ContactPageTableEdit: React.FC<{ contactId: string }> = ({
       setDeleteLoading(true);
     },
     onSuccess: () => {
-      toast("Contact deleted succesfully.");
+      toast("Contact deleted succesfully.", {
+        action: {
+          label: "Close",
+          onClick: () => {},
+        },
+      });
       void ctx.contact.getAll.invalidate();
     },
     onError: () => {

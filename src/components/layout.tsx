@@ -16,9 +16,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
     <>
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex flex-grow flex-col items-center justify-center">
-          {children}
-        </div>
+        <div className="h-screen flex-grow overflow-y-scroll">{children}</div>
       </div>
     </>
   );

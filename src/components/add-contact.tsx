@@ -41,7 +41,12 @@ export const AddContact = () => {
     onSuccess: () => {
       setLoading(false);
       setOpen(false);
-      toast("Added contact.");
+      toast("Added contact.", {
+        action: {
+          label: "Close",
+          onClick: () => {},
+        },
+      });
       void ctx.contact.getAll.invalidate();
     },
     onError: (error) => {

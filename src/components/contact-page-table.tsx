@@ -45,7 +45,7 @@ export const ContactPageTable = () => {
                 "group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-muted/50",
               )}
             >
-              <div className="flex gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
+              <div className="flex shrink gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
                 <Avatar className="h-8 w-8 border group-hover:text-sm">
                   <AvatarImage
                     src={contact.image ?? contact.user?.image ?? ""}

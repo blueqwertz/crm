@@ -30,9 +30,7 @@ export const ProjectIndividualPage: React.FC<{
         <span className="font-semibold">Activities</span>
         <div className="w-full rounded-md border">
           <ActivitiesTable
-            activityData={
-              activityData?.activities.map((activity) => activity.acitivity)!
-            }
+            activityData={activityData?.map((activity) => activity.activities)!}
             pageData={{ type: "project", id: projectId }}
           />
         </div>
