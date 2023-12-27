@@ -1,15 +1,11 @@
 import {
   Link,
   Loader2,
-  MoreHorizontal,
   MoveHorizontal,
   MoveLeft,
   MoveRight,
-  Pen,
   Pencil,
   Trash,
-  Trash2,
-  Wrench,
 } from "lucide-react";
 import {
   Popover,
@@ -28,18 +24,23 @@ import { toast } from "sonner";
 import { InferSelectModel } from "drizzle-orm";
 import { contacts } from "drizzle/schema";
 import { Button } from "./ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Combobox } from "./ui/combobox";
+import { Input } from "./ui/input";
 
 export const ContactPageTableEdit: React.FC<{
   contact: InferSelectModel<typeof contacts>;
 }> = ({ contact }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  const [linkLoading, setLinkLoading] = useState(false);
+  const [linkOpen, setLinkOpen] = useState(false);
   const [linkIndex, setLinkIndex] = useState(0);
   const [linkValue, setLinkValue] = useState<string | undefined>(undefined);
 
   const { data: contactData } = api.contact.getAll.useQuery();
+  // const { data: linkedContacts } = api.contact.getContactLinks.useQuery({
+  //   id: contact.id,
+  // });
 
   const ctx = api.useUtils();
 
@@ -56,8 +57,32 @@ export const ContactPageTableEdit: React.FC<{
       });
       void ctx.contact.getAll.invalidate();
     },
-    onError: () => {
-      setDeleteLoading(false);
+    onError: (error) => {
+      console.log(error);
+      setLinkLoading(false);
+    },
+  });
+  const { mutate: linkContact } = api.contact.addLink.useMutation({
+    onMutate: () => {
+      setLinkLoading(true);
+    },
+    onSuccess: () => {
+      toast("Contact linked succesfully.", {
+        action: {
+          label: "Close",
+          onClick: () => {},
+        },
+      });
+      setLinkValue(undefined);
+      setLinkIndex(0);
+      setLinkOpen(false);
+      setLinkLoading(false);
+      // void ctx.contact.getAll.invalidate();
+    },
+    onError: (error) => {
+      console.log(error);
+      toast(error.message);
+      setLinkLoading(false);
     },
   });
 
@@ -90,7 +115,7 @@ export const ContactPageTableEdit: React.FC<{
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Popover>
+        <Popover open={linkOpen} onOpenChange={setLinkOpen}>
           <PopoverTrigger asChild>
             <div className="box-content cursor-pointer rounded-none border-b border-t p-2 text-muted-foreground transition-colors hover:bg-accent">
               <Link className="h-4 w-4" />
@@ -113,9 +138,12 @@ export const ContactPageTableEdit: React.FC<{
               <span>Contact</span>
             </div>
             <div className="grid grid-cols-[1fr_40px_1fr] items-center justify-between gap-3">
-              <div className="flex h-[40px] flex-1 shrink items-center gap-2 truncate rounded-md border px-3 text-sm">
-                <span className="truncate">{contact.name}</span>
-              </div>
+              <Input
+                value={contact.name}
+                readOnly
+                disabled
+                className="!cursor-default"
+              />
               <Button
                 size={"icon"}
                 variant={"outline"}
@@ -150,7 +178,19 @@ export const ContactPageTableEdit: React.FC<{
                 className="w-auto flex-1 shrink truncate"
               />
             </div>
-            <Button className="">Add</Button>
+            <Button
+              disabled={linkLoading}
+              onClick={() => {
+                linkContact({
+                  mode: linkIndex,
+                  contactOne: contact.id,
+                  contactTwo: linkValue!,
+                });
+              }}
+            >
+              {linkLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Add
+            </Button>
           </PopoverContent>
         </Popover>
         <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">

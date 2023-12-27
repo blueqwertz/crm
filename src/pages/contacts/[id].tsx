@@ -7,7 +7,7 @@ import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ContactIndividualPage } from "~/components/contact-individual-page";
 import { Button } from "~/components/ui/button";
-import { Wrench } from "lucide-react";
+import { Pen, Pencil, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
@@ -35,8 +35,8 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
               </span>
             </div>
             <Button size={"sm"} variant={"outline"}>
-              <Wrench className="mr-2 h-4 w-4" />
-              Configure
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
             </Button>
           </div>
           <Breadcrumbs lastItem={contactData?.name} />

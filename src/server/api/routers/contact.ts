@@ -1,18 +1,15 @@
-import { and, asc, desc, eq, inArray, or } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import {
   activities,
   companies,
   contacts,
   contactsToActivities,
   contactsToCompanies,
+  contactsToContacts,
 } from "drizzle/schema";
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const contactRotuer = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
@@ -81,6 +78,31 @@ export const contactRotuer = createTRPCRouter({
             eq(contacts.id, input.id),
           ),
         );
+    }),
+
+  getContactLinks: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.contacts.findFirst({
+        where: and(
+          eq(contacts.id, input.id),
+          eq(contacts.headId, ctx.session.user.head.id),
+        ),
+        with: {
+          outgoingRelation: {
+            with: {
+              outgoingContact: true,
+              receivingContact: true,
+            },
+          },
+          receivingRelation: {
+            with: {
+              outgoingContact: true,
+              receivingContact: true,
+            },
+          },
+        },
+      });
     }),
 
   addOne: protectedProcedure
@@ -158,5 +180,46 @@ export const contactRotuer = createTRPCRouter({
         mode: z.number(),
       }),
     )
-    .mutation(({ ctx, input }) => {}),
+    .mutation(({ ctx, input }) => {
+      if (input.contactOne == input.contactTwo) {
+        return null;
+      }
+      if (input.mode == 0) {
+        return ctx.db
+          .insert(contactsToContacts)
+          .values([
+            {
+              outgoingContactId: input.contactOne,
+              receivingContactId: input.contactTwo,
+            },
+            {
+              outgoingContactId: input.contactTwo,
+              receivingContactId: input.contactOne,
+            },
+          ])
+          .onConflictDoNothing();
+      }
+      if (input.mode == 1) {
+        return ctx.db
+          .insert(contactsToContacts)
+          .values([
+            {
+              outgoingContactId: input.contactOne,
+              receivingContactId: input.contactTwo,
+            },
+          ])
+          .onConflictDoNothing();
+      }
+      if (input.mode == 2) {
+        return ctx.db
+          .insert(contactsToContacts)
+          .values([
+            {
+              outgoingContactId: input.contactTwo,
+              receivingContactId: input.contactOne,
+            },
+          ])
+          .onConflictDoNothing();
+      }
+    }),
 });

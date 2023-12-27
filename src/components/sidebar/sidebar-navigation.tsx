@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { createId } from "@paralleldrive/cuid2";
 import { Button } from "../ui/button";
 import {
   Book,
@@ -88,7 +89,7 @@ export const SidebarNav = () => {
         {NavItemArray.map((item) => {
           return !item.children ? (
             <Link
-              key={item.title}
+              key={createId()}
               href={item.path ?? "/"}
               className={cn("w-full rounded-md", {
                 "bg-muted": pathname == item.path,
@@ -107,7 +108,7 @@ export const SidebarNav = () => {
           ) : (
             <>
               <Accordion
-                key={item.title}
+                key={createId()}
                 type="single"
                 collapsible
                 defaultValue={

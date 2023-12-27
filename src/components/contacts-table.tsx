@@ -48,9 +48,7 @@ export const ContactsTable: React.FC<{
                     {contact.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-base">
-                  <span className="font-medium">{contact.name}</span>
-                </span>
+                <span className="text-base font-medium">{contact.name}</span>
               </Link>
             );
           })}

@@ -7,7 +7,6 @@ import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "./ui/skeleton";
 import { cn } from "~/utils/cn";
-import { buttonVariants } from "./ui/button";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery();
@@ -38,7 +37,7 @@ export const ContactPageTable = () => {
         {contactData?.map((contact) => {
           return (
             <Link
-              passHref={true}
+              passHref
               href={`/contacts/${contact.id}`}
               key={contact.id}
               className={cn(
@@ -72,6 +71,7 @@ export const ContactPageTable = () => {
                           {contact.companies.map((company, index) => (
                             <>
                               <Link
+                                key={company.companyId}
                                 href={`/companies/${company.companyId}`}
                                 className={cn(
                                   "cursor-pointer leading-3 hover:underline",
