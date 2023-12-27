@@ -39,6 +39,7 @@ import {
 import { ComboboxMulti } from "./ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
 
 const ActivityForm: React.FC<{
   entry: {
@@ -64,6 +65,7 @@ const ActivityForm: React.FC<{
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
       setLoading(false);
+      toast("Activity added succesfully");
       setOpen(false);
     },
     onError: () => {

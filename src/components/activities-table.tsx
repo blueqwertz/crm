@@ -4,12 +4,13 @@ import { Skeleton } from "./ui/skeleton";
 import { activities } from "drizzle/schema";
 import { AddActivity } from "./add-activity";
 import { InferSelectModel } from "drizzle-orm";
-import dayjs from "dayjs";
 import { Button } from "./ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
-var relativeTime = require("dayjs/plugin/relativeTime");
-dayjs.extend(relativeTime);
+
+import dayjs from "dayjs";
+import "@/utils/relative";
+import { toast } from "sonner";
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
+      toast("Activity deleted succesfully");
       setLoading(false);
     },
     onError: () => {
