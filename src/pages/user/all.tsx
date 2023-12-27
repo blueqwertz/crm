@@ -14,7 +14,9 @@ export default function UserAll() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <span>{usePathname()}</span>
+        <div className="flex flex-grow flex-col items-center justify-center">
+          <span>{usePathname()}</span>
+        </div>
       </Layout>
     </>
   );
