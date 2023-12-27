@@ -82,7 +82,7 @@ export const AddCompany = () => {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add new contact</AlertDialogTitle>
+            <AlertDialogTitle>Add new company</AlertDialogTitle>
           </AlertDialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">

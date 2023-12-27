@@ -132,10 +132,17 @@ const ActivityForm: React.FC<{
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     addActivity(values);
+    console.log(values);
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover
+      open={open}
+      onOpenChange={(open) => {
+        setOpen(open);
+        form.setValue("date", new Date());
+      }}
+    >
       <PopoverTrigger asChild>
         <Button
           className={cn(
@@ -369,15 +376,15 @@ const ActivityForm: React.FC<{
                                 }),
                               )}
                               onClick={() => {
-                                if (
-                                  !form.getValues("companyIds")?.length &&
-                                  !form.getValues("contactIds")?.length &&
-                                  !form.getValues("projectIds")?.length
-                                ) {
-                                  toast(
-                                    "Either company, contact or project is required",
-                                  );
-                                }
+                                // if (
+                                //   !form.getValues("companyIds")?.length &&
+                                //   !form.getValues("contactIds")?.length &&
+                                //   !form.getValues("projectIds")?.length
+                                // ) {
+                                //   toast(
+                                //     "Either company, contact or project is required",
+                                //   );
+                                // }
 
                                 const contactNames = form
                                   .getValues("contactIds")
@@ -411,7 +418,7 @@ const ActivityForm: React.FC<{
                                 )}${
                                   projectNames?.length
                                     ? ` on ${projectNames
-                                        .slice(0, 2)
+                                        .slice(0, 1)
                                         .join(", ")}${
                                         projectNames.length > 1
                                           ? `, (+${
@@ -423,7 +430,7 @@ const ActivityForm: React.FC<{
                                 }${
                                   contactNames?.length
                                     ? ` with ${contactNames
-                                        .slice(0, 2)
+                                        .slice(0, 1)
                                         .join(", ")}${
                                         contactNames.length > 1
                                           ? `, (+${
@@ -436,7 +443,7 @@ const ActivityForm: React.FC<{
                                   companyNames?.length
                                     ? ` ${
                                         contactNames?.length ? "and" : "with"
-                                      } ${companyNames.slice(0, 2).join(", ")}${
+                                      } ${companyNames.slice(0, 1).join(", ")}${
                                         companyNames.length > 1
                                           ? `, (+${
                                               companyNames.length - 1

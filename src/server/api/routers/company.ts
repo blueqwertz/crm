@@ -1,6 +1,12 @@
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, sql } from "drizzle-orm";
-import { companies, contacts, contactsToCompanies } from "drizzle/schema";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
+import {
+  activities,
+  companies,
+  companiesToActivities,
+  contacts,
+  contactsToCompanies,
+} from "drizzle/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -68,10 +74,11 @@ export const companyRotuer = createTRPCRouter({
           eq(companies.headId, ctx.session.user.head.id),
         ),
         with: {
-          acitivities: {
+          activities: {
             with: {
               activity: true,
             },
+            // orderBy: (activity) => [asc(activity.createdAt)],
           },
         },
       });

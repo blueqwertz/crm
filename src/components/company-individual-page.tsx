@@ -58,7 +58,7 @@ export const CompanyIndividualPage: React.FC<{
         <div className="w-full rounded-md border">
           <ActivitiesTable
             activityData={
-              activityData?.acitivities.map((activity) => activity.activity)!
+              activityData?.activities.map((activity) => activity.activity)!
             }
             pageData={{ type: "company", id: companyId }}
           />

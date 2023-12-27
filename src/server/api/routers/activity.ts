@@ -89,6 +89,7 @@ export const activityRouer = createTRPCRouter({
             description: input.description,
             headId: ctx.session.user.head.id,
             type: input.type,
+            date: input.date,
           })
           .returning({ id: contacts.id });
 

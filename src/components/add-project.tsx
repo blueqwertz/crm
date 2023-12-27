@@ -77,7 +77,7 @@ export const AddProject = () => {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add new contact</AlertDialogTitle>
+            <AlertDialogTitle>Add new project</AlertDialogTitle>
           </AlertDialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">

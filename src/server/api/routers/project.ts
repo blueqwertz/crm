@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { projects } from "drizzle/schema";
 import { z } from "zod";
 
@@ -68,6 +68,7 @@ export const projectRotuer = createTRPCRouter({
             },
           },
         },
+        orderBy: (activity) => [desc(activity.createdAt)],
       });
     }),
 

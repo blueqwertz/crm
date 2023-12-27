@@ -31,7 +31,7 @@ export const ContactIndividualPage: React.FC<{
         <div className="w-full rounded-md border">
           <ActivitiesTable
             activityData={
-              activityData?.acitivities.map((activity) => activity.acitivity)!
+              activityData?.activities.map((activity) => activity.acitivity)!
             }
             pageData={{ type: "contact", id: contactId }}
           />

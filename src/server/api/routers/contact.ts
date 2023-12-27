@@ -64,7 +64,7 @@ export const contactRotuer = createTRPCRouter({
           eq(contacts.headId, ctx.session.user.head.id),
         ),
         with: {
-          acitivities: {
+          activities: {
             with: {
               acitivity: true,
             },

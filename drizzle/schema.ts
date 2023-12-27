@@ -142,7 +142,7 @@ export const contactRelations = relations(contacts, ({ one, many }) => ({
   user: one(users, { fields: [contacts.userId], references: [users.id] }),
   companies: many(contactsToCompanies),
   projects: many(contactsToProjects),
-  acitivities: many(contactsToActivities),
+  activities: many(contactsToActivities),
   outgoingRelation: many(contactsToContacts, {
     relationName: "outgoingContact",
   }),
@@ -250,7 +250,7 @@ export const companies = pgTable("company", {
 export const companyRelations = relations(companies, ({ one, many }) => ({
   projects: many(companiesToProjects),
   contacts: many(contactsToCompanies),
-  acitivities: many(companiesToActivities),
+  activities: many(companiesToActivities),
   head: one(heads, {
     fields: [companies.headId],
     references: [heads.id],
@@ -365,7 +365,7 @@ export const contactsToProjectsRelations = relations(
 
 // #endregion
 
-// #region Acitivities
+// #region Activities
 
 export const activities = pgTable("activity", {
   id: text("id")

@@ -97,7 +97,7 @@ export const ActivitiesTable: React.FC<{
                 </span>
               )}
               <span className="ml-auto shrink-0 truncate text-sm text-muted-foreground">
-                {dayjs().to(activity.date ?? activity.createdAt)}
+                {dayjs().to(activity.date)}{" "}
               </span>
               <ActivityEdit id={activity.id} />
             </div>
