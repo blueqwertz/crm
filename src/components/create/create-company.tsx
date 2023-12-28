@@ -1,10 +1,7 @@
 import { Loader2, Plus } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -16,7 +13,6 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,7 +41,7 @@ export const AddCompany = () => {
       setOpen(false);
       void ctx.company.getAll.invalidate();
     },
-    onError: (error) => {
+    onError: () => {
       setLoading(false);
     },
   });

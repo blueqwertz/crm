@@ -2,10 +2,9 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
-import { Input } from "../ui/input";
 import { AddContactRelation } from "../links/contact-links";
-import { InferSelectModel } from "drizzle-orm";
-import { contacts } from "drizzle/schema";
+import type { InferSelectModel } from "drizzle-orm";
+import type { contacts } from "drizzle/schema";
 
 export const ContactsTable: React.FC<{
   contactData: InferSelectModel<typeof contacts>[];
@@ -13,7 +12,7 @@ export const ContactsTable: React.FC<{
 }> = ({ contactData, pageData }) => {
   return (
     <>
-      <AddContactRelation pageData={pageData} contactData={contactData!} />
+      <AddContactRelation pageData={pageData} contactData={contactData} />
       {!contactData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">

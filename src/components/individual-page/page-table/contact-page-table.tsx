@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
-import { Briefcase, Building2, Mail, Voicemail } from "lucide-react";
+import { Briefcase, Mail, Voicemail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
@@ -82,7 +82,9 @@ export const ContactPageTable = () => {
                               >
                                 {company.company.name}
                               </Link>
-                              {index + 1 < contact.companies.length && ", "}
+                              <span className="leading-3">
+                                {index + 1 < contact.companies.length && ", "}
+                              </span>
                             </>
                           ))}
                         </Badge>

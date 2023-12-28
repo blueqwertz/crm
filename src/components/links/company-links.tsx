@@ -1,6 +1,6 @@
-import { InferSelectModel } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import { companies, contacts } from "drizzle/schema";
+import type { companies } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -31,10 +31,10 @@ export const AddCompanyRelation: React.FC<{
       setDisabled(false);
       toast.success("Company succesfully added.");
       setSelectedOption((prev) => {
-        if (!prev) return [value?.id!];
-        return [...prev, value?.id!];
+        if (!prev) return [value?.id ?? ""];
+        return [...prev, value?.id ?? ""];
       });
-      ctx.contact.getContactCompanies.invalidate();
+      void ctx.contact.getContactCompanies.invalidate();
     },
     onError: () => {
       setDisabled(false);
@@ -48,7 +48,7 @@ export const AddCompanyRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.project.getProjectCompanies.invalidate();
+      void ctx.project.getProjectCompanies.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -63,7 +63,7 @@ export const AddCompanyRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.project.getProjectContacts.invalidate();
+      void ctx.project.getProjectContacts.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -85,8 +85,8 @@ export const AddCompanyRelation: React.FC<{
       .filter((option) => !companyData?.some((entry) => entry.id == option.id))
       .map((option) => {
         return {
-          value: option.id!,
-          label: option.name!,
+          value: option.id ?? "",
+          label: option.name ?? "",
         };
       }) ?? [];
 
@@ -105,7 +105,7 @@ export const AddCompanyRelation: React.FC<{
               },
             });
           }}
-          setValue={(value, label) => {
+          setValue={(value) => {
             if (!value) {
               return;
             }
@@ -149,19 +149,19 @@ export const AddCompanyRelation: React.FC<{
           className="h-9 rounded-none rounded-tr-md border-b border-l"
           disabled={disabled}
           onClick={() => {
-            if (!selectedOption || !selectedOption.length) {
+            if (!selectedOption?.length) {
               toast.error("Please select a contact");
               return;
             }
             if (pageData.type == "Contact") {
               addContactToProject({
                 projectId: pageData.id,
-                contactIds: selectedOption!,
+                contactIds: selectedOption,
               });
             } else if (pageData.type == "Project") {
               addCompanyToProject({
                 projectId: pageData.id,
-                companyIds: selectedOption!,
+                companyIds: selectedOption,
               });
             }
           }}

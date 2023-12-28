@@ -13,10 +13,10 @@ export const Breadcrumbs: React.FC<{ lastItem?: string }> = ({ lastItem }) => {
       <ChevronRight className="h-4 w-4" />
       {!!pathNames.length &&
         pathNames.map((link, index) => {
-          let href = `/${pathNames.slice(0, index + 1).join("/")}`;
+          const href = `/${pathNames.slice(0, index + 1).join("/")}`;
           return (
             <div key={link} className="flex items-center gap-1">
-              <Link className="text-blue-600 hover:underline" href={href!}>
+              <Link className="text-blue-600 hover:underline" href={href}>
                 {index + 1 >= pathNames.length && lastItem
                   ? lastItem
                   : link.charAt(0).toUpperCase() + link.slice(1)}

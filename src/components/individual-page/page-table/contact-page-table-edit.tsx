@@ -21,8 +21,8 @@ import {
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "sonner";
-import { InferSelectModel } from "drizzle-orm";
-import { contacts } from "drizzle/schema";
+import type { InferSelectModel } from "drizzle-orm";
+import type { contacts } from "drizzle/schema";
 import { Button } from "../../ui/button";
 import { Combobox } from "../../ui/combobox";
 import { Input } from "../../ui/input";
@@ -49,16 +49,10 @@ export const ContactPageTableEdit: React.FC<{
       setDeleteLoading(true);
     },
     onSuccess: () => {
-      toast.success("Contact deleted succesfully.", {
-        action: {
-          label: "Close",
-          onClick: () => {},
-        },
-      });
+      toast.success("Contact deleted succesfully.");
       void ctx.contact.getAll.invalidate();
     },
-    onError: (error) => {
-      console.log(error);
+    onError: () => {
       setLinkLoading(false);
     },
   });
@@ -67,12 +61,7 @@ export const ContactPageTableEdit: React.FC<{
       setLinkLoading(true);
     },
     onSuccess: () => {
-      toast.success("Contact linked succesfully.", {
-        action: {
-          label: "Close",
-          onClick: () => {},
-        },
-      });
+      toast.success("Contact linked succesfully.");
       setLinkValue(undefined);
       setLinkIndex(0);
       setLinkOpen(false);
@@ -168,10 +157,10 @@ export const ContactPageTableEdit: React.FC<{
                     ?.filter((entry) => entry.id != contact.id)
                     .map((entry) => {
                       return { value: entry.id, label: entry.name };
-                    })!
+                    }) ?? []
                 }
                 value={linkValue}
-                setValue={(value, label) => {
+                setValue={(value) => {
                   setLinkValue(value);
                 }}
                 placeholder="Select contact..."

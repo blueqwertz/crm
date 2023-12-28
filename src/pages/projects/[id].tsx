@@ -1,8 +1,7 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
-import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Button } from "~/components/ui/button";
@@ -25,9 +24,7 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
             <div className="flex flex-col">
               {!projectData && <Skeleton className="h-7 text-transparent" />}
               {!!projectData && (
-                <h1 className="text-xl font-bold">
-                  {projectData && projectData.name}
-                </h1>
+                <h1 className="text-xl font-bold">{projectData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
                 View project details.

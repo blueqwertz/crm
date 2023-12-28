@@ -41,7 +41,7 @@ export const AddProject = () => {
       setOpen(false);
       void ctx.project.getAll.invalidate();
     },
-    onError: (error) => {
+    onError: () => {
       setLoading(false);
     },
   });

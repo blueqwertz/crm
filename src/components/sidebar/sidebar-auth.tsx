@@ -2,9 +2,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { Button } from "../ui/button";
-import { ArrowRight, LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ModeToggle } from "../theme-toggle";
 
 export const SidebarAuth = () => {
   const { data: sessionData, status } = useSession();
@@ -30,12 +29,12 @@ export const SidebarAuth = () => {
               <>
                 <div className="flex grow items-center justify-between gap-2 rounded-md border px-2 py-1.5">
                   <Avatar className="h-7 w-7 items-center rounded-full border">
-                    <AvatarImage src={sessionData.user?.image!} />
+                    <AvatarImage src={sessionData.user?.image} />
                     <AvatarFallback>
                       {sessionData.user?.name?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="truncate text-sm font-medium">
+                  <span className="truncate text-sm">
                     {sessionData.user?.name}
                   </span>
                   {/* <span className="truncate text-xs font-medium text-muted-foreground">
@@ -45,11 +44,11 @@ export const SidebarAuth = () => {
                     variant={"ghost"}
                     size={"icon"}
                     onClick={() => {
-                      signOut();
+                      void signOut();
                     }}
-                    className="ml-auto h-7 w-7"
+                    className="ml-auto h-8 w-8"
                   >
-                    <ArrowRight className="h-4 w-4" />
+                    <LogOut className="h-4 w-4" />
                   </Button>
                 </div>
               </>
@@ -58,12 +57,12 @@ export const SidebarAuth = () => {
               <>
                 <Button
                   onClick={() => {
-                    signIn();
+                    void signIn();
                   }}
                   variant={"outline"}
                   className="h-10 w-full"
                 >
-                  <ArrowRight className="mr-2 h-4 w-4" />
+                  <LogIn className="mr-2 h-4 w-4" />
                   Login
                 </Button>
               </>

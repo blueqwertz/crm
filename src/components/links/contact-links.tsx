@@ -1,6 +1,6 @@
-import { InferSelectModel } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import { contacts } from "drizzle/schema";
+import type { contacts } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -31,10 +31,10 @@ export const AddContactRelation: React.FC<{
       setDisabled(false);
       toast.success("Contact succesfully added.");
       setSelectedOption((prev) => {
-        if (!prev) return [value?.id!];
-        return [...prev, value?.id!];
+        if (!prev) return [value?.id ?? ""];
+        return [...prev, value?.id ?? ""];
       });
-      ctx.contact.getAll.invalidate();
+      void ctx.contact.getAll.invalidate();
     },
     onError: () => {
       setDisabled(false);
@@ -48,7 +48,7 @@ export const AddContactRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.company.getCompanyContacts.invalidate();
+      void ctx.company.getCompanyContacts.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -63,7 +63,7 @@ export const AddContactRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.project.getProjectContacts.invalidate();
+      void ctx.project.getProjectContacts.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -105,7 +105,7 @@ export const AddContactRelation: React.FC<{
               },
             });
           }}
-          setValue={(value, label) => {
+          setValue={(value) => {
             if (!value) {
               return;
             }
@@ -149,19 +149,19 @@ export const AddContactRelation: React.FC<{
           className="h-9 rounded-none rounded-tr-md border-b border-l"
           disabled={disabled}
           onClick={() => {
-            if (!selectedOption || !selectedOption.length) {
+            if (!selectedOption?.length) {
               toast.error("Please select a contact");
               return;
             }
             if (pageData.type == "Company") {
               addContactToCompany({
                 companyId: pageData.id,
-                contactIds: selectedOption!,
+                contactIds: selectedOption,
               });
             } else if (pageData.type == "Project") {
               addContactToProject({
                 projectId: pageData.id,
-                contactIds: selectedOption!,
+                contactIds: selectedOption,
               });
             }
           }}

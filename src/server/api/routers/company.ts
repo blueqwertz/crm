@@ -1,5 +1,4 @@
-import { TRPCError } from "@trpc/server";
-import { and, asc, count, desc, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import {
   activities,
   companies,
@@ -17,25 +16,26 @@ export const companyRotuer = createTRPCRouter({
     // return ctx.db.query.companies.findMany({
     //   orderBy: (company) => [desc(company.createdAt)],
     // });
-    return ctx.db
-      .select({
-        id: companies.id,
-        image: companies.image,
-        name: companies.name,
-        contactCount: count(contactsToCompanies.contactId).mapWith(Number),
-        projectCount: count(companiesToProjects.projectId).mapWith(Number),
-      })
-      .from(companies)
-      .leftJoin(
-        contactsToCompanies,
-        eq(companies.id, contactsToCompanies.companyId),
-      )
-      .leftJoin(
-        companiesToProjects,
-        eq(companies.id, companiesToProjects.companyId),
-      )
-      .orderBy(desc(companies.createdAt))
-      .groupBy(companies.id);
+    return (
+      ctx.db
+        .select({
+          id: companies.id,
+          image: companies.image,
+          name: companies.name,
+          contactCount: count(contactsToCompanies.contactId).mapWith(Number),
+        })
+        .from(companies)
+        .leftJoin(
+          contactsToCompanies,
+          eq(companies.id, contactsToCompanies.companyId),
+        )
+        // .leftJoin(
+        //   companiesToProjects,
+        //   eq(companies.id, companiesToProjects.companyId),
+        // )
+        .orderBy(desc(companies.createdAt))
+        .groupBy(companies.id)
+    );
   }),
 
   getOne: protectedProcedure
@@ -218,7 +218,7 @@ export const companyRotuer = createTRPCRouter({
           .returning({ id: contacts.id });
 
         await tx.insert(contactsToCompanies).values({
-          contactId: contactCreated?.id!,
+          contactId: contactCreated?.id ?? "",
           companyId: input.companyId,
         });
       });

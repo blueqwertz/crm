@@ -29,9 +29,9 @@ export const activityRouer = createTRPCRouter({
         })
         .superRefine((values, ctx) => {
           if (
-            (!values.contactIds || !values.contactIds.length) &&
-            (!values.companyIds || !values.companyIds.length) &&
-            (!values.projectIds || !values.projectIds.length)
+            !values?.contactIds?.length &&
+            !values?.companyIds?.length &&
+            !values?.projectIds?.length
           ) {
             ctx.addIssue({
               message: "Either company, contact or project must be selected",
@@ -57,7 +57,7 @@ export const activityRouer = createTRPCRouter({
           ? await ctx.db.query.companies.findMany({
               where: and(
                 eq(companies.headId, ctx.session.user.head.id),
-                inArray(companies.id, input.companyIds!),
+                inArray(companies.id, input.companyIds),
               ),
             })
           : undefined;
@@ -67,7 +67,7 @@ export const activityRouer = createTRPCRouter({
           ? await ctx.db.query.contacts.findMany({
               where: and(
                 eq(contacts.headId, ctx.session.user.head.id),
-                inArray(contacts.id, input.contactIds!),
+                inArray(contacts.id, input.contactIds),
               ),
             })
           : undefined;
@@ -77,7 +77,7 @@ export const activityRouer = createTRPCRouter({
           ? await ctx.db.query.projects.findMany({
               where: and(
                 eq(projects.headId, ctx.session.user.head.id),
-                inArray(projects.id, input.projectIds!),
+                inArray(projects.id, input.projectIds),
               ),
             })
           : undefined;
@@ -102,7 +102,7 @@ export const activityRouer = createTRPCRouter({
             headCompanies?.map((c) => {
               return {
                 companyId: c.id,
-                activityId: activityCreated?.id!,
+                activityId: activityCreated?.id,
               };
             }),
           );
@@ -113,7 +113,7 @@ export const activityRouer = createTRPCRouter({
             headContacts?.map((c) => {
               return {
                 contactId: c.id,
-                activityId: activityCreated?.id!,
+                activityId: activityCreated?.id,
               };
             }),
           );
@@ -124,7 +124,7 @@ export const activityRouer = createTRPCRouter({
             headProjects.map((p) => {
               return {
                 projectId: p.id,
-                activityId: activityCreated?.id!,
+                activityId: activityCreated?.id,
               };
             }),
           );

@@ -1,7 +1,5 @@
-import React from "react";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
 import { usePathname } from "next/navigation";
 import { Layout } from "~/components/layout";
 

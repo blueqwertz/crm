@@ -153,17 +153,14 @@ export const contactRotuer = createTRPCRouter({
           return null;
         }
 
-        if (
-          !input.contactData.companyIds ||
-          !input.contactData.companyIds.length
-        ) {
+        if (!input?.contactData?.companyIds?.length) {
           return contactCreated;
         }
 
         const headCompanies = await tx.query.companies.findMany({
           where: and(
             eq(companies.headId, ctx.session.user.head.id),
-            inArray(companies.id, input.contactData.companyIds!),
+            inArray(companies.id, input.contactData.companyIds),
           ),
         });
 

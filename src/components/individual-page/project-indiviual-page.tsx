@@ -28,7 +28,7 @@ export const ProjectIndividualPage: React.FC<{
             <ContactsTable
               pageData={{ type: "Project", id: projectId }}
               contactData={
-                contactsData?.contacts.map((contact) => contact.contact)!
+                contactsData?.contacts.map((contact) => contact.contact) ?? []
               }
             />
           </div>
@@ -39,7 +39,7 @@ export const ProjectIndividualPage: React.FC<{
             <CompanyTable
               pageData={{ type: "Project", id: projectId }}
               companyData={
-                companyData?.companies.map((company) => company.company)!
+                companyData?.companies.map((company) => company.company) ?? []
               }
             />
           </div>
@@ -49,7 +49,9 @@ export const ProjectIndividualPage: React.FC<{
         <span className="font-semibold">Activities</span>
         <div className="w-full rounded-md border">
           <ActivitiesTable
-            activityData={activityData?.map((activity) => activity.activities)!}
+            activityData={
+              activityData?.map((activity) => activity.activities) ?? []
+            }
             pageData={{ type: "Project", id: projectId }}
           />
         </div>

@@ -1,6 +1,4 @@
-import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
-import { Building2, Mail, Voicemail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
@@ -50,17 +48,17 @@ export const CompanyPageTable = () => {
                 </div>
               </div>
               {!!company.contactCount && (
-                <Badge variant={"outline"} className="text-xs">
+                <Badge variant={"outline"} className="text-xs leading-3">
                   {company.contactCount}{" "}
                   {company.contactCount === 1 ? "contact" : "contacts"}
                 </Badge>
               )}
-              {!!company.projectCount && (
-                <Badge variant={"outline"} className="text-xs">
+              {/* {!!company.projectCount && (
+                <Badge variant={"outline"} className="text-xs leading-3">
                   {company.projectCount}{" "}
                   {company.projectCount === 1 ? "project" : "projects"}
                 </Badge>
-              )}
+              )} */}
             </Link>
           );
         })}

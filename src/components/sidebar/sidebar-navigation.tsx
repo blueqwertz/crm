@@ -7,20 +7,14 @@ import {
 import { createId } from "@paralleldrive/cuid2";
 import { Button } from "../ui/button";
 import {
-  Book,
   Briefcase,
-  Building2,
-  Contact,
-  Contact2,
-  FolderGit2,
   Home,
   KanbanSquare,
   User,
   UserCog,
-  UserRoundCog,
   Users,
 } from "lucide-react";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "~/utils/cn";

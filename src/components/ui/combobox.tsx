@@ -35,7 +35,6 @@ export function Combobox({
   value,
   setValue,
   className,
-  noResults,
   children,
 }: ComboboxInput) {
   const [input, setInput] = React.useState("");

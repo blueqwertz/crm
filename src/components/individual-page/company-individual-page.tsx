@@ -1,11 +1,8 @@
 import React from "react";
-import { RouterOutputs, api } from "~/utils/api";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Link from "next/link";
+import { api } from "~/utils/api";
 import { ProjectsTable } from "../tables/projects-table";
 import { ContactsTable } from "../tables/contacts-table";
 import { ActivitiesTable } from "../tables/activities-table";
-import { Input } from "../ui/input";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
@@ -31,7 +28,7 @@ export const CompanyIndividualPage: React.FC<{
             <ContactsTable
               pageData={{ type: "Company", id: companyId }}
               contactData={
-                contactData?.contacts.map((contact) => contact.contact)!
+                contactData?.contacts.map((contact) => contact.contact) ?? []
               }
             />
           </div>
@@ -42,7 +39,7 @@ export const CompanyIndividualPage: React.FC<{
             <ProjectsTable
               pageData={{ type: "Company", id: companyId }}
               projectData={
-                projectData?.projects.map((project) => project.project)!
+                projectData?.projects.map((project) => project.project) ?? []
               }
             />
           </div>
@@ -52,7 +49,9 @@ export const CompanyIndividualPage: React.FC<{
         <span className="font-semibold">Activities</span>
         <div className="w-full rounded-md border">
           <ActivitiesTable
-            activityData={activityData?.map((activity) => activity.activities)!}
+            activityData={
+              activityData?.map((activity) => activity.activities) ?? []
+            }
             pageData={{ type: "company", id: companyId }}
           />
         </div>

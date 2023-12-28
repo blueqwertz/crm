@@ -1,9 +1,5 @@
 import Head from "next/head";
 
-import { Sidebar } from "~/components/sidebar/sidebar-index";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
-import { CompanyPageTable } from "~/components/individual-page/page-table/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { ProjectPageTable } from "~/components/individual-page/page-table/project-page-table";
 import { AddProject } from "~/components/create/create-project";

@@ -1,16 +1,14 @@
 import React from "react";
-import { RouterOutputs, api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { ProjectsTable } from "../tables/projects-table";
 import { ActivitiesTable } from "../tables/activities-table";
 import { RelationsTable } from "../tables/relations-table";
-import { relations } from "drizzle-orm";
-import { Skeleton } from "../ui/skeleton";
 import { CompanyTable } from "../tables/company-table";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;
   contact: RouterOutputs["contact"]["getOne"];
-}> = ({ contactId, contact }) => {
+}> = ({ contactId }) => {
   const { data: projectData } = api.contact.getContactProjects.useQuery({
     id: contactId,
   });
@@ -52,7 +50,7 @@ export const ContactIndividualPage: React.FC<{
               <ProjectsTable
                 pageData={{ type: "Contact", id: contactId }}
                 projectData={
-                  projectData?.projects.map((project) => project.project)!
+                  projectData?.projects.map((project) => project.project) ?? []
                 }
               />
             </div>
@@ -63,7 +61,7 @@ export const ContactIndividualPage: React.FC<{
               <CompanyTable
                 pageData={{ type: "Contact", id: contactId }}
                 companyData={
-                  companyData?.companies.map((company) => company.company)!
+                  companyData?.companies.map((company) => company.company) ?? []
                 }
               />
             </div>
@@ -78,7 +76,7 @@ export const ContactIndividualPage: React.FC<{
                       outgoingContact: relation.outgoingContact,
                       receivingContact: relation.receivingContact,
                     };
-                  })!
+                  }) ?? []
                 }
                 receivingRelations={
                   relationsData?.receivingRelation.map((relation) => {
@@ -86,7 +84,7 @@ export const ContactIndividualPage: React.FC<{
                       outgoingContact: relation.outgoingContact,
                       receivingContact: relation.receivingContact,
                     };
-                  })!
+                  }) ?? []
                 }
               />
             </div>
@@ -97,7 +95,7 @@ export const ContactIndividualPage: React.FC<{
           <div className="w-full rounded-md border">
             <ActivitiesTable
               activityData={
-                activityData?.map((activity) => activity.activities)!
+                activityData?.map((activity) => activity.activities) ?? []
               }
               pageData={{ type: "contact", id: contactId }}
             />

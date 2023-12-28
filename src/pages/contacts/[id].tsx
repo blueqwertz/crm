@@ -1,13 +1,12 @@
 import Head from "next/head";
 
 import { api } from "~/utils/api";
-import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ContactIndividualPage } from "~/components/individual-page/contact-individual-page";
 import { Button } from "~/components/ui/button";
-import { Pen, Pencil, Wrench } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
@@ -26,9 +25,7 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
             <div className="flex flex-col">
               {!contactData && <Skeleton className="h-7 text-transparent" />}
               {!!contactData && (
-                <h1 className="text-xl font-bold">
-                  {contactData && contactData.name}
-                </h1>
+                <h1 className="text-xl font-bold">{contactData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
                 View contact details.

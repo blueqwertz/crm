@@ -1,11 +1,12 @@
 import Head from "next/head";
-
-import { api } from "~/utils/api";
-import { usePathname } from "next/navigation";
 import { Layout } from "~/components/layout";
+import { generateGreeting } from "~/utils/greeting";
+import { useSession } from "next-auth/react";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function Home() {
-  const { data } = api.contact.getAll.useQuery();
+  const { data: sessionData } = useSession();
+
   return (
     <>
       <Head>
@@ -14,8 +15,19 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex flex-grow flex-col items-center justify-center">
-          <span>{usePathname()}</span>
+        <div className="flex flex-grow flex-col p-5">
+          {/* HEADER */}
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold">Home</h1>
+              {!sessionData && <Skeleton className="h-5 w-40" />}
+              {!!sessionData && (
+                <span className="text-sm text-muted-foreground">
+                  {generateGreeting(sessionData?.user.name)}
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </Layout>
     </>

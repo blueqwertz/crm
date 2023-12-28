@@ -1,5 +1,5 @@
-import { projects } from "drizzle/schema";
-import { InferSelectModel } from "drizzle-orm";
+import type { projects } from "drizzle/schema";
+import type { InferSelectModel } from "drizzle-orm";
 import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -12,7 +12,7 @@ export const ProjectsTable: React.FC<{
 }> = ({ projectData, pageData }) => {
   return (
     <>
-      <AddProjectRelation pageData={pageData} projectData={projectData!} />
+      <AddProjectRelation pageData={pageData} projectData={projectData} />
       {!projectData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">

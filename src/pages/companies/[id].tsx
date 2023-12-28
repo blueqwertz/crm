@@ -1,13 +1,12 @@
 import Head from "next/head";
 
 import { api } from "~/utils/api";
-import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { CompanyIndividualPage } from "~/components/individual-page/company-individual-page";
 import { Button } from "~/components/ui/button";
-import { Settings, Wrench } from "lucide-react";
+import { Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
@@ -26,9 +25,7 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
             <div className="flex flex-col">
               {!companyData && <Skeleton className="h-7 text-transparent" />}
               {!!companyData && (
-                <h1 className="text-xl font-bold">
-                  {companyData && companyData.name}
-                </h1>
+                <h1 className="text-xl font-bold">{companyData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
                 View company details.

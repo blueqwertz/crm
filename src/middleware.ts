@@ -10,7 +10,7 @@ export default withAuth(
 
     const token = await getToken({ req });
     const isAuth = !!token;
-    const isAdmin = token?.role === "ADMIN";
+    // const isAdmin = token?.role === "ADMIN";
     const hasHead = !!token?.head?.id;
 
     console.log("MIDDLEWARE", token);
@@ -23,13 +23,13 @@ export default withAuth(
       req.nextUrl.pathname.startsWith(value),
     );
 
-    const requiresAuthPage = ["/dashboard"].find((value) =>
-      req.nextUrl.pathname.startsWith(value),
-    );
+    // const requiresAuthPage = ["/dashboard"].find((value) =>
+    //   req.nextUrl.pathname.startsWith(value),
+    // );
 
-    const requiresAdminPage = ["/admin"].find((value) =>
-      req.nextUrl.pathname.startsWith(value),
-    );
+    // const requiresAdminPage = ["/admin"].find((value) =>
+    //   req.nextUrl.pathname.startsWith(value),
+    // );
 
     if (!isAuth && !isAuthPage) {
       return NextResponse.redirect(new URL("/auth/login", req.url));

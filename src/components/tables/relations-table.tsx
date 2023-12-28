@@ -1,9 +1,7 @@
-import { InferSelectModel } from "drizzle-orm";
-import { contacts } from "drizzle/schema";
+import type { InferSelectModel } from "drizzle-orm";
+import type { contacts } from "drizzle/schema";
 import { Skeleton } from "../ui/skeleton";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { MoveHorizontal, MoveLeft, MoveRight } from "lucide-react";
-import { useEffect } from "react";
+import { MoveHorizontal, MoveRight } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";

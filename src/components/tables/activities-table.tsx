@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
-import { activities } from "drizzle/schema";
+import type { activities } from "drizzle/schema";
 import { AddActivity } from "../create/create-activity";
-import { InferSelectModel } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
@@ -29,15 +28,10 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       setLoading(true);
     },
     onSuccess: () => {
-      ctx.contact.getContactActivities.invalidate();
-      ctx.project.getProjectActivities.invalidate();
-      ctx.company.getCompanyActivities.invalidate();
-      toast.success("Activity deleted succesfully.", {
-        action: {
-          label: "Close",
-          onClick: () => {},
-        },
-      });
+      void ctx.contact.getContactActivities.invalidate();
+      void ctx.project.getProjectActivities.invalidate();
+      void ctx.company.getCompanyActivities.invalidate();
+      toast.success("Activity deleted succesfully.");
       setLoading(false);
     },
     onError: () => {

@@ -66,9 +66,9 @@ const ActivityForm: React.FC<{
     onSuccess: (contactCreated) => {
       form.setValue("contactIds", [
         ...form.getValues("contactIds")!,
-        contactCreated?.id!,
+        contactCreated?.id ?? "",
       ]);
-      ctx.contact.getAll.invalidate();
+      void ctx.contact.getAll.invalidate();
       toast.success(`Added contact.`);
     },
     onError: () => {
@@ -80,9 +80,9 @@ const ActivityForm: React.FC<{
     onSuccess: (companyCreated) => {
       form.setValue("companyIds", [
         ...form.getValues("companyIds")!,
-        companyCreated?.id!,
+        companyCreated?.id ?? "",
       ]);
-      ctx.company.getAll.invalidate();
+      void ctx.company.getAll.invalidate();
       toast.success(`Added company.`);
     },
     onError: () => {
@@ -94,9 +94,9 @@ const ActivityForm: React.FC<{
     onSuccess: (projectCreated) => {
       form.setValue("projectIds", [
         ...form.getValues("projectIds")!,
-        projectCreated?.id!,
+        projectCreated?.id ?? "",
       ]);
-      ctx.project.getAll.invalidate();
+      void ctx.project.getAll.invalidate();
       toast.success(`Added project.`);
     },
     onError: () => {
@@ -109,15 +109,10 @@ const ActivityForm: React.FC<{
       setLoading(true);
     },
     onSuccess: () => {
-      ctx.contact.getContactActivities.invalidate();
-      ctx.project.getProjectActivities.invalidate();
-      ctx.company.getCompanyActivities.invalidate();
-      toast.success("Activity added succesfully.", {
-        action: {
-          label: "Close",
-          onClick: () => {},
-        },
-      });
+      void ctx.contact.getContactActivities.invalidate();
+      void ctx.project.getProjectActivities.invalidate();
+      void ctx.company.getCompanyActivities.invalidate();
+      toast.success("Activity added succesfully.");
       setLoading(false);
       form.reset();
       setOpen(false);
@@ -141,9 +136,9 @@ const ActivityForm: React.FC<{
     })
     .superRefine((values, ctx) => {
       if (
-        (!values.contactIds || !values.contactIds.length) &&
-        (!values.companyIds || !values.companyIds.length) &&
-        (!values.projectIds || !values.projectIds.length)
+        !values?.contactIds?.length &&
+        !values?.companyIds?.length &&
+        !values?.projectIds?.length
       ) {
         ctx.addIssue({
           message: "Either company, contact or project must be selected",
@@ -282,10 +277,10 @@ const ActivityForm: React.FC<{
                         options={
                           contacts?.map((contacts) => {
                             return {
-                              value: contacts.id!,
-                              label: contacts.name!,
+                              value: contacts.id ?? "",
+                              label: contacts.name ?? "",
                             };
-                          })!
+                          }) ?? []
                         }
                         noResultsName="contact"
                         noResultsClick={(value) => {
@@ -296,7 +291,7 @@ const ActivityForm: React.FC<{
                           });
                         }}
                         value={field.value}
-                        setValue={(value, label) => {
+                        setValue={(value) => {
                           if (!value) {
                             return;
                           }
@@ -329,14 +324,14 @@ const ActivityForm: React.FC<{
                   <FormItem>
                     <FormLabel>Company</FormLabel>
                     <FormControl>
-                      {!!companies && companies.length ? (
+                      {!!companies && !!companies.length ? (
                         <ComboboxMulti
                           placeholder={"Select company..."}
                           options={
-                            companies?.map((company) => {
+                            companies.map((company) => {
                               return {
-                                value: company.id!,
-                                label: company.name!,
+                                value: company.id ?? "",
+                                label: company.name ?? "",
                               };
                             })!
                           }
@@ -349,7 +344,7 @@ const ActivityForm: React.FC<{
                             });
                           }}
                           value={field.value}
-                          setValue={(value, label) => {
+                          setValue={(value) => {
                             if (!value) {
                               return;
                             }
@@ -389,7 +384,7 @@ const ActivityForm: React.FC<{
                                 value: project.id!,
                                 label: project.name!,
                               };
-                            })!
+                            }) ?? []
                           }
                           noResultsName="project"
                           noResultsClick={(value) => {
@@ -400,7 +395,7 @@ const ActivityForm: React.FC<{
                             });
                           }}
                           value={field.value}
-                          setValue={(value, label) => {
+                          setValue={(value) => {
                             if (!value) {
                               return;
                             }
@@ -581,7 +576,7 @@ export const AddActivity: React.FC<{
   return (
     <>
       <div className="flex text-sm">
-        {typeArray.map((entry, index) => {
+        {typeArray.map((entry) => {
           return <ActivityForm entry={entry} pageData={pageData} />;
         })}
       </div>

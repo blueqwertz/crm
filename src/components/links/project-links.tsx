@@ -1,6 +1,6 @@
-import { InferSelectModel } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import { companies, contacts, projects } from "drizzle/schema";
+import type { projects } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -31,10 +31,10 @@ export const AddProjectRelation: React.FC<{
       setDisabled(false);
       toast.success("Project succesfully added.");
       setSelectedOption((prev) => {
-        if (!prev) return [value?.id!];
-        return [...prev, value?.id!];
+        if (!prev) return [value?.id ?? ""];
+        return [...prev, value?.id ?? ""];
       });
-      ctx.project.getAll.invalidate();
+      void ctx.project.getAll.invalidate();
     },
     onError: () => {
       setDisabled(false);
@@ -48,7 +48,7 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.contact.getContactProjects.invalidate();
+      void ctx.contact.getContactProjects.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -63,7 +63,7 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.company.getCompanyProjects.invalidate();
+      void ctx.company.getCompanyProjects.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -105,7 +105,7 @@ export const AddProjectRelation: React.FC<{
               },
             });
           }}
-          setValue={(value, label) => {
+          setValue={(value) => {
             if (!value) {
               return;
             }
@@ -149,19 +149,19 @@ export const AddProjectRelation: React.FC<{
           className="h-9 rounded-none rounded-tr-md border-b border-l"
           disabled={disabled}
           onClick={() => {
-            if (!selectedOption || !selectedOption.length) {
+            if (!selectedOption?.length) {
               toast.error("Please select a contact");
               return;
             }
             if (pageData.type == "Contact") {
               addProjectToContact({
                 contactId: pageData.id,
-                projectIds: selectedOption!,
+                projectIds: selectedOption,
               });
             } else if (pageData.type == "Company") {
               addProjectToCompany({
                 companyId: pageData.id,
-                projectIds: selectedOption!,
+                projectIds: selectedOption,
               });
             }
           }}

@@ -1,13 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
-import { contacts, headInvitationLinks, users } from "drizzle/schema";
+import { and, eq, isNull } from "drizzle-orm";
+import { headInvitationLinks, users } from "drizzle/schema";
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const headRouter = createTRPCRouter({
   checkInvite: protectedProcedure

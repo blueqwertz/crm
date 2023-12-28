@@ -12,6 +12,7 @@ import {
 import { statusMaps } from "~/utils/maps";
 import { cn } from "~/utils/cn";
 import { Skeleton } from "../../ui/skeleton";
+import { ProjectPageTableEdit } from "./project-page-table-edit";
 
 export const ProjectPageTable = () => {
   const { data: projectData } = api.project.getAll.useQuery();
@@ -46,17 +47,17 @@ export const ProjectPageTable = () => {
               passHref={true}
               href={`/projects/${project.id}`}
               key={project.id}
-              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50 sm:px-6"
+              className="flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50"
             >
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 px-4 py-4">
                 <div className="flex h-8 items-center gap-2 text-base">
                   <span className="font-semibold">{project.name}</span>
                   <Badge
                     variant={"outline"}
                     className={cn("text-[11px] text-xs leading-3")}
                   >
-                    {statusMaps[project.status!].icon!}
-                    {statusMaps[project.status!]?.title}
+                    {statusMaps[project.status!].icon}
+                    {statusMaps[project.status!].title}
                   </Badge>
                 </div>
                 {!!project.description && (
@@ -147,6 +148,7 @@ export const ProjectPageTable = () => {
                   </>
                 )}
               </div>
+              <ProjectPageTableEdit projectId={project.id} />
             </Link>
           );
         })}

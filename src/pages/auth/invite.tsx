@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import Head from "next/head";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 export default function AuthenticationPage() {
@@ -20,7 +20,7 @@ export default function AuthenticationPage() {
     },
     onSuccess: () => {
       setLoading(false);
-      router.replace("/");
+      void router.replace("/");
     },
     onError: () => {
       setLoading(false);

@@ -1,11 +1,5 @@
-import React from "react";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
-import { Sidebar } from "~/components/sidebar/sidebar-index";
-import { usePathname } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
 import { CompanyPageTable } from "~/components/individual-page/page-table/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { AddCompany } from "~/components/create/create-company";

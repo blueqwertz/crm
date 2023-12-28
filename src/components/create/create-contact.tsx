@@ -1,4 +1,4 @@
-import { CopySlash, Loader2, Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,16 +40,10 @@ export const AddContact = () => {
     },
     onSuccess: () => {
       setLoading(false);
-      setOpen(false);
-      toast.success("Added contact.", {
-        action: {
-          label: "Close",
-          onClick: () => {},
-        },
-      });
+      toast.success("Added contact.");
       void ctx.contact.getAll.invalidate();
     },
-    onError: (error) => {
+    onError: () => {
       setLoading(false);
     },
   });
@@ -57,13 +51,13 @@ export const AddContact = () => {
   const { mutate: addCompany } = api.company.addOne.useMutation({
     onSuccess: (companies) => {
       form.setValue("companyIds", [
-        ...form.getValues("companyIds")!,
-        companies?.id!,
+        ...(form.getValues("companyIds") ?? []),
+        companies?.id ?? "",
       ]);
-      ctx.company.getAll.invalidate();
+      void ctx.company.getAll.invalidate();
       toast.success(`Added company ${companies?.name}.`);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error("Failed to add company.");
     },
   });
@@ -86,18 +80,11 @@ export const AddContact = () => {
     form.clearErrors();
   }
 
-  const [open, setOpen] = useState(false);
-
   return (
     <>
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
+          <Button size={"sm"}>
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
@@ -124,7 +111,7 @@ export const AddContact = () => {
               <FormField
                 control={form.control}
                 name="companyIds"
-                render={({ field }) => (
+                render={({}) => (
                   <FormItem>
                     <FormLabel>Company</FormLabel>
                     <FormControl>
@@ -134,20 +121,21 @@ export const AddContact = () => {
                           options={
                             companies?.map((company) => {
                               return {
-                                value: company.id!,
+                                value: company.id,
                                 label: company.name!,
                               };
-                            })!
+                            }) ?? []
                           }
                           noResultsName="company"
                           noResultsClick={(value) => {
                             addCompany({ companyData: { name: value } });
                           }}
                           value={form.getValues("companyIds")}
-                          setValue={(value, label) => {
+                          setValue={(value) => {
                             if (!value) {
                               return;
                             }
+
                             const currentCompanyIds =
                               form.getValues("companyIds") ?? [];
 

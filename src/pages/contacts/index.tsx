@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { ContactPageTable } from "~/components/individual-page/page-table/contact-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { AddContact } from "~/components/create/create-contact";
