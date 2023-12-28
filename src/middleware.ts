@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   async function middleware(req) {
-    if (req.nextUrl.pathname.startsWith("/api")) {
+    if (
+      req.nextUrl.pathname.startsWith("/api") ||
+      req.nextUrl.pathname.startsWith("/en/api")
+    ) {
       return;
     }
 
