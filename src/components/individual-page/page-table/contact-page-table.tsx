@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 import { cn } from "~/utils/cn";
 
 export const ContactPageTable = () => {

@@ -4,7 +4,7 @@ import { Building2, Mail, Voicemail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 export const CompanyPageTable = () => {
   const { data: companyData } = api.company.getAll.useQuery();

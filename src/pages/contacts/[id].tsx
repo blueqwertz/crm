@@ -5,7 +5,7 @@ import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ContactIndividualPage } from "~/components/contact-individual-page";
+import { ContactIndividualPage } from "~/components/individual-page/contact-individual-page";
 import { Button } from "~/components/ui/button";
 import { Pen, Pencil, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";

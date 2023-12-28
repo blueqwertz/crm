@@ -1,20 +1,19 @@
-import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
-import { Input } from "./ui/input";
-import { AddContactRelation } from "./add-contact-relation";
+import { projects } from "drizzle/schema";
 import { InferSelectModel } from "drizzle-orm";
-import { contacts } from "drizzle/schema";
+import Link from "next/link";
+import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Skeleton } from "../ui/skeleton";
+import { AddProjectRelation } from "../links/project-links";
 
-export const ContactsTable: React.FC<{
-  contactData: InferSelectModel<typeof contacts>[];
-  pageData: { type: "Company" | "Project"; id: string };
-}> = ({ contactData, pageData }) => {
+export const ProjectsTable: React.FC<{
+  projectData: InferSelectModel<typeof projects>[];
+  pageData: { type: "Company" | "Contact"; id: string };
+}> = ({ projectData, pageData }) => {
   return (
     <>
-      <AddContactRelation pageData={pageData} contactData={contactData!} />
-      {!contactData && (
+      <AddProjectRelation pageData={pageData} projectData={projectData!} />
+      {!projectData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -26,29 +25,31 @@ export const ContactsTable: React.FC<{
           </div>
         </>
       )}
-      {!!contactData && !contactData.length && (
+      {!!projectData && !projectData.length && (
         <>
           <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No contacts
+            No projects
           </div>
         </>
       )}
-      {!!contactData && (
+      {!!projectData && (
         <>
-          {contactData.map((contact) => {
+          {projectData.map((project) => {
             return (
               <Link
-                key={contact.id}
-                href={`/contacts/${contact.id}`}
+                key={project.id}
+                href={`/projects/${project.id}`}
                 className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={contact.image!} />
+                  <AvatarImage src={project.image!} />
                   <AvatarFallback className="text-[11px]">
-                    {contact.name?.[0]}
+                    {project.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-base font-medium">{contact.name}</span>
+                <span className="truncate text-base">
+                  <span className="font-semibold">{project.name}</span>
+                </span>
               </Link>
             );
           })}

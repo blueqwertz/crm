@@ -10,14 +10,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
+} from "../ui/form";
+import { Input } from "../ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "sonner";
-import { ComboboxMulti } from "./ui/combobox-multi";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Skeleton } from "./ui/skeleton";
+import { ComboboxMulti } from "../ui/combobox-multi";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Skeleton } from "../ui/skeleton";
 
 export const AddContact = () => {
   const { data: companies } = api.company.getAll.useQuery();

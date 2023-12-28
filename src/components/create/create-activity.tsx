@@ -7,7 +7,7 @@ import {
   Voicemail,
   Zap,
 } from "lucide-react";
-import { Button, buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   Popover,
   PopoverContent,
@@ -41,9 +41,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ComboboxMulti } from "./ui/combobox-multi";
+import { ComboboxMulti } from "../ui/combobox-multi";
 import { api } from "~/utils/api";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
 
 const ActivityForm: React.FC<{

@@ -4,7 +4,7 @@ import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ProjectIndividualPage } from "~/components/project-indiviual-page";
+import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Button } from "~/components/ui/button";
 import { Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";

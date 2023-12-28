@@ -1,8 +1,8 @@
 import React from "react";
 import { api } from "~/utils/api";
-import { ContactsTable } from "./contacts-table";
-import { ActivitiesTable } from "./activities-table";
-import { CompanyTable } from "./company-table";
+import { ContactsTable } from "../tables/contacts-table";
+import { ActivitiesTable } from "../tables/activities-table";
+import { CompanyTable } from "../tables/company-table";
 
 export const ProjectIndividualPage: React.FC<{
   projectId: string;

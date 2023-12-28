@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import { activities } from "drizzle/schema";
-import { AddActivity } from "./create-activity";
+import { AddActivity } from "../create/create-activity";
 import { InferSelectModel } from "drizzle-orm";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
 import {
@@ -18,7 +18,7 @@ import "@/utils/relative";
 import { toast } from "sonner";
 import { cn } from "~/utils/cn";
 import { typeMaps } from "~/utils/maps";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -108,7 +108,7 @@ export const ActivitiesTable: React.FC<{
                 className="absolute top-1/2 h-16 translate-x-[14.5px] group-last:hidden"
               />
 
-              <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5">
+              <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5 ring-4 ring-background">
                 {typeMaps[activity.type!].icon}
               </div>
               {!!activity.description && (

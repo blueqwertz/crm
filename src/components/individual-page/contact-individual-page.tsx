@@ -1,11 +1,11 @@
 import React from "react";
 import { RouterOutputs, api } from "~/utils/api";
-import { ProjectsTable } from "./projects-table";
-import { ActivitiesTable } from "./activities-table";
-import { RelationsTable } from "./relations-table";
+import { ProjectsTable } from "../tables/projects-table";
+import { ActivitiesTable } from "../tables/activities-table";
+import { RelationsTable } from "../tables/relations-table";
 import { relations } from "drizzle-orm";
-import { Skeleton } from "./ui/skeleton";
-import { CompanyTable } from "./company-table";
+import { Skeleton } from "../ui/skeleton";
+import { CompanyTable } from "../tables/company-table";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;

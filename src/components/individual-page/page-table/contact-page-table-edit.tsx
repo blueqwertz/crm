@@ -23,9 +23,9 @@ import { api } from "~/utils/api";
 import { toast } from "sonner";
 import { InferSelectModel } from "drizzle-orm";
 import { contacts } from "drizzle/schema";
-import { Button } from "./ui/button";
-import { Combobox } from "./ui/combobox";
-import { Input } from "./ui/input";
+import { Button } from "../../ui/button";
+import { Combobox } from "../../ui/combobox";
+import { Input } from "../../ui/input";
 
 export const ContactPageTableEdit: React.FC<{
   contact: InferSelectModel<typeof contacts>;

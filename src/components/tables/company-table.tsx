@@ -1,11 +1,11 @@
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import { InferSelectModel } from "drizzle-orm";
 import { companies } from "drizzle/schema";
-import { AddCompany } from "./create-company";
-import { AddCompanyRelation } from "./add-company-relation";
+import { AddCompany } from "../create/create-company";
+import { AddCompanyRelation } from "../links/company-links";
 
 export const CompanyTable: React.FC<{
   companyData: InferSelectModel<typeof companies>[];

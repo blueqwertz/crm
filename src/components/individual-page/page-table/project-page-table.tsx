@@ -1,6 +1,6 @@
 import { api } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../ui/badge";
 import { Briefcase } from "lucide-react";
 import Link from "next/link";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { statusMaps } from "~/utils/maps";
 import { cn } from "~/utils/cn";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 
 export const ProjectPageTable = () => {
   const { data: projectData } = api.project.getAll.useQuery();

@@ -1,11 +1,11 @@
 import React from "react";
 import { RouterOutputs, api } from "~/utils/api";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
-import { ProjectsTable } from "./projects-table";
-import { ContactsTable } from "./contacts-table";
-import { ActivitiesTable } from "./activities-table";
-import { Input } from "./ui/input";
+import { ProjectsTable } from "../tables/projects-table";
+import { ContactsTable } from "../tables/contacts-table";
+import { ActivitiesTable } from "../tables/activities-table";
+import { Input } from "../ui/input";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
