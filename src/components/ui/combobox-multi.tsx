@@ -25,7 +25,8 @@ type ComboboxInput = {
     label: string;
   }[];
   className?: string;
-  noResults?: React.ReactNode;
+  noResultsName?: string;
+  noResultsClick?: (value: string) => void;
   children?: React.ReactNode;
 };
 
@@ -35,7 +36,8 @@ export function ComboboxMulti({
   value,
   setValue,
   className,
-  noResults,
+  noResultsName,
+  noResultsClick,
   children,
 }: ComboboxInput) {
   const [input, setInput] = React.useState("");
@@ -65,9 +67,29 @@ export function ComboboxMulti({
         )}
       </PopoverTrigger>
       <PopoverContent className="w-[250px] p-0" align="start">
-        <Command value={input} onValueChange={setInput}>
-          <CommandInput placeholder={placeholder} />
-          <CommandEmpty>No results found.</CommandEmpty>
+        <Command>
+          <CommandInput
+            placeholder={placeholder}
+            value={input}
+            onValueChange={setInput}
+          />
+          <CommandEmpty>
+            {!!noResultsName ? (
+              <span
+                className="cursor-pointer hover:underline"
+                onClick={() => {
+                  if (!!noResultsClick) {
+                    noResultsClick(input);
+                    setInput("");
+                  }
+                }}
+              >
+                Add {noResultsName} "{input}"
+              </span>
+            ) : (
+              "No results found."
+            )}
+          </CommandEmpty>
           <CommandGroup className="max-h-[250px] overflow-y-scroll">
             {options.map((option) => (
               <CommandItem

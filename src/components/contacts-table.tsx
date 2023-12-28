@@ -40,7 +40,7 @@ export const ContactsTable: React.FC<{
               <Link
                 key={contact.id}
                 href={`/contacts/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50"
+                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={contact.image!} />

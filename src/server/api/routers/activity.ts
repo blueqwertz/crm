@@ -131,6 +131,7 @@ export const activityRouer = createTRPCRouter({
         }
       });
     }),
+
   deleteOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {

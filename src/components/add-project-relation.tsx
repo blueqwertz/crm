@@ -1,6 +1,6 @@
 import { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "./ui/combobox-multi";
-import { contacts } from "drizzle/schema";
+import { companies, contacts, projects } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "./ui/button";
@@ -9,46 +9,46 @@ import { api } from "~/utils/api";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
 
-export const AddContactRelation: React.FC<{
-  pageData: { type: "Company" | "Project"; id: string };
-  contactData: InferSelectModel<typeof contacts>[];
-}> = ({ pageData, contactData }) => {
+export const AddProjectRelation: React.FC<{
+  pageData: { type: "Company" | "Contact"; id: string };
+  projectData: InferSelectModel<typeof projects>[];
+}> = ({ pageData, projectData }) => {
   const [selectedOption, setSelectedOption] = useState<string[] | undefined>(
     undefined,
   );
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data } = api.contact.getAll.useQuery();
+  const { data } = api.project.getAll.useQuery();
 
   const ctx = api.useUtils();
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addProject } = api.project.addOne.useMutation({
     onMutate: () => {
       setDisabled(true);
     },
     onSuccess: (value) => {
       setDisabled(false);
-      toast.success("Contact succesfully added.");
+      toast.success("Project succesfully added.");
       setSelectedOption((prev) => {
         if (!prev) return [value?.id!];
         return [...prev, value?.id!];
       });
-      ctx.contact.getAll.invalidate();
+      ctx.project.getAll.invalidate();
     },
     onError: () => {
       setDisabled(false);
-      toast.error("Failed to add contact.");
+      toast.error("Failed to add project.");
     },
   });
 
-  const { mutate: addContactToCompany } = api.company.addContact.useMutation({
+  const { mutate: addProjectToContact } = api.contact.addProject.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.company.getCompanyContacts.invalidate();
+      ctx.contact.getContactProjects.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -57,13 +57,13 @@ export const AddContactRelation: React.FC<{
     },
   });
 
-  const { mutate: addContactToProject } = api.project.addContact.useMutation({
+  const { mutate: addProjectToCompany } = api.company.addProject.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.project.getProjectContacts.invalidate();
+      ctx.company.getCompanyProjects.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -82,7 +82,7 @@ export const AddContactRelation: React.FC<{
 
   const options =
     data
-      .filter((option) => !contactData?.some((entry) => entry.id == option.id))
+      .filter((option) => !projectData?.some((entry) => entry.id == option.id))
       .map((option) => {
         return {
           value: option.id!,
@@ -94,13 +94,13 @@ export const AddContactRelation: React.FC<{
     <>
       <div className="flex">
         <ComboboxMulti
-          placeholder={"Select contact..."}
+          placeholder={"Select project..."}
           options={options}
           value={selectedOption}
-          noResultsName="contact"
+          noResultsName="project"
           noResultsClick={(value) => {
-            addContact({
-              contactData: {
+            addProject({
+              projectData: {
                 name: value,
               },
             });
@@ -138,7 +138,7 @@ export const AddContactRelation: React.FC<{
             ) : (
               <span className="flex items-center text-muted-foreground">
                 <Plus className="mr-1 h-3 w-3" />
-                Add contact...
+                Add project...
               </span>
             )}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -153,15 +153,15 @@ export const AddContactRelation: React.FC<{
               toast.error("Please select a contact");
               return;
             }
-            if (pageData.type == "Company") {
-              addContactToCompany({
-                companyId: pageData.id,
-                contactIds: selectedOption!,
+            if (pageData.type == "Contact") {
+              addProjectToContact({
+                contactId: pageData.id,
+                projectIds: selectedOption!,
               });
-            } else if (pageData.type == "Project") {
-              addContactToProject({
-                projectId: pageData.id,
-                contactIds: selectedOption!,
+            } else if (pageData.type == "Company") {
+              addProjectToCompany({
+                companyId: pageData.id,
+                projectIds: selectedOption!,
               });
             }
           }}

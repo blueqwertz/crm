@@ -36,7 +36,7 @@ export const CompanyPageTable = () => {
             <Link
               href={`/companies/${company.id}`}
               key={company.id}
-              className="flex gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50 sm:px-6"
+              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50 sm:px-6"
             >
               <Avatar className="h-8 w-8 border">
                 <AvatarImage src={company.image!} alt="" />
@@ -48,8 +48,19 @@ export const CompanyPageTable = () => {
                 <div className="flex h-8 items-center gap-2 text-base">
                   <span className="font-semibold">{company.name}</span>
                 </div>
-                {}
               </div>
+              {!!company.contactCount && (
+                <Badge variant={"outline"} className="text-xs">
+                  {company.contactCount}{" "}
+                  {company.contactCount === 1 ? "contact" : "contacts"}
+                </Badge>
+              )}
+              {!!company.projectCount && (
+                <Badge variant={"outline"} className="text-xs">
+                  {company.projectCount}{" "}
+                  {company.projectCount === 1 ? "project" : "projects"}
+                </Badge>
+              )}
             </Link>
           );
         })}

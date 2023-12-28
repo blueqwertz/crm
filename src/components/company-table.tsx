@@ -1,19 +1,20 @@
-import { projects } from "drizzle/schema";
-import { InferSelectModel } from "drizzle-orm";
-import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
-import { AddProjectRelation } from "./add-project-relation";
+import { InferSelectModel } from "drizzle-orm";
+import { companies } from "drizzle/schema";
+import { AddCompany } from "./create-company";
+import { AddCompanyRelation } from "./add-company-relation";
 
-export const ProjectsTable: React.FC<{
-  projectData: InferSelectModel<typeof projects>[];
+export const CompanyTable: React.FC<{
+  companyData: InferSelectModel<typeof companies>[];
   pageData: { type: "Company" | "Project" | "Contact"; id: string };
-}> = ({ projectData, pageData }) => {
+}> = ({ companyData, pageData }) => {
   return (
     <>
-      <AddProjectRelation pageData={pageData} projectData={projectData!} />
-      {!projectData && (
+      <AddCompanyRelation pageData={pageData} companyData={companyData} />
+      {!companyData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -25,31 +26,29 @@ export const ProjectsTable: React.FC<{
           </div>
         </>
       )}
-      {!!projectData && !projectData.length && (
+      {!!companyData && !companyData.length && (
         <>
           <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No projects
+            No companies
           </div>
         </>
       )}
-      {!!projectData && (
+      {!!companyData && (
         <>
-          {projectData.map((project) => {
+          {companyData.map((contact) => {
             return (
               <Link
-                key={project.id}
-                href={`/projects/${project.id}`}
-                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
+                key={contact.id}
+                href={`/contacts/${contact.id}`}
+                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={project.image!} />
+                  <AvatarImage src={contact.image!} />
                   <AvatarFallback className="text-[11px]">
-                    {project.name?.[0]}
+                    {contact.name?.[0]}
                   </AvatarFallback>
                 </Avatar>
-                <span className="truncate text-base">
-                  <span className="font-semibold">{project.name}</span>
-                </span>
+                <span className="text-base font-medium">{contact.name}</span>
               </Link>
             );
           })}

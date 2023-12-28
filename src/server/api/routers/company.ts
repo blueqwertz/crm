@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import {
   activities,
   companies,
   companiesToActivities,
+  companiesToProjects,
   contacts,
   contactsToCompanies,
 } from "drizzle/schema";
@@ -13,9 +14,28 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const companyRotuer = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.query.companies.findMany({
-      orderBy: (company) => [desc(company.createdAt)],
-    });
+    // return ctx.db.query.companies.findMany({
+    //   orderBy: (company) => [desc(company.createdAt)],
+    // });
+    return ctx.db
+      .select({
+        id: companies.id,
+        image: companies.image,
+        name: companies.name,
+        contactCount: count(contactsToCompanies.contactId).mapWith(Number),
+        projectCount: count(companiesToProjects.projectId).mapWith(Number),
+      })
+      .from(companies)
+      .leftJoin(
+        contactsToCompanies,
+        eq(companies.id, contactsToCompanies.companyId),
+      )
+      .leftJoin(
+        companiesToProjects,
+        eq(companies.id, companiesToProjects.companyId),
+      )
+      .orderBy(desc(companies.createdAt))
+      .groupBy(companies.id);
   }),
 
   getOne: protectedProcedure
@@ -111,13 +131,18 @@ export const companyRotuer = createTRPCRouter({
         }),
       }),
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.db.insert(companies).values({
-        headId: ctx.session.user.head.id,
-        name: input.companyData.name,
-        info: input.companyData.info,
-        field: input.companyData.field,
-      });
+    .mutation(async ({ ctx, input }) => {
+      const [companyCreated] = await ctx.db
+        .insert(companies)
+        .values({
+          headId: ctx.session.user.head.id,
+          name: input.companyData.name,
+          info: input.companyData.info,
+          field: input.companyData.field,
+        })
+        .returning({ id: companies.id, name: companies.name });
+
+      return companyCreated;
     }),
 
   deleteOne: protectedProcedure
@@ -152,14 +177,19 @@ export const companyRotuer = createTRPCRouter({
         return null;
       }
 
-      return ctx.db.insert(contactsToCompanies).values(
-        input.contactIds.map((id) => {
-          return {
-            contactId: id,
-            companyId: input.companyId,
-          };
-        }),
-      );
+      const contactLink = await ctx.db
+        .insert(contactsToCompanies)
+        .values(
+          input.contactIds.map((id) => {
+            return {
+              contactId: id,
+              companyId: input.companyId,
+            };
+          }),
+        )
+        .returning({ id: contactsToCompanies.contactId });
+
+      return contactLink;
     }),
 
   createAndAddContact: protectedProcedure
@@ -192,5 +222,39 @@ export const companyRotuer = createTRPCRouter({
           companyId: input.companyId,
         });
       });
+    }),
+
+  addProject: protectedProcedure
+    .input(
+      z.object({
+        projectIds: z.array(z.string()),
+        companyId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const company = await ctx.db.query.companies.findFirst({
+        where: and(
+          eq(companies.headId, ctx.session.user.head.id),
+          eq(companies.id, input.companyId),
+        ),
+      });
+
+      if (!company) {
+        return null;
+      }
+
+      const contactLink = await ctx.db
+        .insert(companiesToProjects)
+        .values(
+          input.projectIds.map((id) => {
+            return {
+              projectId: id,
+              companyId: input.companyId,
+            };
+          }),
+        )
+        .returning({ id: companiesToProjects.projectId });
+
+      return contactLink;
     }),
 });

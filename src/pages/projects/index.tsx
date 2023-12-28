@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { ProjectPageTable } from "~/components/project-page-table";
-import { AddProject } from "~/components/add-project";
+import { AddProject } from "~/components/create-project";
 import { Layout } from "~/components/layout";
 
 export default function Projects() {

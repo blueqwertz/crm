@@ -40,6 +40,7 @@ export const CompanyIndividualPage: React.FC<{
           <span className="font-semibold">Projects</span>
           <div className="w-full overflow-hidden rounded-md border">
             <ProjectsTable
+              pageData={{ type: "Company", id: companyId }}
               projectData={
                 projectData?.projects.map((project) => project.project)!
               }

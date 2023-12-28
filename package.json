@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate:pg --out ./drizzle/migrations --breakpoints --schema=./drizzle/schema.ts",
     "db:migrate": "tsx drizzle/migrate",
     "dev": "next dev",
-    "dev:studio": "dotenv drizzle-kit push:pg && concurrently -k \"npm run dev \" \"npm run db:studio\"",
+    "dev:studio": "concurrently -k \"npm run dev \" \"npm run db:studio\"",
+    "dev:full": "dotenv drizzle-kit push:pg && concurrently -k \"npm run dev \" \"npm run db:studio\"",
     "lint": "next lint",
     "start": "next start"
   },

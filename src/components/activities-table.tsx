@@ -2,17 +2,23 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import { activities } from "drizzle/schema";
-import { AddActivity } from "./add-activity";
+import { AddActivity } from "./create-activity";
 import { InferSelectModel } from "drizzle-orm";
 import { Button } from "./ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import dayjs from "dayjs";
 import "@/utils/relative";
 import { toast } from "sonner";
 import { cn } from "~/utils/cn";
 import { typeMaps } from "~/utils/maps";
+import { Separator } from "./ui/separator";
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -26,7 +32,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
-      toast("Activity deleted succesfully.", {
+      toast.success("Activity deleted succesfully.", {
         action: {
           label: "Close",
           onClick: () => {},
@@ -40,17 +46,26 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   });
 
   return (
-    <Button
-      size={"icon"}
-      className="h-7 w-7 shrink-0 text-muted-foreground"
-      variant={"ghost"}
-      onClick={() => {
-        deleteActivity({ id });
-      }}
-    >
-      {!loading && <X className="h-4 w-4" />}
-      {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
-    </Button>
+    <>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size={"icon"}
+              className="h-7 w-7 shrink-0 text-muted-foreground"
+              variant={"ghost"}
+              onClick={() => {
+                deleteActivity({ id });
+              }}
+            >
+              {!loading && <X className="h-4 w-4" />}
+              {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Delete</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </>
   );
 };
 
@@ -86,9 +101,14 @@ export const ActivitiesTable: React.FC<{
             <div
               key={activity.id}
               // href={`/activities/${activity.id}`}
-              className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none"
+              className="group relative flex items-center gap-2 px-4 py-4 transition-colors last:border-none"
             >
-              <div className="mr-1 shrink-0 rounded-md border p-1.5">
+              <Separator
+                orientation="vertical"
+                className="absolute top-1/2 h-16 translate-x-[14.5px] group-last:hidden"
+              />
+
+              <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5">
                 {typeMaps[activity.type!].icon}
               </div>
               {!!activity.description && (

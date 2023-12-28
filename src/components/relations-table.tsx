@@ -6,6 +6,7 @@ import { MoveHorizontal, MoveLeft, MoveRight } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "./ui/button";
+import Link from "next/link";
 
 export const RelationsTable: React.FC<{
   outgoingRelations: {
@@ -52,7 +53,7 @@ export const RelationsTable: React.FC<{
               })
               .map((relation) => {
                 return (
-                  <div className="flex grow justify-between gap-3 border border-l-0 border-r-0 border-t-0 p-2">
+                  <div className="flex grow justify-between gap-3 border-b p-2 last:border-none">
                     <div
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
@@ -62,18 +63,23 @@ export const RelationsTable: React.FC<{
                       {relation.outgoingContact.name}
                     </div>
 
-                    <Button size={"icon"} variant={"outline"}>
+                    <Button
+                      size={"icon"}
+                      variant={"outline"}
+                      className="pointer-events-none"
+                    >
                       <MoveHorizontal className="h-5 w-5" />
                     </Button>
 
-                    <div
+                    <Link
+                      href={`/contacts/${relation.receivingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
                         "h-[40px] flex-1 justify-start",
                       )}
                     >
                       {relation.receivingContact.name}
-                    </div>
+                    </Link>
                   </div>
                 );
               })}
@@ -85,7 +91,7 @@ export const RelationsTable: React.FC<{
               })
               .map((relation) => {
                 return (
-                  <div className="flex grow justify-between gap-3 border border-l-0 border-r-0 border-t-0 p-2">
+                  <div className="flex grow justify-between gap-3 border-b p-2 last:border-none">
                     <div
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
@@ -95,18 +101,23 @@ export const RelationsTable: React.FC<{
                       {relation.outgoingContact.name}
                     </div>
 
-                    <Button size={"icon"} variant={"outline"}>
+                    <Button
+                      size={"icon"}
+                      variant={"outline"}
+                      className="pointer-events-none"
+                    >
                       <MoveRight className="h-5 w-5" />
                     </Button>
 
-                    <div
+                    <Link
+                      href={`/contacts/${relation.receivingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
                         "h-[40px] flex-1 justify-start",
                       )}
                     >
                       {relation.receivingContact.name}
-                    </div>
+                    </Link>
                   </div>
                 );
               })}
@@ -119,17 +130,22 @@ export const RelationsTable: React.FC<{
               })
               .map((relation) => {
                 return (
-                  <div className="-m-px flex grow justify-between gap-3 border border-l-0 border-r-0 border-t-0 p-2">
-                    <div
+                  <div className="-m-px flex grow justify-between gap-3 border-b p-2 last:border-none">
+                    <Link
+                      href={`/contacts/${relation.outgoingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
                         "h-[40px] flex-1 justify-start",
                       )}
                     >
                       {relation.outgoingContact.name}
-                    </div>
+                    </Link>
 
-                    <Button size={"icon"} variant={"outline"}>
+                    <Button
+                      size={"icon"}
+                      variant={"outline"}
+                      className="pointer-events-none"
+                    >
                       <MoveRight className="h-5 w-5" />
                     </Button>
 

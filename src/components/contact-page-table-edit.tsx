@@ -49,7 +49,7 @@ export const ContactPageTableEdit: React.FC<{
       setDeleteLoading(true);
     },
     onSuccess: () => {
-      toast("Contact deleted succesfully.", {
+      toast.success("Contact deleted succesfully.", {
         action: {
           label: "Close",
           onClick: () => {},
@@ -67,7 +67,7 @@ export const ContactPageTableEdit: React.FC<{
       setLinkLoading(true);
     },
     onSuccess: () => {
-      toast("Contact linked succesfully.", {
+      toast.success("Contact linked succesfully.", {
         action: {
           label: "Close",
           onClick: () => {},
@@ -81,7 +81,7 @@ export const ContactPageTableEdit: React.FC<{
     },
     onError: (error) => {
       console.log(error);
-      toast(error.message);
+      toast.error(error.message);
       setLinkLoading(false);
     },
   });
@@ -134,7 +134,7 @@ export const ContactPageTableEdit: React.FC<{
             </div>
             <div className="grid grid-cols-[1fr_40px_1fr] items-center justify-between gap-3 text-sm text-muted-foreground">
               <span>Contact</span>
-              <div>dir.</div>
+              <span></span>
               <span>Contact</span>
             </div>
             <div className="grid grid-cols-[1fr_40px_1fr] items-center justify-between gap-3">

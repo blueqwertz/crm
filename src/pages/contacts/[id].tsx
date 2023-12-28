@@ -40,7 +40,7 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
             </Button>
           </div>
           <Breadcrumbs lastItem={contactData?.name} />
-          <ContactIndividualPage contactId={id} />
+          <ContactIndividualPage contactId={id} contact={contactData} />
         </div>
       </Layout>
     </>

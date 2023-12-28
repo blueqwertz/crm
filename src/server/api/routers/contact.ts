@@ -6,6 +6,7 @@ import {
   contactsToActivities,
   contactsToCompanies,
   contactsToContacts,
+  contactsToProjects,
 } from "drizzle/schema";
 import { z } from "zod";
 
@@ -52,6 +53,24 @@ export const contactRotuer = createTRPCRouter({
           projects: {
             with: {
               project: true,
+            },
+          },
+        },
+      });
+    }),
+
+  getContactCompanies: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.contacts.findFirst({
+        where: and(
+          eq(contacts.id, input.id),
+          eq(contacts.headId, ctx.session.user.head.id),
+        ),
+        with: {
+          companies: {
+            with: {
+              company: true,
             },
           },
         },
@@ -138,7 +157,7 @@ export const contactRotuer = createTRPCRouter({
           !input.contactData.companyIds ||
           !input.contactData.companyIds.length
         ) {
-          return null;
+          return contactCreated;
         }
 
         const headCompanies = await tx.query.companies.findMany({
@@ -156,6 +175,8 @@ export const contactRotuer = createTRPCRouter({
             };
           }),
         );
+
+        return contactCreated;
       });
     }),
 
@@ -221,5 +242,73 @@ export const contactRotuer = createTRPCRouter({
           ])
           .onConflictDoNothing();
       }
+    }),
+
+  addCompany: protectedProcedure
+    .input(
+      z.object({
+        companyIds: z.array(z.string()),
+        contactId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const contact = await ctx.db.query.contacts.findFirst({
+        where: and(
+          eq(contacts.headId, ctx.session.user.head.id),
+          eq(contacts.id, input.contactId),
+        ),
+      });
+
+      if (!contact) {
+        return null;
+      }
+
+      const contactLink = await ctx.db
+        .insert(contactsToCompanies)
+        .values(
+          input.companyIds.map((id) => {
+            return {
+              contactId: input.contactId,
+              companyId: id,
+            };
+          }),
+        )
+        .returning({ id: contactsToCompanies.companyId });
+
+      return contactLink;
+    }),
+
+  addProject: protectedProcedure
+    .input(
+      z.object({
+        projectIds: z.array(z.string()),
+        contactId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const contact = await ctx.db.query.contacts.findFirst({
+        where: and(
+          eq(contacts.headId, ctx.session.user.head.id),
+          eq(contacts.id, input.contactId),
+        ),
+      });
+
+      if (!contact) {
+        return null;
+      }
+
+      const contactLink = await ctx.db
+        .insert(contactsToProjects)
+        .values(
+          input.projectIds.map((id) => {
+            return {
+              contactId: input.contactId,
+              projectId: id,
+            };
+          }),
+        )
+        .returning({ id: contactsToCompanies.companyId });
+
+      return contactLink;
     }),
 });

@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Sidebar } from "~/components/sidebar/sidebar-index";
 import { ContactPageTable } from "~/components/contact-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { AddContact } from "~/components/add-contact";
+import { AddContact } from "~/components/create-contact";
 import { Layout } from "~/components/layout";
 
 export default function Contacts() {

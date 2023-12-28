@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { CompanyPageTable } from "~/components/company-page-table";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import { AddCompany } from "~/components/add-company";
+import { AddCompany } from "~/components/create-company";
 import { Layout } from "~/components/layout";
 
 export default function Companies() {

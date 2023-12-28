@@ -1,6 +1,6 @@
 import { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "./ui/combobox-multi";
-import { contacts } from "drizzle/schema";
+import { companies, contacts } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "./ui/button";
@@ -9,46 +9,46 @@ import { api } from "~/utils/api";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
 
-export const AddContactRelation: React.FC<{
-  pageData: { type: "Company" | "Project"; id: string };
-  contactData: InferSelectModel<typeof contacts>[];
-}> = ({ pageData, contactData }) => {
+export const AddCompanyRelation: React.FC<{
+  pageData: { type: "Company" | "Project" | "Contact"; id: string };
+  companyData: InferSelectModel<typeof companies>[];
+}> = ({ pageData, companyData }) => {
   const [selectedOption, setSelectedOption] = useState<string[] | undefined>(
     undefined,
   );
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data } = api.contact.getAll.useQuery();
+  const { data } = api.company.getAll.useQuery();
 
   const ctx = api.useUtils();
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addCompany } = api.company.addOne.useMutation({
     onMutate: () => {
       setDisabled(true);
     },
     onSuccess: (value) => {
       setDisabled(false);
-      toast.success("Contact succesfully added.");
+      toast.success("Company succesfully added.");
       setSelectedOption((prev) => {
         if (!prev) return [value?.id!];
         return [...prev, value?.id!];
       });
-      ctx.contact.getAll.invalidate();
+      ctx.contact.getContactCompanies.invalidate();
     },
     onError: () => {
       setDisabled(false);
-      toast.error("Failed to add contact.");
+      toast.error("Failed to add company.");
     },
   });
 
-  const { mutate: addContactToCompany } = api.company.addContact.useMutation({
+  const { mutate: addCompanyToProject } = api.project.addCompany.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
       setLoading(false);
-      ctx.company.getCompanyContacts.invalidate();
+      ctx.project.getProjectCompanies.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -82,7 +82,7 @@ export const AddContactRelation: React.FC<{
 
   const options =
     data
-      .filter((option) => !contactData?.some((entry) => entry.id == option.id))
+      .filter((option) => !companyData?.some((entry) => entry.id == option.id))
       .map((option) => {
         return {
           value: option.id!,
@@ -99,8 +99,8 @@ export const AddContactRelation: React.FC<{
           value={selectedOption}
           noResultsName="contact"
           noResultsClick={(value) => {
-            addContact({
-              contactData: {
+            addCompany({
+              companyData: {
                 name: value,
               },
             });
@@ -138,7 +138,7 @@ export const AddContactRelation: React.FC<{
             ) : (
               <span className="flex items-center text-muted-foreground">
                 <Plus className="mr-1 h-3 w-3" />
-                Add contact...
+                Add company...
               </span>
             )}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -153,15 +153,15 @@ export const AddContactRelation: React.FC<{
               toast.error("Please select a contact");
               return;
             }
-            if (pageData.type == "Company") {
-              addContactToCompany({
-                companyId: pageData.id,
-                contactIds: selectedOption!,
-              });
-            } else if (pageData.type == "Project") {
+            if (pageData.type == "Contact") {
               addContactToProject({
                 projectId: pageData.id,
                 contactIds: selectedOption!,
+              });
+            } else if (pageData.type == "Project") {
+              addCompanyToProject({
+                projectId: pageData.id,
+                companyIds: selectedOption!,
               });
             }
           }}

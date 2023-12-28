@@ -41,7 +41,7 @@ export const AddContact = () => {
     onSuccess: () => {
       setLoading(false);
       setOpen(false);
-      toast("Added contact.", {
+      toast.success("Added contact.", {
         action: {
           label: "Close",
           onClick: () => {},
@@ -51,6 +51,20 @@ export const AddContact = () => {
     },
     onError: (error) => {
       setLoading(false);
+    },
+  });
+
+  const { mutate: addCompany } = api.company.addOne.useMutation({
+    onSuccess: (companies) => {
+      form.setValue("companyIds", [
+        ...form.getValues("companyIds")!,
+        companies?.id!,
+      ]);
+      ctx.company.getAll.invalidate();
+      toast.success(`Added company ${companies?.name}.`);
+    },
+    onError: (error) => {
+      toast.error("Failed to add company.");
     },
   });
 
@@ -125,6 +139,10 @@ export const AddContact = () => {
                               };
                             })!
                           }
+                          noResultsName="company"
+                          noResultsClick={(value) => {
+                            addCompany({ companyData: { name: value } });
+                          }}
                           value={form.getValues("companyIds")}
                           setValue={(value, label) => {
                             if (!value) {

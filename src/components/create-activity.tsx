@@ -62,6 +62,48 @@ const ActivityForm: React.FC<{
   const { data: contacts } = api.contact.getAll.useQuery();
   const { data: projects } = api.project.getAll.useQuery();
 
+  const { mutate: addContact } = api.contact.addOne.useMutation({
+    onSuccess: (contactCreated) => {
+      form.setValue("contactIds", [
+        ...form.getValues("contactIds")!,
+        contactCreated?.id!,
+      ]);
+      ctx.contact.getAll.invalidate();
+      toast.success(`Added contact.`);
+    },
+    onError: () => {
+      toast.error("Failed to add contact.");
+    },
+  });
+
+  const { mutate: addCompany } = api.company.addOne.useMutation({
+    onSuccess: (companyCreated) => {
+      form.setValue("companyIds", [
+        ...form.getValues("companyIds")!,
+        companyCreated?.id!,
+      ]);
+      ctx.company.getAll.invalidate();
+      toast.success(`Added company.`);
+    },
+    onError: () => {
+      toast.error("Failed to add company.");
+    },
+  });
+
+  const { mutate: addProject } = api.project.addOne.useMutation({
+    onSuccess: (projectCreated) => {
+      form.setValue("projectIds", [
+        ...form.getValues("projectIds")!,
+        projectCreated?.id!,
+      ]);
+      ctx.project.getAll.invalidate();
+      toast.success(`Added project.`);
+    },
+    onError: () => {
+      toast.error("Failed to add project.");
+    },
+  });
+
   const { mutate: addActivity } = api.activity.addOne.useMutation({
     onMutate: () => {
       setLoading(true);
@@ -70,7 +112,7 @@ const ActivityForm: React.FC<{
       ctx.contact.getContactActivities.invalidate();
       ctx.project.getProjectActivities.invalidate();
       ctx.company.getCompanyActivities.invalidate();
-      toast("Activity added succesfully.", {
+      toast.success("Activity added succesfully.", {
         action: {
           label: "Close",
           onClick: () => {},
@@ -157,7 +199,7 @@ const ActivityForm: React.FC<{
           {!!entry.icon && entry.icon}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px]">
+      <PopoverContent className="w-[400px]" align="end">
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <div className="grid grid-cols-2 space-x-3">
@@ -245,6 +287,14 @@ const ActivityForm: React.FC<{
                             };
                           })!
                         }
+                        noResultsName="contact"
+                        noResultsClick={(value) => {
+                          addContact({
+                            contactData: {
+                              name: value,
+                            },
+                          });
+                        }}
                         value={field.value}
                         setValue={(value, label) => {
                           if (!value) {
@@ -290,6 +340,14 @@ const ActivityForm: React.FC<{
                               };
                             })!
                           }
+                          noResultsName="company"
+                          noResultsClick={(value) => {
+                            addCompany({
+                              companyData: {
+                                name: value,
+                              },
+                            });
+                          }}
                           value={field.value}
                           setValue={(value, label) => {
                             if (!value) {
@@ -333,6 +391,14 @@ const ActivityForm: React.FC<{
                               };
                             })!
                           }
+                          noResultsName="project"
+                          noResultsClick={(value) => {
+                            addProject({
+                              projectData: {
+                                name: value,
+                              },
+                            });
+                          }}
                           value={field.value}
                           setValue={(value, label) => {
                             if (!value) {
