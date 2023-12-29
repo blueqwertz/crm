@@ -4,13 +4,6 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   async function middleware(req) {
-    if (
-      req.nextUrl.pathname.startsWith("/api") ||
-      req.nextUrl.pathname.startsWith("/en/api")
-    ) {
-      return;
-    }
-
     const token = await getToken({ req });
     const isAuth = !!token;
     // const isAdmin = token?.role === "ADMIN";
@@ -90,3 +83,23 @@ export default withAuth(
     },
   },
 );
+
+export const config = {
+  matcher: [
+    "/",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    {
+      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
+};

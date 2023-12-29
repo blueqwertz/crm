@@ -19,7 +19,3 @@ export function generateGreeting(username: string): string {
 
   return greeting;
 }
-
-const username = "John";
-const greetingMessage = generateGreeting(username);
-console.log(greetingMessage);
