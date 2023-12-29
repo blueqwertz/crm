@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "../../ui/skeleton";
 import { cn } from "~/utils/cn";
+import { GetStaticProps } from "next";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery();

@@ -10,7 +10,12 @@ import { Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: companyData } = api.company.getOne.useQuery({ id });
+  const { data: companyData, isLoading } = api.company.getOne.useQuery({ id });
+
+  if (isLoading) {
+    console.log("is loading!!!");
+  }
+
   return (
     <>
       <Head>
@@ -44,20 +49,34 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = (context) => {
-  const id = context.params?.id;
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import superjson from "superjson";
+import { appRouter } from "~/server/api/root";
+import { getSession } from "next-auth/react";
+import { db } from "~/server/db";
 
-  if (typeof id != "string") throw new Error("no id provided");
-
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ id: string }>,
+) {
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { db, session: await getSession(context) },
+    transformer: superjson,
+  });
+  const id = context.params?.id as string;
+  /*
+   * Prefetching the `post.byId` query.
+   * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
+   */
+  await helpers.company.getOne.fetch({ id });
+  // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {
+      trpcState: helpers.dehydrate(),
       id,
     },
   };
-};
-
-export const getStaticPaths = () => {
-  return { paths: [], fallback: "blocking" };
-};
+}
 
 export default CompanyPage;

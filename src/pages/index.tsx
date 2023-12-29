@@ -3,6 +3,7 @@ import { Layout } from "~/components/layout";
 import { generateGreeting } from "~/utils/greeting";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "~/components/ui/skeleton";
+import { Command } from "lucide-react";
 
 export default function Home() {
   const { data: sessionData } = useSession();
@@ -19,7 +20,10 @@ export default function Home() {
           {/* HEADER */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold">Home</h1>
+              <h1 className="flex items-center gap-1 text-xl font-bold">
+                <Command />
+                CRM
+              </h1>
               {!sessionData && <Skeleton className="h-5 w-40" />}
               {!!sessionData && (
                 <span className="text-sm text-muted-foreground">
