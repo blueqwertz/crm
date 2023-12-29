@@ -73,7 +73,7 @@ export const ProjectPageTable = () => {
                             href={`/companies/${company.companyId}`}
                           >
                             <Badge
-                              className="truncate text-xs font-normal hover:underline"
+                              className="truncate text-xs font-normal leading-3 hover:underline"
                               variant="outline"
                             >
                               <Briefcase className="mr-1 h-3 w-3" />
