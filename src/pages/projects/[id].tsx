@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import type { GetStaticProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Button } from "~/components/ui/button";
@@ -49,7 +49,7 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
 };
 
 import { createServerSideHelpers } from "@trpc/react-query/server";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import type { GetServerSidePropsContext } from "next";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
@@ -63,7 +63,7 @@ export async function getServerSideProps(
     ctx: { db, session: await getSession(context) },
     transformer: superjson,
   });
-  const id = context.params?.id as string;
+  const id = context.params?.id ?? "";
   /*
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
