@@ -35,12 +35,7 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
           {/* HEADER */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              {!companyData && (
-                <>
-                  <Skeleton className="h-8 text-transparent" />
-                  <Skeleton className="h-[26px] text-transparent mt-0.5" />
-                </>
-              )}
+              {!companyData && <Skeleton className="h-7 text-transparent" />}
               {!!companyData && (
                 <h1 className="text-xl font-bold">{companyData.name}</h1>
               )}
@@ -82,14 +77,14 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  // await helpers.company.getOne.fetch({
-  //   id,
-  //   include: {
-  //     contacts: true,
-  //     projects: true,
-  //     activities: true,
-  //   },
-  // });
+  await helpers.company.getOne.fetch({
+    id,
+    include: {
+      contacts: true,
+      projects: true,
+      activities: true,
+    },
+  });
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {

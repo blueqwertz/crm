@@ -76,22 +76,18 @@ export const contactRotuer = createTRPCRouter({
               }
             : false,
           projects: input.include?.projects,
-          incomingRelations: input.include?.relations
-            ? {
-                include: {
-                  incomingContact: true,
-                  outgoingContact: true,
-                },
-              }
-            : false,
-          outgoingRelations: input.include?.relations
-            ? {
-                include: {
-                  incomingContact: true,
-                  outgoingContact: true,
-                },
-              }
-            : false,
+          incomingRelations: {
+            include: {
+              incomingContact: true,
+              outgoingContact: true,
+            },
+          },
+          outgoingRelations: {
+            include: {
+              incomingContact: true,
+              outgoingContact: true,
+            },
+          },
         },
       });
     }),

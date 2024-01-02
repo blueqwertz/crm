@@ -20,6 +20,8 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
     },
   });
 
+  console.log(typeof contactData);
+
   if (isLoading) {
     console.log("is loading!!!");
   }

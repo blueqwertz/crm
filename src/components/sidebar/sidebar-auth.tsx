@@ -34,7 +34,7 @@ export const SidebarAuth = () => {
                       {sessionData.user?.name?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="truncate text-sm">
+                  <span className="truncate text-sm font-medium">
                     {sessionData.user?.name}
                   </span>
                   {/* <span className="truncate text-xs font-medium text-muted-foreground">

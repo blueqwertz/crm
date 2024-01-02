@@ -54,7 +54,7 @@ export const RelationsTable: React.FC<{
                     <div
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground",
+                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
                       )}
                     >
                       {relation.outgoingContact.name}
@@ -72,7 +72,7 @@ export const RelationsTable: React.FC<{
                       href={`/contacts/${relation.incomingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start",
+                        "h-[40px] flex-1 justify-start"
                       )}
                     >
                       {relation.incomingContact.name}
@@ -92,7 +92,7 @@ export const RelationsTable: React.FC<{
                     <div
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground",
+                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
                       )}
                     >
                       {relation.outgoingContact.name}
@@ -110,7 +110,7 @@ export const RelationsTable: React.FC<{
                       href={`/contacts/${relation.incomingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start",
+                        "h-[40px] flex-1 justify-start"
                       )}
                     >
                       {relation.incomingContact.name}
@@ -132,7 +132,7 @@ export const RelationsTable: React.FC<{
                       href={`/contacts/${relation.outgoingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start",
+                        "h-[40px] flex-1 justify-start"
                       )}
                     >
                       {relation.outgoingContact.name}
@@ -149,7 +149,7 @@ export const RelationsTable: React.FC<{
                     <div
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground",
+                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
                       )}
                     >
                       {relation.incomingContact.name}
