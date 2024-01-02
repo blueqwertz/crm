@@ -6,11 +6,18 @@ import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { CompanyIndividualPage } from "~/components/individual-page/company-individual-page";
 import { Button } from "~/components/ui/button";
-import { Wrench } from "lucide-react";
+import { Brush, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: companyData, isLoading } = api.company.getOne.useQuery({ id });
+  const { data: companyData, isLoading } = api.company.getOne.useQuery({
+    id,
+    include: {
+      contacts: true,
+      projects: true,
+      activities: true,
+    },
+  });
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -28,7 +35,12 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
           {/* HEADER */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              {!companyData && <Skeleton className="h-7 text-transparent" />}
+              {!companyData && (
+                <>
+                  <Skeleton className="h-8 text-transparent" />
+                  <Skeleton className="h-[26px] text-transparent mt-0.5" />
+                </>
+              )}
               {!!companyData && (
                 <h1 className="text-xl font-bold">{companyData.name}</h1>
               )}
@@ -36,13 +48,13 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
                 View company details.
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"}>
-              <Wrench className="mr-2 h-4 w-4" />
-              Configure
+            <Button size={"sm"} variant={"outline"} className="px-4">
+              <Brush className="mr-2 h-4 w-4" />
+              Edit
             </Button>
           </div>
           <Breadcrumbs lastItem={companyData?.name ?? id} />
-          <CompanyIndividualPage companyId={id} />
+          <CompanyIndividualPage companyId={id} company={companyData ?? null} />
         </div>
       </Layout>
     </>
@@ -55,9 +67,10 @@ import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
+import { Input } from "~/components/ui/input";
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>,
+  context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -69,7 +82,14 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.company.getOne.fetch({ id });
+  // await helpers.company.getOne.fetch({
+  //   id,
+  //   include: {
+  //     contacts: true,
+  //     projects: true,
+  //     activities: true,
+  //   },
+  // });
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {

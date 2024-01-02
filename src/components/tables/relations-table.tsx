@@ -1,24 +1,23 @@
-import type { InferSelectModel } from "drizzle-orm";
-import type { contacts } from "drizzle/schema";
 import { Skeleton } from "../ui/skeleton";
 import { MoveHorizontal, MoveRight } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
+import { Contact, ContactRelation } from "@prisma/client";
 
 export const RelationsTable: React.FC<{
-  outgoingRelations: {
-    outgoingContact: InferSelectModel<typeof contacts>;
-    receivingContact: InferSelectModel<typeof contacts>;
-  }[];
-  receivingRelations: {
-    outgoingContact: InferSelectModel<typeof contacts>;
-    receivingContact: InferSelectModel<typeof contacts>;
-  }[];
-}> = ({ outgoingRelations, receivingRelations }) => {
+  outgoingRelations: (ContactRelation & {
+    outgoingContact: Contact;
+    incomingContact: Contact;
+  })[];
+  incomingRelations: (ContactRelation & {
+    outgoingContact: Contact;
+    incomingContact: Contact;
+  })[];
+}> = ({ outgoingRelations, incomingRelations }) => {
   return (
     <>
-      {!outgoingRelations && !receivingRelations && (
+      {!outgoingRelations && !incomingRelations && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -32,21 +31,21 @@ export const RelationsTable: React.FC<{
       )}
       {!!outgoingRelations &&
         !outgoingRelations.length &&
-        !!receivingRelations &&
-        !receivingRelations.length && (
+        !!incomingRelations &&
+        !incomingRelations.length && (
           <>
             <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
               No relations
             </div>
           </>
         )}
-      {!!outgoingRelations && !!receivingRelations && (
+      {!!outgoingRelations && !!incomingRelations && (
         <>
           <div className="flex flex-col">
             {outgoingRelations
               .filter((out) => {
-                return receivingRelations.find((rec) => {
-                  return out.receivingContact.id === rec.outgoingContact.id;
+                return incomingRelations.find((rec) => {
+                  return out.incomingContact.id === rec.outgoingContact.id;
                 });
               })
               .map((relation) => {
@@ -70,21 +69,21 @@ export const RelationsTable: React.FC<{
                     </Button>
 
                     <Link
-                      href={`/contacts/${relation.receivingContact.id}`}
+                      href={`/contacts/${relation.incomingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
                         "h-[40px] flex-1 justify-start",
                       )}
                     >
-                      {relation.receivingContact.name}
+                      {relation.incomingContact.name}
                     </Link>
                   </div>
                 );
               })}
             {outgoingRelations
               .filter((out) => {
-                return !receivingRelations.find((rec) => {
-                  return out.receivingContact.id === rec.outgoingContact.id;
+                return !incomingRelations.find((rec) => {
+                  return out.incomingContact.id === rec.outgoingContact.id;
                 });
               })
               .map((relation) => {
@@ -108,22 +107,22 @@ export const RelationsTable: React.FC<{
                     </Button>
 
                     <Link
-                      href={`/contacts/${relation.receivingContact.id}`}
+                      href={`/contacts/${relation.incomingContact.id}`}
                       className={cn(
                         buttonVariants({ variant: "outline", size: "sm" }),
                         "h-[40px] flex-1 justify-start",
                       )}
                     >
-                      {relation.receivingContact.name}
+                      {relation.incomingContact.name}
                     </Link>
                   </div>
                 );
               })}
 
-            {receivingRelations
+            {incomingRelations
               .filter((rec) => {
                 return !outgoingRelations.find((out) => {
-                  return out.receivingContact.id === rec.outgoingContact.id;
+                  return out.incomingContact.id === rec.outgoingContact.id;
                 });
               })
               .map((relation) => {
@@ -153,7 +152,7 @@ export const RelationsTable: React.FC<{
                         "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground",
                       )}
                     >
-                      {relation.receivingContact.name}
+                      {relation.incomingContact.name}
                     </div>
                   </div>
                 );

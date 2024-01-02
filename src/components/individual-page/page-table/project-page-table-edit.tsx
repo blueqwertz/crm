@@ -24,22 +24,22 @@ export const ProjectPageTableEdit: React.FC<{ projectId: string }> = ({
   return (
     <div className="flex flex-col items-center justify-center px-4 py-4 sm:px-6">
       <div key={`cpte-${projectId}`} className="flex">
-        <div className="box-content h-4 w-4 cursor-pointer rounded-l-md border border-r-0 p-2 text-red-500 transition-colors hover:bg-accent">
+        <div
+          className="box-content h-4 w-4 cursor-pointer rounded-md border p-2 text-red-500 transition-colors hover:bg-accent"
+          onClick={(e) => {
+            e.preventDefault();
+            !deleteLoading && deleteProject({ id: projectId });
+          }}
+        >
           {!deleteLoading ? (
-            <Trash
-              className="h-4 w-4"
-              onClick={(e) => {
-                e.preventDefault();
-                deleteProject({ id: projectId });
-              }}
-            />
+            <Trash className="h-4 w-4" />
           ) : (
             <Loader2 className="h-4 w-4 animate-spin" />
           )}
         </div>
-        <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">
+        {/* <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">
           <Pencil className="h-4 w-4" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

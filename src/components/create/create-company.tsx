@@ -1,11 +1,4 @@
 import { Loader2, Plus } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export const AddCompany = () => {
   const ctx = api.useUtils();
@@ -64,22 +58,17 @@ export const AddCompany = () => {
 
   return (
     <>
-      <AlertDialog open={open}>
-        <AlertDialogTrigger asChild>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button size={"sm"} className="px-4">
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
+        </PopoverTrigger>
+        <PopoverContent align="end">
+          {/* <AlertDialogHeader>
             <AlertDialogTitle>Add new company</AlertDialogTitle>
-          </AlertDialogHeader>
+          </AlertDialogHeader> */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
               <FormField
@@ -121,25 +110,14 @@ export const AddCompany = () => {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-2 justify-end gap-3">
-                <div
-                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors"
-                  onClick={() => {
-                    setOpen(false);
-                    form.reset();
-                  }}
-                >
-                  Close
-                </div>
-                <Button type="submit" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Add
-                </Button>
-              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create company
+              </Button>
             </form>
           </Form>
-        </AlertDialogContent>
-      </AlertDialog>
+        </PopoverContent>
+      </Popover>
     </>
   );
 };

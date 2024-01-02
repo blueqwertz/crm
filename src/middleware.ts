@@ -12,11 +12,11 @@ export default withAuth(
     console.log("MIDDLEWARE", token);
 
     const isAuthPage = ["/auth/login"].find((value) =>
-      req.nextUrl.pathname.startsWith(value),
+      req.nextUrl.pathname.startsWith(value)
     );
 
     const isInvitePage = ["/auth/invite"].find((value) =>
-      req.nextUrl.pathname.startsWith(value),
+      req.nextUrl.pathname.startsWith(value)
     );
 
     // const requiresAuthPage = ["/dashboard"].find((value) =>
@@ -81,7 +81,7 @@ export default withAuth(
         return true;
       },
     },
-  },
+  }
 );
 
 export const config = {

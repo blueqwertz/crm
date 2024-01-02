@@ -1,6 +1,4 @@
-import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import type { projects } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -8,13 +6,14 @@ import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { Project } from "@prisma/client";
 
 export const AddProjectRelation: React.FC<{
   pageData: { type: "Company" | "Contact"; id: string };
-  projectData: InferSelectModel<typeof projects>[];
+  projectData: Project[];
 }> = ({ pageData, projectData }) => {
   const [selectedOption, setSelectedOption] = useState<string[] | undefined>(
-    undefined,
+    undefined
   );
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -48,7 +47,7 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.contact.getContactProjects.invalidate();
+      void ctx.contact.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -63,7 +62,7 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.company.getCompanyProjects.invalidate();
+      void ctx.company.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -85,8 +84,8 @@ export const AddProjectRelation: React.FC<{
       .filter((option) => !projectData?.some((entry) => entry.id == option.id))
       .map((option) => {
         return {
-          value: option.id!,
-          label: option.name!,
+          value: option.id,
+          label: option.name,
         };
       }) ?? [];
 
@@ -101,7 +100,7 @@ export const AddProjectRelation: React.FC<{
           noResultsClick={(value) => {
             addProject({
               projectData: {
-                name: value,
+                name: value.trim(),
               },
             });
           }}
@@ -122,7 +121,7 @@ export const AddProjectRelation: React.FC<{
             variant="ghost"
             role="combobox"
             className={cn(
-              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium",
+              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium"
             )}
           >
             {!!selectedOption && selectedOption.length ? (

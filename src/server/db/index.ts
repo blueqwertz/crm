@@ -22,9 +22,24 @@
 // export const db = drizzle(sql, { schema });
 
 // SUPABASE
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "../../../drizzle/schema";
+// import { drizzle } from "drizzle-orm/postgres-js";
+// import postgres from "postgres";
+// import * as schema from "../../../drizzle/schema";
 
-const client = postgres(process.env.DATABASE_URL!);
-export const db = drizzle(client, { schema });
+// const client = postgres(process.env.DATABASE_URL!);
+// export const db = drizzle(client, { schema });
+
+import { PrismaClient } from "@prisma/client";
+import { env } from "~/env";
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const db =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+  });
+
+if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;

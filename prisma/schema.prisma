@@ -1,0 +1,234 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider     = "postgresql"
+    relationMode = "prisma"
+    url          = env("DATABASE_URL")
+}
+
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? // @db.Text
+    access_token      String? // @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? // @db.Text
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@index([userId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+enum Role {
+    SysAdmin
+    SysManager
+    HeadAdmin
+    HeadManager
+    Default
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+
+    headId String?
+    head   Head?   @relation(fields: [headId], references: [id])
+
+    Contact        Contact?
+    createdInvites HeadInvite[] @relation("creator")
+    usedInvite     HeadInvite[] @relation("user")
+
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    UserRoles UserRoles[]
+
+    @@index([headId])
+}
+
+model UserRoles {
+    role   Role   @default(Default)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@id([role, userId])
+    @@index([userId])
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+model Head {
+    id        String   @id @default(cuid())
+    name      String
+    info      String?
+    image     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    activities Activity[]
+    companies  Company[]
+    contacts   Contact[]
+    projects   Project[]
+    user       User[]
+    invites    HeadInvite[]
+}
+
+model HeadInvite {
+    id     String @id @unique @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Restrict)
+
+    creatorId String
+    creator   User   @relation("creator", fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    userId String?
+    user   User?   @relation("user", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    usedAt    DateTime?
+
+    @@index([headId])
+    @@index([creatorId])
+    @@index([userId])
+}
+
+model Contact {
+    id     String  @id @default(cuid())
+    headId String
+    head   Head    @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String? @unique
+    user   User?   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+    name   String
+    email  String?
+    image  String?
+    info   String?
+    mobile String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    activities        Activity[]        @relation("ActivityToContact")
+    companies         Company[]         @relation("CompanyToContact")
+    projects          Project[]         @relation("ContactToProject")
+    outgoingRelations ContactRelation[] @relation("outgoingContact")
+    incomingRelations ContactRelation[] @relation("incomingContact")
+
+    @@index([headId])
+}
+
+model ContactRelation {
+    outgoingContactId String
+    outgoingContact   Contact @relation("outgoingContact", fields: [outgoingContactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    incomingContactId String
+    incomingContact   Contact @relation("incomingContact", fields: [incomingContactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    @@id([outgoingContactId, incomingContactId])
+    @@index([outgoingContactId])
+    @@index([incomingContactId])
+}
+
+model Company {
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    name  String
+    image String?
+    info  String?
+    field String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    activities Activity[] @relation("ActivityToCompany")
+    contacts   Contact[]  @relation("CompanyToContact")
+    projects   Project[]  @relation("CompanyToProject")
+
+    @@index([headId])
+}
+
+enum ProjectStatus {
+    NotStarted
+    OnHold
+    InProgress
+    Completed
+    Cancelled
+}
+
+model Project {
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    name   String
+    image  String?
+    info   String?
+    status ProjectStatus @default(NotStarted)
+
+    date      DateTime @default(now())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    activities Activity[] @relation("ActivityToProject")
+    companies  Company[]  @relation("CompanyToProject")
+    contacts   Contact[]  @relation("ContactToProject")
+
+    @@index([headId])
+}
+
+enum ActivityType {
+    Call
+    Meeting
+    Email
+    FollowUp
+    Task
+}
+
+model Activity {
+    id          String       @id @default(cuid())
+    headId      String
+    head        Head         @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    description String?
+    type        ActivityType @default(Call)
+    date        DateTime?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    companies   Company[]    @relation("ActivityToCompany")
+    contacts    Contact[]    @relation("ActivityToContact")
+    projects    Project[]    @relation("ActivityToProject")
+
+    @@index([headId])
+}

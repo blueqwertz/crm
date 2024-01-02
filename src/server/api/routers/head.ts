@@ -1,5 +1,5 @@
+import { TRPCError } from "@trpc/server";
 import { and, eq, isNull } from "drizzle-orm";
-import { headInvitationLinks, users } from "drizzle/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -7,35 +7,46 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 export const headRouter = createTRPCRouter({
   checkInvite: protectedProcedure
     .input(z.object({ inviteCode: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const invite = await ctx.db.query.headInvitationLinks.findFirst({
-        where: and(
-          eq(headInvitationLinks.id, input.inviteCode),
-          isNull(headInvitationLinks.usedById),
-        ),
+    .mutation(({ ctx, input }) => {
+      return ctx.db.headInvite.findFirst({
+        where: {
+          id: input.inviteCode,
+          userId: null,
+        },
       });
-
-      return invite;
     }),
+
   useInvite: protectedProcedure
     .input(z.object({ inviteCode: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const invitation = await ctx.db.query.headInvitationLinks.findFirst({
-        where: eq(headInvitationLinks.id, input.inviteCode),
-      });
+      return ctx.db.$transaction(async (tx) => {
+        const invite = await tx.headInvite.update({
+          where: {
+            id: input.inviteCode,
+            userId: null,
+          },
+          data: {
+            userId: ctx.session.user.id,
+            usedAt: new Date(),
+          },
+        });
 
-      if (!invitation) {
-        return false;
-      }
-      return ctx.db.transaction(async (tx) => {
-        await tx
-          .update(headInvitationLinks)
-          .set({ usedById: ctx.session.user.id, usedAt: new Date() })
-          .where(eq(headInvitationLinks.id, input.inviteCode));
-        await tx
-          .update(users)
-          .set({ headId: invitation.headId })
-          .where(eq(users.id, ctx.session.user.id));
+        if (!invite) {
+          return new TRPCError({
+            code: "NOT_FOUND",
+            message: "Invite not found",
+          });
+        }
+
+        await tx.user.update({
+          where: {
+            headId: null,
+            id: ctx.session.user.id,
+          },
+          data: {
+            headId: invite.headId,
+          },
+        });
       });
     }),
 });

@@ -22,13 +22,13 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "sonner";
 import type { InferSelectModel } from "drizzle-orm";
-import type { contacts } from "drizzle/schema";
 import { Button } from "../../ui/button";
 import { Combobox } from "../../ui/combobox";
 import { Input } from "../../ui/input";
+import { Contact } from "@prisma/client";
 
 export const ContactPageTableEdit: React.FC<{
-  contact: InferSelectModel<typeof contacts>;
+  contact: Contact;
 }> = ({ contact }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -106,7 +106,7 @@ export const ContactPageTableEdit: React.FC<{
         </TooltipProvider>
         <Popover open={linkOpen} onOpenChange={setLinkOpen}>
           <PopoverTrigger asChild>
-            <div className="box-content cursor-pointer rounded-none border-b border-t p-2 text-muted-foreground transition-colors hover:bg-accent">
+            <div className="box-content cursor-pointer rounded-none border border-l-0 rounded-r-md p-2 text-muted-foreground transition-colors hover:bg-accent">
               <Link className="h-4 w-4" />
             </div>
           </PopoverTrigger>
@@ -182,9 +182,9 @@ export const ContactPageTableEdit: React.FC<{
             </Button>
           </PopoverContent>
         </Popover>
-        <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">
+        {/* <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">
           <Pencil className="h-4 w-4" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

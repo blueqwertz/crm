@@ -1,6 +1,4 @@
-import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import type { contacts } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -8,13 +6,14 @@ import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { Contact } from "@prisma/client";
 
 export const AddContactRelation: React.FC<{
   pageData: { type: "Company" | "Project"; id: string };
-  contactData: InferSelectModel<typeof contacts>[];
+  contactData: Contact[];
 }> = ({ pageData, contactData }) => {
   const [selectedOption, setSelectedOption] = useState<string[] | undefined>(
-    undefined,
+    undefined
   );
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -48,7 +47,7 @@ export const AddContactRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.company.getCompanyContacts.invalidate();
+      void ctx.company.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -63,7 +62,7 @@ export const AddContactRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.project.getProjectContacts.invalidate();
+      void ctx.project.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -85,8 +84,8 @@ export const AddContactRelation: React.FC<{
       .filter((option) => !contactData?.some((entry) => entry.id == option.id))
       .map((option) => {
         return {
-          value: option.id!,
-          label: option.name!,
+          value: option.id,
+          label: option.name,
         };
       }) ?? [];
 
@@ -94,6 +93,7 @@ export const AddContactRelation: React.FC<{
     <>
       <div className="flex">
         <ComboboxMulti
+          className="shrink"
           placeholder={"Select contact..."}
           options={options}
           value={selectedOption}
@@ -101,7 +101,7 @@ export const AddContactRelation: React.FC<{
           noResultsClick={(value) => {
             addContact({
               contactData: {
-                name: value,
+                name: value.trim(),
               },
             });
           }}
@@ -122,7 +122,7 @@ export const AddContactRelation: React.FC<{
             variant="ghost"
             role="combobox"
             className={cn(
-              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium",
+              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium"
             )}
           >
             {!!selectedOption && selectedOption.length ? (
@@ -146,7 +146,7 @@ export const AddContactRelation: React.FC<{
         </ComboboxMulti>
         <Button
           variant="ghost"
-          className="h-9 rounded-none rounded-tr-md border-b border-l"
+          className="h-9 rounded-none rounded-tr-md border-b border-l shrink-0"
           disabled={disabled}
           onClick={() => {
             if (!selectedOption?.length) {

@@ -9,7 +9,11 @@ import { Skeleton } from "../../ui/skeleton";
 import { cn } from "~/utils/cn";
 
 export const ContactPageTable = () => {
-  const { data: contactData } = api.contact.getAll.useQuery();
+  const { data: contactData } = api.contact.getAll.useQuery({
+    include: {
+      companies: true,
+    },
+  });
   const { data: sessionData } = useSession();
 
   return (
@@ -71,8 +75,8 @@ export const ContactPageTable = () => {
                           {contact.companies.map((company, index) => (
                             <>
                               <Link
-                                key={company.companyId}
-                                href={`/companies/${company.companyId}`}
+                                key={company.id}
+                                href={`/companies/${company.id}`}
                                 className={cn(
                                   "cursor-pointer leading-3 hover:underline",
                                   {
@@ -80,7 +84,7 @@ export const ContactPageTable = () => {
                                   },
                                 )}
                               >
-                                {company.company.name}
+                                {company.name}
                               </Link>
                               <span className="leading-3">
                                 {index + 1 < contact.companies.length && ", "}
@@ -105,9 +109,9 @@ export const ContactPageTable = () => {
                       )}
                     </div>
                   </div>
-                  {!!contact.info && (
-                    <span className="mb-1 text-sm">{contact.info}</span>
-                  )}
+                  <span className="mb-1 text-sm empty:hidden">
+                    {contact.info}
+                  </span>
                   {(!!contact.user || !!contact.email || !!contact.mobile) && (
                     <div className="flex flex-wrap gap-2 text-xs">
                       {(!!contact.email || !!contact.user?.email) && (

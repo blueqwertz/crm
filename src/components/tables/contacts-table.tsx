@@ -3,11 +3,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { AddContactRelation } from "../links/contact-links";
-import type { InferSelectModel } from "drizzle-orm";
-import type { contacts } from "drizzle/schema";
+import { Contact } from "@prisma/client";
 
 export const ContactsTable: React.FC<{
-  contactData: InferSelectModel<typeof contacts>[];
+  contactData: Contact[];
   pageData: { type: "Company" | "Project"; id: string };
 }> = ({ contactData, pageData }) => {
   return (

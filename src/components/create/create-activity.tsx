@@ -4,8 +4,8 @@ import {
   Clipboard,
   Loader2,
   Mail,
+  Sparkles,
   Voicemail,
-  Zap,
 } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import {
@@ -45,13 +45,14 @@ import { ComboboxMulti } from "../ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { ActivityType } from "@prisma/client";
 
 const ActivityForm: React.FC<{
   entry: {
     icon: React.ReactNode;
     type: "Call" | "Meeting" | "Email" | "Task" | "FollowUp";
   };
-  pageData?: { type: string; id: string };
+  pageData?: { type: "Company" | "Project" | "Contact"; id: string };
 }> = ({ entry, pageData }) => {
   const ctx = api.useUtils();
 
@@ -109,9 +110,9 @@ const ActivityForm: React.FC<{
       setLoading(true);
     },
     onSuccess: () => {
-      void ctx.contact.getContactActivities.invalidate();
-      void ctx.project.getProjectActivities.invalidate();
-      void ctx.company.getCompanyActivities.invalidate();
+      void ctx.contact.getOne.invalidate();
+      void ctx.company.getOne.invalidate();
+      void ctx.project.getOne.invalidate();
       toast.success("Activity added succesfully.");
       setLoading(false);
       form.reset();
@@ -163,9 +164,9 @@ const ActivityForm: React.FC<{
     defaultValues: {
       type: entry.type,
       date: new Date(),
-      companyIds: pageData?.type == "company" ? [pageData.id] : [],
-      contactIds: pageData?.type == "contact" ? [pageData.id] : [],
-      projectIds: pageData?.type == "project" ? [pageData.id] : [],
+      companyIds: pageData?.type == "Company" ? [pageData.id] : [],
+      contactIds: pageData?.type == "Contact" ? [pageData.id] : [],
+      projectIds: pageData?.type == "Project" ? [pageData.id] : [],
       description: "",
     },
   });
@@ -187,7 +188,7 @@ const ActivityForm: React.FC<{
       <PopoverTrigger asChild>
         <Button
           className={cn(
-            "h-9 flex-grow rounded-none border-b border-r first:rounded-tl-sm last:rounded-tr-sm",
+            "h-9 flex-grow rounded-none border-b border-r first:rounded-tl-sm last:rounded-tr-sm"
           )}
           variant={"ghost"}
         >
@@ -213,11 +214,9 @@ const ActivityForm: React.FC<{
                           <SelectValue placeholder="Theme" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Call">Call</SelectItem>
-                          <SelectItem value="Meeting">Meeting</SelectItem>
-                          <SelectItem value="Email">Email</SelectItem>
-                          <SelectItem value="Task">Task</SelectItem>
-                          <SelectItem value="FollowUp">Follow Up</SelectItem>
+                          {Object.keys(ActivityType).map((status) => (
+                            <SelectItem value={status}>{status}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -238,7 +237,7 @@ const ActivityForm: React.FC<{
                             variant={"outline"}
                             className={cn(
                               "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
                             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -271,7 +270,7 @@ const ActivityForm: React.FC<{
                 <FormItem>
                   <FormLabel>Contact</FormLabel>
                   <FormControl>
-                    {!!companies && companies.length ? (
+                    {!!contacts ? (
                       <ComboboxMulti
                         placeholder={"Select contact..."}
                         options={
@@ -298,10 +297,10 @@ const ActivityForm: React.FC<{
                           const currentCompanyIds = field.value ?? [];
 
                           const updatedCompanyIds = currentCompanyIds.includes(
-                            value,
+                            value
                           )
                             ? currentCompanyIds.filter(
-                                (entry) => entry != value,
+                                (entry) => entry != value
                               )
                             : [...currentCompanyIds, value];
 
@@ -324,7 +323,7 @@ const ActivityForm: React.FC<{
                   <FormItem>
                     <FormLabel>Company</FormLabel>
                     <FormControl>
-                      {!!companies && !!companies.length ? (
+                      {!!companies ? (
                         <ComboboxMulti
                           placeholder={"Select company..."}
                           options={
@@ -353,7 +352,7 @@ const ActivityForm: React.FC<{
                             const updatedCompanyIds =
                               currentCompanyIds.includes(value)
                                 ? currentCompanyIds.filter(
-                                    (entry) => entry != value,
+                                    (entry) => entry != value
                                   )
                                 : [...currentCompanyIds, value];
 
@@ -375,7 +374,7 @@ const ActivityForm: React.FC<{
                   <FormItem>
                     <FormLabel>Project</FormLabel>
                     <FormControl>
-                      {!!projects && projects.length ? (
+                      {!!projects ? (
                         <ComboboxMulti
                           placeholder={"Select project..."}
                           options={
@@ -404,7 +403,7 @@ const ActivityForm: React.FC<{
                             const updatedProjectIds =
                               currentProjectIds.includes(value)
                                 ? currentProjectIds.filter(
-                                    (entry) => entry != value,
+                                    (entry) => entry != value
                                   )
                                 : [...currentProjectIds, value];
 
@@ -427,18 +426,22 @@ const ActivityForm: React.FC<{
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <div className="flex gap-2">
-                      <Input placeholder="Description" {...field} />
+                    <div className="relative flex gap-2">
+                      <Input
+                        placeholder="Description"
+                        className="pr-10"
+                        {...field}
+                      />
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div
                               className={cn(
-                                "shrink-0 cursor-pointer",
                                 buttonVariants({
                                   variant: "outline",
                                   size: "icon",
                                 }),
+                                "absolute right-1.5 top-1.5 h-7 w-7 shrink-0 cursor-pointer"
                               )}
                               onClick={() => {
                                 // if (
@@ -456,8 +459,8 @@ const ActivityForm: React.FC<{
                                   ?.map(
                                     (entry) =>
                                       contacts?.find(
-                                        (contact) => contact.id === entry,
-                                      )?.name,
+                                        (contact) => contact.id === entry
+                                      )?.name
                                   );
 
                                 const companyNames = form
@@ -465,8 +468,8 @@ const ActivityForm: React.FC<{
                                   ?.map(
                                     (entry) =>
                                       companies?.find(
-                                        (company) => company.id === entry,
-                                      )?.name,
+                                        (company) => company.id === entry
+                                      )?.name
                                   );
 
                                 const projectNames = form
@@ -474,12 +477,12 @@ const ActivityForm: React.FC<{
                                   ?.map(
                                     (entry) =>
                                       projects?.find(
-                                        (project) => project.id === entry,
-                                      )?.name,
+                                        (project) => project.id === entry
+                                      )?.name
                                   );
 
                                 const generatedDescription = `${form.getValues(
-                                  "type",
+                                  "type"
                                 )}${
                                   projectNames?.length
                                     ? ` on ${projectNames
@@ -520,11 +523,11 @@ const ActivityForm: React.FC<{
 
                                 form.setValue(
                                   "description",
-                                  generatedDescription,
+                                  generatedDescription
                                 );
                               }}
                             >
-                              <Zap className="h-4 w-4" />
+                              <Sparkles className="h-4 w-4" />
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -550,7 +553,7 @@ const ActivityForm: React.FC<{
 };
 
 export const AddActivity: React.FC<{
-  pageData?: { type: string; id: string };
+  pageData?: { type: "Company" | "Project" | "Contact"; id: string };
 }> = ({ pageData }) => {
   const typeArray: {
     icon: React.ReactNode;

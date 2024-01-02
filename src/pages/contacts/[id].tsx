@@ -5,12 +5,20 @@ import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ContactIndividualPage } from "~/components/individual-page/contact-individual-page";
 import { Button } from "~/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Brush } from "lucide-react";
 import { Layout } from "~/components/layout";
 import { db } from "~/server/db";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: contactData, isLoading } = api.contact.getOne.useQuery({ id });
+  const { data: contactData, isLoading } = api.contact.getOne.useQuery({
+    id,
+    include: {
+      activities: true,
+      companies: true,
+      projects: true,
+      relations: true,
+    },
+  });
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -36,13 +44,13 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
                 View contact details.
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"}>
-              <Pencil className="mr-2 h-4 w-4" />
+            <Button size={"sm"} variant={"outline"} className="px-4">
+              <Brush className="mr-2 h-4 w-4" />
               Edit
             </Button>
           </div>
           <Breadcrumbs lastItem={contactData?.name} />
-          <ContactIndividualPage contactId={id} contact={contactData} />
+          <ContactIndividualPage contactId={id} contact={contactData ?? null} />
         </div>
       </Layout>
     </>
@@ -56,7 +64,7 @@ import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>,
+  context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -68,7 +76,15 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.contact.getOne.fetch({ id });
+  await helpers.contact.getOne.fetch({
+    id,
+    include: {
+      activities: true,
+      companies: true,
+      projects: true,
+      relations: true,
+    },
+  });
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {

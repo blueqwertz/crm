@@ -1,6 +1,5 @@
 import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
-import type { companies } from "drizzle/schema";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
@@ -8,13 +7,14 @@ import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { toast } from "sonner";
+import { Company } from "@prisma/client";
 
 export const AddCompanyRelation: React.FC<{
   pageData: { type: "Company" | "Project" | "Contact"; id: string };
-  companyData: InferSelectModel<typeof companies>[];
+  companyData: Company[];
 }> = ({ pageData, companyData }) => {
   const [selectedOption, setSelectedOption] = useState<string[] | undefined>(
-    undefined,
+    undefined
   );
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -34,7 +34,7 @@ export const AddCompanyRelation: React.FC<{
         if (!prev) return [value?.id ?? ""];
         return [...prev, value?.id ?? ""];
       });
-      void ctx.contact.getContactCompanies.invalidate();
+      void ctx.company.getAll.invalidate();
     },
     onError: () => {
       setDisabled(false);
@@ -48,7 +48,7 @@ export const AddCompanyRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.project.getProjectCompanies.invalidate();
+      void ctx.project.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -57,13 +57,13 @@ export const AddCompanyRelation: React.FC<{
     },
   });
 
-  const { mutate: addContactToProject } = api.project.addContact.useMutation({
+  const { mutate: addContactToProject } = api.contact.addCompany.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.project.getProjectContacts.invalidate();
+      void ctx.contact.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -94,14 +94,14 @@ export const AddCompanyRelation: React.FC<{
     <>
       <div className="flex">
         <ComboboxMulti
-          placeholder={"Select contact..."}
+          placeholder={"Select company..."}
           options={options}
           value={selectedOption}
-          noResultsName="contact"
+          noResultsName="company"
           noResultsClick={(value) => {
             addCompany({
               companyData: {
-                name: value,
+                name: value.trim(),
               },
             });
           }}
@@ -122,7 +122,7 @@ export const AddCompanyRelation: React.FC<{
             variant="ghost"
             role="combobox"
             className={cn(
-              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium",
+              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium"
             )}
           >
             {!!selectedOption && selectedOption.length ? (
@@ -155,8 +155,8 @@ export const AddCompanyRelation: React.FC<{
             }
             if (pageData.type == "Contact") {
               addContactToProject({
-                projectId: pageData.id,
-                contactIds: selectedOption,
+                contactId: pageData.id,
+                companyIds: selectedOption,
               });
             } else if (pageData.type == "Project") {
               addCompanyToProject({

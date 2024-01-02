@@ -49,7 +49,7 @@ export function ComboboxMulti({
           <Button
             variant="outline"
             role="combobox"
-            className={cn("w-full justify-between px-3 font-medium", className)}
+            className={cn(className, "w-full justify-between px-3 font-medium")}
           >
             {!!value && value.length ? (
               <span className="flex w-full items-center truncate">
@@ -74,23 +74,23 @@ export function ComboboxMulti({
             onValueChange={setInput}
           />
           <CommandEmpty>
-            {!!noResultsName ? (
+            {!!noResultsName && !!input.length ? (
               <span
-                className="cursor-pointer hover:underline"
                 onClick={() => {
                   if (!!noResultsClick) {
                     noResultsClick(input);
                     setInput("");
                   }
                 }}
+                className="hover:underline cursor-pointer"
               >
-                Add {noResultsName} "{input}"
+                Add {noResultsName} "{input.trim()}"
               </span>
             ) : (
-              "No results found."
+              <span>No results found.</span>
             )}
           </CommandEmpty>
-          <CommandGroup className="max-h-[250px] overflow-y-scroll">
+          <CommandGroup className={cn("max-h-[250px] overflow-y-scroll")}>
             {options.map((option) => (
               <CommandItem
                 key={option.value}
@@ -101,7 +101,7 @@ export function ComboboxMulti({
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value?.includes(option.value) ? "opacity-100" : "opacity-0",
+                    value?.includes(option.value) ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {option.label}

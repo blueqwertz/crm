@@ -40,6 +40,8 @@ export const AddContact = () => {
     },
     onSuccess: () => {
       setLoading(false);
+      form.reset();
+      form.clearErrors();
       toast.success("Added contact.");
       void ctx.contact.getAll.invalidate();
     },
@@ -76,15 +78,13 @@ export const AddContact = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     addContact({ contactData: values });
-    form.reset();
-    form.clearErrors();
   }
 
   return (
     <>
       <Popover>
         <PopoverTrigger asChild>
-          <Button size={"sm"}>
+          <Button size={"sm"} className="px-4">
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
@@ -115,14 +115,14 @@ export const AddContact = () => {
                   <FormItem>
                     <FormLabel>Company</FormLabel>
                     <FormControl>
-                      {!!companies && companies.length ? (
+                      {!!companies ? (
                         <ComboboxMulti
                           placeholder={"Select company..."}
                           options={
-                            companies?.map((company) => {
+                            companies.map((company) => {
                               return {
                                 value: company.id,
-                                label: company.name!,
+                                label: company.name,
                               };
                             }) ?? []
                           }
@@ -142,7 +142,7 @@ export const AddContact = () => {
                             const updatedCompanyIds =
                               currentCompanyIds.includes(value)
                                 ? currentCompanyIds.filter(
-                                    (entry) => entry != value,
+                                    (entry) => entry != value
                                   )
                                 : [...currentCompanyIds, value];
 
@@ -196,8 +196,8 @@ export const AddContact = () => {
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-1 justify-end gap-3">
-                {/* <div
+
+              {/* <div
                   className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-muted/50"
                   onClick={() => {
                     form.reset();
@@ -205,11 +205,10 @@ export const AddContact = () => {
                 >
                   Close
                 </div> */}
-                <Button type="submit" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Add
-                </Button>
-              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create contact
+              </Button>
             </form>
           </Form>
         </PopoverContent>

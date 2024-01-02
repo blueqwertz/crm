@@ -3,11 +3,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import type { InferSelectModel } from "drizzle-orm";
-import type { companies } from "drizzle/schema";
 import { AddCompanyRelation } from "../links/company-links";
+import { Company } from "@prisma/client";
 
 export const CompanyTable: React.FC<{
-  companyData: InferSelectModel<typeof companies>[];
+  companyData: Company[];
   pageData: { type: "Company" | "Project" | "Contact"; id: string };
 }> = ({ companyData, pageData }) => {
   return (

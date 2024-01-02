@@ -5,11 +5,18 @@ import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Button } from "~/components/ui/button";
-import { Wrench } from "lucide-react";
+import { Brush, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: projectData, isLoading } = api.project.getOne.useQuery({ id });
+  const { data: projectData, isLoading } = api.project.getOne.useQuery({
+    id,
+    include: {
+      activities: true,
+      companies: true,
+      contacts: true,
+    },
+  });
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -35,13 +42,13 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                 View project details.
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"}>
-              <Wrench className="mr-2 h-4 w-4" />
-              Configure
+            <Button size={"sm"} variant={"outline"} className="px-4">
+              <Brush className="mr-2 h-4 w-4" />
+              Edit
             </Button>
           </div>
           <Breadcrumbs lastItem={projectData?.name ?? "..."} />
-          <ProjectIndividualPage projectId={id} />
+          <ProjectIndividualPage projectId={id} project={projectData ?? null} />
         </div>
       </Layout>
     </>
@@ -56,7 +63,7 @@ import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
 
 export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>,
+  context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -68,7 +75,14 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.project.getOne.fetch({ id });
+  await helpers.project.getOne.fetch({
+    id,
+    include: {
+      activities: true,
+      companies: true,
+      contacts: true,
+    },
+  });
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {

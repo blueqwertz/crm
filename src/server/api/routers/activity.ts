@@ -1,17 +1,6 @@
-import { and, eq, inArray } from "drizzle-orm";
-import {
-  activities,
-  companies,
-  companiesToActivities,
-  contacts,
-  contactsToActivities,
-  projects,
-  projectsToActivities,
-} from "drizzle/schema";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
 
 export const activityRouer = createTRPCRouter({
   addOne: protectedProcedure
@@ -49,99 +38,46 @@ export const activityRouer = createTRPCRouter({
               path: ["projectIds"],
             });
           }
-        }),
+        })
     )
     .mutation(async ({ ctx, input }) => {
-      const headCompanies =
-        !!input.companyIds && input.companyIds.length
-          ? await ctx.db.query.companies.findMany({
-              where: and(
-                eq(companies.headId, ctx.session.user.head.id),
-                inArray(companies.id, input.companyIds),
-              ),
-            })
-          : undefined;
+      return ctx.db.activity.create({
+        data: {
+          description: input.description,
+          type: input.type,
+          date: input.date,
 
-      const headContacts =
-        !!input.contactIds && input.contactIds.length
-          ? await ctx.db.query.contacts.findMany({
-              where: and(
-                eq(contacts.headId, ctx.session.user.head.id),
-                inArray(contacts.id, input.contactIds),
-              ),
-            })
-          : undefined;
-
-      const headProjects =
-        !!input.projectIds && input.projectIds.length
-          ? await ctx.db.query.projects.findMany({
-              where: and(
-                eq(projects.headId, ctx.session.user.head.id),
-                inArray(projects.id, input.projectIds),
-              ),
-            })
-          : undefined;
-
-      return ctx.db.transaction(async (tx) => {
-        const [activityCreated] = await tx
-          .insert(activities)
-          .values({
-            description: input.description,
-            headId: ctx.session.user.head.id,
-            type: input.type,
-            date: input.date,
-          })
-          .returning({ id: contacts.id });
-
-        if (!activityCreated) {
-          return null;
-        }
-
-        if (!!headCompanies && headCompanies.length) {
-          await tx.insert(companiesToActivities).values(
-            headCompanies?.map((c) => {
-              return {
-                companyId: c.id,
-                activityId: activityCreated?.id,
-              };
-            }),
-          );
-        }
-
-        if (!!headContacts && headContacts.length) {
-          await tx.insert(contactsToActivities).values(
-            headContacts?.map((c) => {
-              return {
-                contactId: c.id,
-                activityId: activityCreated?.id,
-              };
-            }),
-          );
-        }
-
-        if (!!headProjects && headProjects.length) {
-          await tx.insert(projectsToActivities).values(
-            headProjects.map((p) => {
-              return {
-                projectId: p.id,
-                activityId: activityCreated?.id,
-              };
-            }),
-          );
-        }
+          headId: ctx.session.user.head.id,
+          companies: {
+            connect: input.companyIds?.map((id) => ({
+              id,
+              headId: ctx.session.user.head.id,
+            })),
+          },
+          contacts: {
+            connect: input.contactIds?.map((id) => ({
+              id,
+              headId: ctx.session.user.head.id,
+            })),
+          },
+          projects: {
+            connect: input.projectIds?.map((id) => ({
+              id,
+              headId: ctx.session.user.head.id,
+            })),
+          },
+        },
       });
     }),
 
   deleteOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
-      return db
-        .delete(activities)
-        .where(
-          and(
-            eq(activities.headId, ctx.session.user.head.id),
-            eq(activities.id, input.id),
-          ),
-        );
+      return ctx.db.activity.delete({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.id,
+        },
+      });
     }),
 });

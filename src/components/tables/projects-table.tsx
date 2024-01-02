@@ -1,13 +1,13 @@
-import type { projects } from "drizzle/schema";
 import type { InferSelectModel } from "drizzle-orm";
 import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { AddProjectRelation } from "../links/project-links";
+import { Project } from "@prisma/client";
 
 export const ProjectsTable: React.FC<{
-  projectData: InferSelectModel<typeof projects>[];
+  projectData: Project[];
   pageData: { type: "Company" | "Contact"; id: string };
 }> = ({ projectData, pageData }) => {
   return (

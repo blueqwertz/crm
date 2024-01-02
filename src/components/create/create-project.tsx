@@ -1,11 +1,4 @@
 import { Loader2, Plus } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export const AddProject = () => {
   const ctx = api.useUtils();
@@ -29,7 +23,7 @@ export const AddProject = () => {
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
-    description: z.union([z.string().max(200).optional(), z.literal("")]),
+    info: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
   const { mutate: addProject } = api.project.addOne.useMutation({
@@ -50,7 +44,7 @@ export const AddProject = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: "",
+      info: "",
     },
   });
 
@@ -63,22 +57,17 @@ export const AddProject = () => {
 
   return (
     <>
-      <AlertDialog open={open}>
-        <AlertDialogTrigger asChild>
-          <Button
-            size={"sm"}
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button size={"sm"} className="px-4">
             <Plus className="mr-1 h-4 w-4" />
             New
           </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
+        </PopoverTrigger>
+        <PopoverContent align="end">
+          {/* <AlertDialogHeader>
             <AlertDialogTitle>Add new project</AlertDialogTitle>
-          </AlertDialogHeader>
+          </AlertDialogHeader> */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
               <FormField
@@ -96,36 +85,25 @@ export const AddProject = () => {
               />
               <FormField
                 control={form.control}
-                name="description"
+                name="info"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Info</FormLabel>
                     <FormControl>
-                      <Input placeholder="Description" {...field} />
+                      <Input placeholder="Info" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="grid grid-cols-2 justify-end gap-3">
-                <div
-                  className="flex cursor-pointer items-center justify-center rounded-md border text-sm transition-colors hover:bg-muted/50"
-                  onClick={() => {
-                    setOpen(false);
-                    form.reset();
-                  }}
-                >
-                  Close
-                </div>
-                <Button type="submit" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Add
-                </Button>
-              </div>
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create project
+              </Button>
             </form>
           </Form>
-        </AlertDialogContent>
-      </AlertDialog>
+        </PopoverContent>
+      </Popover>
     </>
   );
 };

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
-import type { activities } from "drizzle/schema";
 import { AddActivity } from "../create/create-activity";
 import type { InferSelectModel } from "drizzle-orm";
 import { Button } from "../ui/button";
@@ -18,6 +17,7 @@ import { toast } from "sonner";
 import { cn } from "~/utils/cn";
 import { typeMaps } from "~/utils/maps";
 import { Separator } from "../ui/separator";
+import { Activity } from "@prisma/client";
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -28,9 +28,9 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       setLoading(true);
     },
     onSuccess: () => {
-      void ctx.contact.getContactActivities.invalidate();
-      void ctx.project.getProjectActivities.invalidate();
-      void ctx.company.getCompanyActivities.invalidate();
+      void ctx.contact.getOne.invalidate();
+      void ctx.company.getOne.invalidate();
+      void ctx.project.getOne.invalidate();
       toast.success("Activity deleted succesfully.");
       setLoading(false);
     },
@@ -64,8 +64,8 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
 };
 
 export const ActivitiesTable: React.FC<{
-  activityData: InferSelectModel<typeof activities>[];
-  pageData?: { type: string; id: string };
+  activityData: Activity[];
+  pageData?: { type: "Company" | "Project" | "Contact"; id: string };
 }> = ({ activityData, pageData }) => {
   return (
     <>
@@ -84,7 +84,7 @@ export const ActivitiesTable: React.FC<{
       )}
       {!!activityData && !activityData.length && (
         <>
-          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
+          <div className="flex min-h-[96px] grow items-center justify-center text-sm text-muted-foreground">
             No activities
           </div>
         </>
@@ -103,10 +103,10 @@ export const ActivitiesTable: React.FC<{
               />
 
               <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5 ring-4 ring-background">
-                {typeMaps[activity.type!].icon}
+                {typeMaps[activity.type].icon}
               </div>
               {!!activity.description && (
-                <span className={cn("line-clamp-2 text-sm")}>
+                <span className={cn("line-clamp-1 text-sm")}>
                   {activity.description}
                 </span>
               )}

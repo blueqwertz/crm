@@ -11,7 +11,7 @@ export default function AuthenticationPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex h-screen items-center justify-center px-8 lg:grid lg:grid-cols-2 lg:px-0">
-        <div className="relative hidden h-screen flex-col justify-between bg-slate-900 p-8 text-white lg:flex">
+        <div className="relative hidden h-screen flex-col justify-between bg-zinc-900 p-10 text-white lg:flex">
           <div className="flex items-center gap-2 text-lg font-medium">
             <Command />
             CRM
@@ -29,23 +29,6 @@ export default function AuthenticationPage() {
               </p>
             </div>
             <UserAuthForm />
-            {/* <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{" "}
-              <Link
-                href="/terms"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              .
-            </p> */}
           </div>
         </div>
       </div>
