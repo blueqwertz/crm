@@ -70,11 +70,8 @@ const ActivityForm: React.FC<{
         contactCreated?.id ?? "",
       ]);
       void ctx.contact.getAll.invalidate();
-      toast.success(`Added contact.`);
     },
-    onError: () => {
-      toast.error("Failed to add contact.");
-    },
+    onError: () => {},
   });
 
   const { mutate: addCompany } = api.company.addOne.useMutation({
@@ -84,11 +81,8 @@ const ActivityForm: React.FC<{
         companyCreated?.id ?? "",
       ]);
       void ctx.company.getAll.invalidate();
-      toast.success(`Added company.`);
     },
-    onError: () => {
-      toast.error("Failed to add company.");
-    },
+    onError: () => {},
   });
 
   const { mutate: addProject } = api.project.addOne.useMutation({
@@ -98,11 +92,8 @@ const ActivityForm: React.FC<{
         projectCreated?.id ?? "",
       ]);
       void ctx.project.getAll.invalidate();
-      toast.success(`Added project.`);
     },
-    onError: () => {
-      toast.error("Failed to add project.");
-    },
+    onError: () => {},
   });
 
   const { mutate: addActivity } = api.activity.addOne.useMutation({
@@ -113,7 +104,6 @@ const ActivityForm: React.FC<{
       void ctx.contact.getOne.invalidate();
       void ctx.company.getOne.invalidate();
       void ctx.project.getOne.invalidate();
-      toast.success("Activity added succesfully.");
       setLoading(false);
       form.reset();
       setOpen(false);

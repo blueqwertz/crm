@@ -31,7 +31,6 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       void ctx.contact.getOne.invalidate();
       void ctx.company.getOne.invalidate();
       void ctx.project.getOne.invalidate();
-      toast.success("Activity deleted succesfully.");
       setLoading(false);
     },
     onError: () => {

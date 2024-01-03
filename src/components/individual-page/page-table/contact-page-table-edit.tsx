@@ -49,7 +49,6 @@ export const ContactPageTableEdit: React.FC<{
       setDeleteLoading(true);
     },
     onSuccess: () => {
-      toast.success("Contact deleted succesfully.");
       void ctx.contact.getAll.invalidate();
     },
     onError: () => {
@@ -61,7 +60,6 @@ export const ContactPageTableEdit: React.FC<{
       setLinkLoading(true);
     },
     onSuccess: () => {
-      toast.success("Contact linked succesfully.");
       setLinkValue(undefined);
       setLinkIndex(0);
       setLinkOpen(false);
@@ -70,7 +68,6 @@ export const ContactPageTableEdit: React.FC<{
     },
     onError: (error) => {
       console.log(error);
-      toast.error(error.message);
       setLinkLoading(false);
     },
   });
@@ -83,30 +80,9 @@ export const ContactPageTableEdit: React.FC<{
       }}
     >
       <div key={`cpte-${contact.id}`} className="flex">
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div
-                className="box-content h-4 w-4 cursor-pointer rounded-l-md border p-2 text-red-500 transition-colors hover:bg-accent"
-                onClick={() => {
-                  !deleteLoading && deleteContact({ id: contact.id });
-                }}
-              >
-                {!deleteLoading ? (
-                  <Trash className="h-4 w-4" />
-                ) : (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="">
-              <p>Delete</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
         <Popover open={linkOpen} onOpenChange={setLinkOpen}>
           <PopoverTrigger asChild>
-            <div className="box-content cursor-pointer rounded-none border border-l-0 rounded-r-md p-2 text-muted-foreground transition-colors hover:bg-accent">
+            <div className="box-content cursor-pointer rounded-none border border-r-0 rounded-l-md p-2 text-muted-foreground transition-colors hover:bg-accent">
               <Link className="h-4 w-4" />
             </div>
           </PopoverTrigger>
@@ -182,6 +158,28 @@ export const ContactPageTableEdit: React.FC<{
             </Button>
           </PopoverContent>
         </Popover>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div
+                className="box-content h-4 w-4 cursor-pointer rounded-r-md border p-2 text-red-500 transition-colors hover:bg-accent"
+                onClick={() => {
+                  !deleteLoading && deleteContact({ id: contact.id });
+                }}
+              >
+                {!deleteLoading ? (
+                  <Trash className="h-4 w-4" />
+                ) : (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="">
+              <p>Delete</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
         {/* <div className="box-content cursor-pointer rounded-r-md border p-2 text-muted-foreground transition-colors hover:bg-accent">
           <Pencil className="h-4 w-4" />
         </div> */}

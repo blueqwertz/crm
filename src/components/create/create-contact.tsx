@@ -14,7 +14,6 @@ import {
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { toast } from "sonner";
 import { ComboboxMulti } from "../ui/combobox-multi";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Skeleton } from "../ui/skeleton";
@@ -42,7 +41,6 @@ export const AddContact = () => {
       setLoading(false);
       form.reset();
       form.clearErrors();
-      toast.success("Added contact.");
       void ctx.contact.getAll.invalidate();
     },
     onError: () => {
@@ -57,11 +55,8 @@ export const AddContact = () => {
         companies?.id ?? "",
       ]);
       void ctx.company.getAll.invalidate();
-      toast.success(`Added company ${companies?.name}.`);
     },
-    onError: () => {
-      toast.error("Failed to add company.");
-    },
+    onError: () => {},
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

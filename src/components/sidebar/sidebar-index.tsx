@@ -3,6 +3,7 @@ import { SidebarAuth } from "./sidebar-auth";
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarNav } from "./sidebar-navigation";
 import { SidebarSearch } from "./sidebar-search";
+import { SidebarFeedback } from "./sidebar-feedback";
 
 export const Sidebar = () => {
   return (
@@ -11,6 +12,7 @@ export const Sidebar = () => {
         <SidebarHeader />
         <SidebarSearch />
         <SidebarNav />
+        <SidebarFeedback />
         <SidebarAuth />
       </div>
     </>

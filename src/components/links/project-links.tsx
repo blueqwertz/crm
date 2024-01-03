@@ -28,7 +28,6 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: (value) => {
       setDisabled(false);
-      toast.success("Project succesfully added.");
       setSelectedOption((prev) => {
         if (!prev) return [value?.id ?? ""];
         return [...prev, value?.id ?? ""];
@@ -37,7 +36,6 @@ export const AddProjectRelation: React.FC<{
     },
     onError: () => {
       setDisabled(false);
-      toast.error("Failed to add project.");
     },
   });
 
@@ -149,7 +147,6 @@ export const AddProjectRelation: React.FC<{
           disabled={disabled}
           onClick={() => {
             if (!selectedOption?.length) {
-              toast.error("Please select a contact");
               return;
             }
             if (pageData.type == "Contact") {

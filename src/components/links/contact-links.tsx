@@ -28,7 +28,6 @@ export const AddContactRelation: React.FC<{
     },
     onSuccess: (value) => {
       setDisabled(false);
-      toast.success("Contact succesfully added.");
       setSelectedOption((prev) => {
         if (!prev) return [value?.id ?? ""];
         return [...prev, value?.id ?? ""];
@@ -37,7 +36,6 @@ export const AddContactRelation: React.FC<{
     },
     onError: () => {
       setDisabled(false);
-      toast.error("Failed to add contact.");
     },
   });
 
@@ -150,7 +148,6 @@ export const AddContactRelation: React.FC<{
           disabled={disabled}
           onClick={() => {
             if (!selectedOption?.length) {
-              toast.error("Please select a contact");
               return;
             }
             if (pageData.type == "Company") {
