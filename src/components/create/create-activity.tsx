@@ -70,7 +70,6 @@ const ActivityForm: React.FC<{
         contactCreated?.id ?? "",
       ]);
       void ctx.contact.getAll.invalidate();
-      toast.success(`Added contact.`);
     },
   });
 
@@ -81,7 +80,6 @@ const ActivityForm: React.FC<{
         companyCreated?.id ?? "",
       ]);
       void ctx.company.getAll.invalidate();
-      toast.success(`Added company.`);
     },
   });
 
@@ -92,7 +90,6 @@ const ActivityForm: React.FC<{
         projectCreated?.id ?? "",
       ]);
       void ctx.project.getAll.invalidate();
-      toast.success(`Added project.`);
     },
   });
 
@@ -104,7 +101,6 @@ const ActivityForm: React.FC<{
       void ctx.contact.getOne.invalidate();
       void ctx.company.getOne.invalidate();
       void ctx.project.getOne.invalidate();
-      toast.success("Activity added succesfully.");
       setLoading(false);
       form.reset();
       setOpen(false);
