@@ -64,12 +64,6 @@ export const CompanyPageTable = () => {
                   {company._count.projects === 1 ? "project" : "projects"}
                 </Badge>
               )}
-              {/* {!!company.projectCount && (
-                <Badge variant={"outline"} className="text-xs leading-3">
-                  {company.projectCount}{" "}
-                  {company.projectCount === 1 ? "project" : "projects"}
-                </Badge>
-              )} */}
             </Link>
           );
         })}
