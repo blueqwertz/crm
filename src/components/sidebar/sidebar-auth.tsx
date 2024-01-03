@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const SidebarAuth: React.FC = () => {
+export const SidebarAuth = () => {
   const { data: sessionData, status } = useSession();
 
   return (

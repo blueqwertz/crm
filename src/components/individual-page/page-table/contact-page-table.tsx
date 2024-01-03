@@ -45,7 +45,7 @@ export const ContactPageTable = () => {
               href={`/contacts/${contact.id}`}
               key={contact.id}
               className={cn(
-                "group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-muted/50",
+                "group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-muted/50"
               )}
             >
               <div className="flex shrink gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
@@ -59,7 +59,7 @@ export const ContactPageTable = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-1">
-                  <div className="flex h-8 items-center gap-2 text-sm">
+                  <div className="flex h-8 items-center gap-2 text-base">
                     <span className="truncate font-semibold">
                       {contact.name}
                     </span>
@@ -81,7 +81,7 @@ export const ContactPageTable = () => {
                                   "cursor-pointer leading-3 hover:underline",
                                   {
                                     "ml-1": index > 0,
-                                  },
+                                  }
                                 )}
                               >
                                 {company.name}
