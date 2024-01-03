@@ -21,6 +21,8 @@ import { Skeleton } from "../ui/skeleton";
 export const AddContact = () => {
   const { data: companies } = api.company.getAll.useQuery();
 
+  const [open, setOpen] = useState(false);
+
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
@@ -42,6 +44,7 @@ export const AddContact = () => {
       form.reset();
       form.clearErrors();
       void ctx.contact.getAll.invalidate();
+      setOpen(false);
     },
     onError: () => {
       setLoading(false);
@@ -56,7 +59,6 @@ export const AddContact = () => {
       ]);
       void ctx.company.getAll.invalidate();
     },
-    onError: () => {},
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,7 +79,7 @@ export const AddContact = () => {
 
   return (
     <>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button size={"sm"} className="px-4">
             <Plus className="mr-1 h-4 w-4" />

@@ -70,8 +70,8 @@ const ActivityForm: React.FC<{
         contactCreated?.id ?? "",
       ]);
       void ctx.contact.getAll.invalidate();
+      toast.success(`Added contact.`);
     },
-    onError: () => {},
   });
 
   const { mutate: addCompany } = api.company.addOne.useMutation({
@@ -81,8 +81,8 @@ const ActivityForm: React.FC<{
         companyCreated?.id ?? "",
       ]);
       void ctx.company.getAll.invalidate();
+      toast.success(`Added company.`);
     },
-    onError: () => {},
   });
 
   const { mutate: addProject } = api.project.addOne.useMutation({
@@ -92,8 +92,8 @@ const ActivityForm: React.FC<{
         projectCreated?.id ?? "",
       ]);
       void ctx.project.getAll.invalidate();
+      toast.success(`Added project.`);
     },
-    onError: () => {},
   });
 
   const { mutate: addActivity } = api.activity.addOne.useMutation({
@@ -104,6 +104,7 @@ const ActivityForm: React.FC<{
       void ctx.contact.getOne.invalidate();
       void ctx.company.getOne.invalidate();
       void ctx.project.getOne.invalidate();
+      toast.success("Activity added succesfully.");
       setLoading(false);
       form.reset();
       setOpen(false);
@@ -414,14 +415,10 @@ const ActivityForm: React.FC<{
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Info</FormLabel>
                   <FormControl>
                     <div className="relative flex gap-2">
-                      <Input
-                        placeholder="Description"
-                        className="pr-10"
-                        {...field}
-                      />
+                      <Input placeholder="Info" className="pr-10" {...field} />
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
