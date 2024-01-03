@@ -12,6 +12,8 @@ export const companyRotuer = createTRPCRouter({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
               projects: z.boolean().optional().default(false),
+              contactCount: z.boolean().optional().default(false),
+              projectCount: z.boolean().optional().default(false),
             })
             .optional(),
         })
@@ -32,6 +34,12 @@ export const companyRotuer = createTRPCRouter({
               }
             : false,
           projects: input?.include?.projects,
+          _count: {
+            select: {
+              contacts: input?.include?.contactCount,
+              projects: input?.include?.projectCount,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",

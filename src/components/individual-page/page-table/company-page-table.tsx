@@ -5,7 +5,12 @@ import Link from "next/link";
 import { Skeleton } from "../../ui/skeleton";
 
 export const CompanyPageTable = () => {
-  const { data: companyData } = api.company.getAll.useQuery();
+  const { data: companyData } = api.company.getAll.useQuery({
+    include: {
+      contactCount: true,
+      projectCount: true,
+    },
+  });
 
   return (
     <>
@@ -47,10 +52,16 @@ export const CompanyPageTable = () => {
                   <span className="font-semibold">{company.name}</span>
                 </div>
               </div>
-              {!!company.contactCount && (
+              {!!company._count.contacts && (
                 <Badge variant={"outline"} className="text-xs leading-3">
-                  {company.contactCount}{" "}
-                  {company.contactCount === 1 ? "contact" : "contacts"}
+                  {company._count.contacts}{" "}
+                  {company._count.contacts === 1 ? "contact" : "contacts"}
+                </Badge>
+              )}
+              {!!company._count.projects && (
+                <Badge variant={"outline"} className="text-xs leading-3">
+                  {company._count.projects}{" "}
+                  {company._count.projects === 1 ? "project" : "projects"}
                 </Badge>
               )}
               {/* {!!company.projectCount && (

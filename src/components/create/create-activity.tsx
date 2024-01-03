@@ -380,8 +380,8 @@ const ActivityForm: React.FC<{
                           options={
                             projects?.map((project) => {
                               return {
-                                value: project.id!,
-                                label: project.name!,
+                                value: project.id,
+                                label: project.name,
                               };
                             }) ?? []
                           }
