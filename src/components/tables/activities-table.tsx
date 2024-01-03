@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { AddActivity } from "../create/create-activity";
-import type { InferSelectModel } from "drizzle-orm";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
@@ -11,13 +10,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import dayjs from "dayjs";
 import "@/utils/relative";
-import { toast } from "sonner";
 import { cn } from "~/utils/cn";
 import { typeMaps } from "~/utils/maps";
 import { Separator } from "../ui/separator";
 import { Activity } from "@prisma/client";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+dayjs.extend(advancedFormat);
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -110,7 +110,7 @@ export const ActivitiesTable: React.FC<{
               {!activity.description && (
                 <span className="text-sm">
                   {activity.type} on{" "}
-                  {dayjs(activity.date).format("DD. MMMM, YYYY")}
+                  {dayjs(activity.date).format("Do MMMM, YYYY")}
                 </span>
               )}
               <span className="ml-auto shrink-0 truncate text-sm text-muted-foreground">

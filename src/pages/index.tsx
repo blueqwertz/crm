@@ -20,7 +20,9 @@ export default function Home() {
           {/* HEADER */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <h1 className="flex items-center gap-1 text-xl font-bold">CRM</h1>
+              <h1 className="flex items-center gap-1 text-xl font-bold">
+                Dashboard
+              </h1>
               {!sessionData && <Skeleton className="h-5 w-40" />}
               {!!sessionData && (
                 <span className="text-sm text-muted-foreground">

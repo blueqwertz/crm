@@ -72,14 +72,14 @@ export function ComboboxMulti({
             placeholder={placeholder}
             value={input}
             onValueChange={setInput}
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                if (!!noResultsClick) {
-                  noResultsClick(input);
-                  setInput("");
-                }
-              }
-            }}
+            // onKeyUp={(e) => {
+            //   if (e.key === "Enter") {
+            //     if (!!noResultsClick) {
+            //       noResultsClick(input);
+            //       setInput("");
+            //     }
+            //   }
+            // }}
           />
           <CommandEmpty>
             {!!noResultsName && !!input.length ? (
@@ -92,7 +92,8 @@ export function ComboboxMulti({
                 }}
                 className="hover:underline cursor-pointer"
               >
-                Add {noResultsName} "{input.trim()}"
+                Add {noResultsName} "
+                <span className="italic">{input.trim()}</span>"
               </span>
             ) : (
               <span>No results found.</span>

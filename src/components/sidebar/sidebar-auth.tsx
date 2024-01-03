@@ -5,17 +5,11 @@ import { Button } from "../ui/button";
 import {
   ArrowRight,
   Barcode,
-  Briefcase,
-  ChevronRight,
-  Code,
   CreditCard,
   LifeBuoy,
   Link,
   LogOut,
-  Mail,
-  MessageSquare,
   Plus,
-  PlusCircle,
   Settings,
   User,
   UserPlus,
@@ -43,13 +37,9 @@ export const SidebarAuth = () => {
     <>
       {status == "loading" && (
         <>
-          <div className="flex grow items-center justify-between gap-2 rounded-md border px-2 py-1.5">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <div className="flex flex-grow flex-col gap-1">
-              <Skeleton className="h-6 w-full" />
-              {/* <Skeleton className="h-4 w-full" /> */}
-            </div>
-            <Skeleton className="h-8 w-8 rounded-sm" />
+          <div className="mt-auto flex items-center justify-center gap-2 rounded-md border px-2 py-[5px]">
+            <Skeleton className="h-7 w-7 rounded-full" />
+            <Skeleton className="h-6 w-24" />
           </div>
         </>
       )}
@@ -59,7 +49,7 @@ export const SidebarAuth = () => {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant={"outline"}>
+                  <Button variant={"outline"} className="mt-auto justify-start">
                     <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
                       <AvatarImage src={sessionData.user?.image} />
                       <AvatarFallback>
@@ -69,7 +59,7 @@ export const SidebarAuth = () => {
                     <span className="font-medium">{sessionData.user.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[205px]">
+                <DropdownMenuContent className="w-[205px]" align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
@@ -144,7 +134,7 @@ export const SidebarAuth = () => {
                   void signIn();
                 }}
                 variant={"outline"}
-                className="h-10 w-full"
+                className="h-10 w-full mt-auto"
               >
                 Login
                 <ArrowRight className="h-4 w-4 ml-1" />

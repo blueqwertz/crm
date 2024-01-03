@@ -21,7 +21,6 @@ import {
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "sonner";
-import type { InferSelectModel } from "drizzle-orm";
 import { Button } from "../../ui/button";
 import { Combobox } from "../../ui/combobox";
 import { Input } from "../../ui/input";

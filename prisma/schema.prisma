@@ -53,10 +53,10 @@ model User {
     Contact        Contact?
     createdInvites HeadInvite[] @relation("creator")
     usedInvite     HeadInvite[] @relation("user")
+    feedback       Feedback[]
 
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
-    Feedback  Feedback[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([headId])
 }
@@ -232,8 +232,8 @@ model Activity {
 model Feedback {
     id String @id @default(cuid())
 
-    userdId String
-    user    User   @relation(fields: [userdId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     message String
     rating  Int     @default(0)
@@ -242,7 +242,7 @@ model Feedback {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    @@index([userdId])
+    @@index([userId])
 }
 
 // #endregion

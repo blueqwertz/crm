@@ -31,7 +31,7 @@ export default withAuth(
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
-    if (isAuth && !hasHead && !isInvitePage) {
+    if (isAuth && !hasHead && !isInvitePage && !isAuthPage) {
       return NextResponse.redirect(new URL("/auth/invite", req.url));
     }
 

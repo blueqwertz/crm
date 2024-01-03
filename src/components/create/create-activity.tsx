@@ -44,7 +44,6 @@ import {
 import { ComboboxMulti } from "../ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
 import { ActivityType } from "@prisma/client";
 
 const ActivityForm: React.FC<{

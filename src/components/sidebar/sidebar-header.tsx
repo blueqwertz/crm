@@ -8,7 +8,7 @@ export const SidebarHeader = () => {
   const { data: sessionData } = useSession();
   return (
     <>
-      <div className="flex max-w-full gap-2 w-full">
+      <div className="flex gap-2 border-b items-center justify-center h-14 px-2 sm:px-3 py-1">
         <Button variant={"outline"} className="grow justify-start px-3">
           <Avatar className="h-7 w-7 shrink-0 border text-xs mr-2">
             <AvatarImage />

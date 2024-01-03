@@ -1,3 +1,4 @@
+import { ActivityType } from "@prisma/client";
 import {
   ArrowUpCircle,
   CalendarCheck,
@@ -34,7 +35,9 @@ export const statusMaps = {
   },
 };
 
-export const typeMaps = {
+export const typeMaps: {
+  [key in ActivityType]: { title: string; icon: React.ReactNode };
+} = {
   Call: {
     title: "Call",
     icon: <Voicemail className="h-4 w-4" />,

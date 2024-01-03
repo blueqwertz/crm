@@ -43,9 +43,9 @@ export const AddContactRelation: React.FC<{
     onMutate: () => {
       setLoading(true);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await ctx.company.getOne.invalidate();
       setLoading(false);
-      void ctx.company.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -58,9 +58,9 @@ export const AddContactRelation: React.FC<{
     onMutate: () => {
       setLoading(true);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await ctx.project.getOne.invalidate();
       setLoading(false);
-      void ctx.project.getOne.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {

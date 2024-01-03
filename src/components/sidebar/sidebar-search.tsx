@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 export const SidebarSearch = () => {
   return (
     <>
-      <div className="my-2">
+      <div>
         <Input
           placeholder="Coming soon..."
           disabled={true}
