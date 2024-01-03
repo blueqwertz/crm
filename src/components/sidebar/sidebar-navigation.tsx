@@ -83,7 +83,7 @@ export const SidebarNav = () => {
         {NavItemArray.map((item) => {
           return !item.children ? (
             <Link
-              key={createId()}
+              key={item.title}
               href={item.path ?? "/"}
               className={cn("w-full rounded-md", {
                 "bg-muted": pathname == item.path,
@@ -102,7 +102,7 @@ export const SidebarNav = () => {
           ) : (
             <>
               <Accordion
-                key={createId()}
+                key={item.title}
                 type="single"
                 collapsible
                 defaultValue={
@@ -132,7 +132,7 @@ export const SidebarNav = () => {
                               "h-8 w-full justify-start px-2.5 font-light",
                               {
                                 "bg-muted": pathname == child.path,
-                              },
+                              }
                             )}
                           >
                             <div className="mr-2 h-4 w-4"></div>

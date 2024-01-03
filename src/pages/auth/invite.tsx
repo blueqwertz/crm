@@ -4,8 +4,9 @@ import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
 import { Check, Command, Loader2 } from "lucide-react";
 import Head from "next/head";
-import { redirect, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export default function AuthenticationPage() {
   const [checkLoading, setCheckLoading] = useState(false);
@@ -15,6 +16,7 @@ export default function AuthenticationPage() {
   const [codeInput, setCodeInput] = useState("");
 
   const router = useRouter();
+  const { update } = useSession();
 
   const [inputTimer, setInputTimer] = useState<NodeJS.Timeout>();
 
@@ -22,9 +24,13 @@ export default function AuthenticationPage() {
     onMutate: () => {
       setLoading(true);
     },
-    onSuccess: () => {
-      setLoading(false);
-      void router.replace("/");
+    onSuccess: async (data) => {
+      console.log(data);
+      if (data) {
+        setLoading(false);
+        await update();
+        void router.push("/");
+      }
     },
     onError: () => {
       setLoading(false);
@@ -39,7 +45,6 @@ export default function AuthenticationPage() {
     onSuccess: (data) => {
       setCheckLoading(false);
       !!data && setCheck(true);
-      console.log(data);
     },
   });
 
@@ -49,7 +54,6 @@ export default function AuthenticationPage() {
     if (queryParameters.get("code")) {
       setCodeInput(queryParameters.get("code")!);
       useInvite({ inviteCode: queryParameters.get("code")! });
-      window.open("/", "_self");
     }
   }, [queryParameters.get("code")]);
 

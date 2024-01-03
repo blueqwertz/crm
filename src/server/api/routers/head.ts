@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -47,6 +46,8 @@ export const headRouter = createTRPCRouter({
             headId: invite.headId,
           },
         });
+
+        return invite;
       });
     }),
 });

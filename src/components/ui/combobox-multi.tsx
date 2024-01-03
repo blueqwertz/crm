@@ -72,6 +72,14 @@ export function ComboboxMulti({
             placeholder={placeholder}
             value={input}
             onValueChange={setInput}
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                if (!!noResultsClick) {
+                  noResultsClick(input);
+                  setInput("");
+                }
+              }
+            }}
           />
           <CommandEmpty>
             {!!noResultsName && !!input.length ? (

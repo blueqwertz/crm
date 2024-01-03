@@ -105,14 +105,13 @@ export const ActivitiesTable: React.FC<{
               <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5 ring-4 ring-background">
                 {typeMaps[activity.type].icon}
               </div>
-              {!!activity.description && (
-                <span className={cn("line-clamp-1 text-sm")}>
-                  {activity.description}
-                </span>
-              )}
+              <span className={cn("line-clamp-1 text-sm empty:hidden")}>
+                {activity.description}
+              </span>
               {!activity.description && (
-                <span className="text-base text-muted-foreground">
-                  No description
+                <span className="text-sm">
+                  {activity.type} on{" "}
+                  {dayjs(activity.date).format("DD. MMMM, YYYY")}
                 </span>
               )}
               <span className="ml-auto shrink-0 truncate text-sm text-muted-foreground">

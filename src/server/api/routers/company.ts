@@ -12,8 +12,10 @@ export const companyRotuer = createTRPCRouter({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
               projects: z.boolean().optional().default(false),
-              contactCount: z.boolean().optional().default(false),
-              projectCount: z.boolean().optional().default(false),
+              count: z.object({
+                contacts: z.boolean().optional().default(false),
+                projects: z.boolean().optional().default(false),
+              }),
             })
             .optional(),
         })
@@ -34,10 +36,12 @@ export const companyRotuer = createTRPCRouter({
               }
             : false,
           projects: input?.include?.projects,
-          _count: {
+          _count: Object.values(input?.include?.count ?? {}).some(
+            (value) => value
+          ) && {
             select: {
-              contacts: input?.include?.contactCount,
-              projects: input?.include?.projectCount,
+              contacts: input?.include?.count.contacts,
+              projects: input?.include?.count.projects,
             },
           },
         },
@@ -117,7 +121,6 @@ export const companyRotuer = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
       return ctx.db.company.update({
         where: {
           headId: ctx.session.user.head.id,
@@ -126,6 +129,30 @@ export const companyRotuer = createTRPCRouter({
         data: {
           contacts: {
             connect: input.contactIds.map((id) => ({
+              id,
+              headId: ctx.session.user.head.id,
+            })),
+          },
+        },
+      });
+    }),
+
+  deleteContact: protectedProcedure
+    .input(
+      z.object({
+        contactIds: z.array(z.string()),
+        companyId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.company.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.companyId,
+        },
+        data: {
+          contacts: {
+            disconnect: input.contactIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
             })),
@@ -150,6 +177,30 @@ export const companyRotuer = createTRPCRouter({
         data: {
           projects: {
             connect: input.projectIds.map((id) => ({
+              id,
+              headId: ctx.session.user.head.id,
+            })),
+          },
+        },
+      });
+    }),
+
+  deleteProject: protectedProcedure
+    .input(
+      z.object({
+        projectIds: z.array(z.string()),
+        companyId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.company.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.companyId,
+        },
+        data: {
+          projects: {
+            disconnect: input.projectIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
             })),

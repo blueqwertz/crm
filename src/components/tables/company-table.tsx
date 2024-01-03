@@ -2,13 +2,92 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
-import type { InferSelectModel } from "drizzle-orm";
 import { AddCompanyRelation } from "../links/company-links";
 import { Company } from "@prisma/client";
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Loader2, X } from "lucide-react";
+import { api } from "~/utils/api";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+
+const CompanyEdit: React.FC<{
+  id: string;
+  pageData: { type: "Project" | "Contact"; id: string };
+}> = ({ id, pageData }) => {
+  const [loading, setLoading] = useState(false);
+
+  const ctx = api.useUtils();
+  const { mutate: deleteCompanyFromProject } =
+    api.project.deleteCompany.useMutation({
+      onMutate: () => {
+        setLoading(true);
+      },
+      onSuccess: () => {
+        void ctx.project.getOne.invalidate();
+        setLoading(false);
+      },
+      onError: () => {
+        setLoading(false);
+      },
+    });
+
+  const { mutate: deleteCompanyFromContact } =
+    api.contact.deleteCompany.useMutation({
+      onMutate: () => {
+        setLoading(true);
+      },
+      onSuccess: () => {
+        void ctx.contact.getOne.invalidate();
+        setLoading(false);
+      },
+      onError: () => {
+        setLoading(false);
+      },
+    });
+
+  return (
+    <>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size={"icon"}
+              className="ml-auto h-7 w-7 shrink-0 text-muted-foreground"
+              variant={"ghost"}
+              onClick={(e) => {
+                e.preventDefault();
+                if (pageData.type === "Project") {
+                  deleteCompanyFromProject({
+                    projectId: pageData.id,
+                    companyIds: [id],
+                  });
+                } else if (pageData.type === "Contact") {
+                  deleteCompanyFromContact({
+                    contactId: pageData.id,
+                    companyIds: [id],
+                  });
+                }
+              }}
+            >
+              {!loading && <X className="h-4 w-4" />}
+              {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Remove from company</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </>
+  );
+};
 
 export const CompanyTable: React.FC<{
   companyData: Company[];
-  pageData: { type: "Company" | "Project" | "Contact"; id: string };
+  pageData: { type: "Project" | "Contact"; id: string };
 }> = ({ companyData, pageData }) => {
   return (
     <>
@@ -48,6 +127,7 @@ export const CompanyTable: React.FC<{
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-base font-medium">{contact.name}</span>
+                <CompanyEdit id={contact.id} pageData={pageData} />
               </Link>
             );
           })}
