@@ -8,6 +8,7 @@ datasource db {
     url          = env("DATABASE_URL")
 }
 
+// #region NextAuth
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -68,6 +69,9 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+// #endregion
+
+// #region Application
 model Head {
     id    String  @id @default(cuid())
     name  String
@@ -88,13 +92,13 @@ model Head {
 model HeadInvite {
     id     String @id @unique @default(cuid())
     headId String
-    head   Head   @relation(fields: [headId], references: [id], onDelete: Restrict)
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade)
 
-    creatorId String
-    creator   User   @relation("creator", fields: [creatorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    creatorId String?
+    creator   User?   @relation("creator", fields: [creatorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     userId String?
-    user   User?     @relation("user", fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    user   User?     @relation("user", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     usedAt DateTime?
 
     createdAt DateTime @default(now())
@@ -106,11 +110,12 @@ model HeadInvite {
 }
 
 model Contact {
-    id     String  @id @default(cuid())
+    id     String @id @default(cuid())
     headId String
-    head   Head    @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
     userId String? @unique
-    user   User?   @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     name   String
     email  String?
@@ -118,9 +123,10 @@ model Contact {
     info   String?
     mobile String?
 
-    activities        Activity[]        @relation("ActivityToContact")
-    companies         Company[]         @relation("CompanyToContact")
-    projects          Project[]         @relation("ContactToProject")
+    activities Activity[]
+    companies  Company[]
+    projects   Project[]
+
     outgoingRelations ContactRelation[] @relation("outgoingContact")
     incomingRelations ContactRelation[] @relation("incomingContact")
 
@@ -154,9 +160,9 @@ model Company {
     info  String?
     field String?
 
-    activities Activity[] @relation("ActivityToCompany")
-    contacts   Contact[]  @relation("CompanyToContact")
-    projects   Project[]  @relation("CompanyToProject")
+    activities Activity[]
+    contacts   Contact[]
+    projects   Project[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -183,9 +189,9 @@ model Project {
     status ProjectStatus @default(NotStarted)
     date   DateTime      @default(now())
 
-    activities Activity[] @relation("ActivityToProject")
-    companies  Company[]  @relation("CompanyToProject")
-    contacts   Contact[]  @relation("ContactToProject")
+    activities Activity[]
+    companies  Company[]
+    contacts   Contact[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -209,15 +215,19 @@ model Activity {
     type        ActivityType @default(Call)
     date        DateTime?
 
-    companies Company[] @relation("ActivityToCompany")
-    contacts  Contact[] @relation("ActivityToContact")
-    projects  Project[] @relation("ActivityToProject")
+    companies Company[]
+    contacts  Contact[]
+    projects  Project[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     @@index([headId])
 }
+
+// #endregion
+
+// #region Additional
 
 model Feedback {
     id String @id @default(cuid())
@@ -234,3 +244,5 @@ model Feedback {
 
     @@index([userdId])
 }
+
+// #endregion
