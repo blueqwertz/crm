@@ -3,7 +3,6 @@ import { Layout } from "~/components/layout";
 import { generateGreeting } from "~/utils/greeting";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "~/components/ui/skeleton";
-import { Command } from "lucide-react";
 
 export default function Home() {
   const { data: sessionData } = useSession();

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "../../ui/skeleton";
 import { cn } from "~/utils/cn";
+import { initials } from "~/utils/initials";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery({
@@ -55,7 +56,7 @@ export const ContactPageTable = () => {
                     alt=""
                   />
                   <AvatarFallback className="text-xs">
-                    {contact.name?.[0]}
+                    {initials(contact.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-1">
