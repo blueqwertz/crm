@@ -49,14 +49,19 @@ export const SidebarAuth = () => {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant={"outline"} className="mt-auto justify-start">
+                  <Button
+                    variant={"outline"}
+                    className="mt-auto justify-start truncate"
+                  >
                     <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
                       <AvatarImage src={sessionData.user?.image} />
                       <AvatarFallback>
                         {sessionData.user?.name?.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium">{sessionData.user.name}</span>
+                    <span className="font-medium truncate">
+                      {sessionData.user.name}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[205px]" align="end">

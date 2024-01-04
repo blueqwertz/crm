@@ -9,7 +9,10 @@ export const SidebarHeader = () => {
   return (
     <>
       <div className="flex gap-2 border-b items-center justify-center h-14 px-2 sm:px-3 py-1">
-        <Button variant={"outline"} className="grow justify-start px-3">
+        <Button
+          variant={"outline"}
+          className="grow justify-start px-3 truncate"
+        >
           <Avatar className="h-7 w-7 shrink-0 border text-xs mr-2">
             <AvatarImage />
             <AvatarFallback>{sessionData?.user.head.name?.[0]}</AvatarFallback>
