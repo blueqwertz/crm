@@ -60,7 +60,13 @@ export const projectRotuer = createTRPCRouter({
         },
         include: {
           contacts: input.include?.contacts,
-          activities: input.include?.activities,
+          activities: input?.include?.activities
+            ? {
+                orderBy: {
+                  date: "desc",
+                },
+              }
+            : false,
           companies: input.include?.companies,
         },
         orderBy: {

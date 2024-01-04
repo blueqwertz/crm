@@ -45,7 +45,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
           <TooltipTrigger asChild>
             <Button
               size={"icon"}
-              className="h-7 w-7 shrink-0 text-muted-foreground"
+              className="h-7 w-7 shrink-0 text-muted-foreground ml-auto hover:bg-transparent"
               variant={"ghost"}
               onClick={() => {
                 deleteActivity({ id });
@@ -55,7 +55,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
               {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Delete</TooltipContent>
+          <TooltipContent>Delete activity</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </>
@@ -104,18 +104,20 @@ export const ActivitiesTable: React.FC<{
               <div className="z-10 mr-1 shrink-0 rounded-md border bg-primary-foreground p-1.5 ring-4 ring-background">
                 {typeMaps[activity.type].icon}
               </div>
-              <span className={cn("line-clamp-1 text-sm empty:hidden")}>
-                {activity.description}
-              </span>
-              {!activity.description && (
-                <span className="text-sm">
-                  {activity.type} on{" "}
-                  {dayjs(activity.date).format("Do MMMM, YYYY")}
+              <div className="flex flex-col">
+                <span className="leading-none text-xs text-muted-foreground">
+                  {dayjs().to(activity.date)}
                 </span>
-              )}
-              <span className="ml-auto shrink-0 truncate text-sm text-muted-foreground">
-                {dayjs().to(activity.date)}
-              </span>
+                <span className={cn("line-clamp-3 text-sm empty:hidden")}>
+                  {activity.description}
+                </span>
+                {!activity.description && (
+                  <span className="text-sm">
+                    {activity.type} on{" "}
+                    {dayjs(activity.date).format("Do MMMM, YYYY")}
+                  </span>
+                )}
+              </div>
               <ActivityEdit id={activity.id} />
             </div>
           );
