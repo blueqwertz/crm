@@ -50,10 +50,11 @@ model User {
     headId String?
     head   Head?   @relation(fields: [headId], references: [id])
 
-    Contact        Contact?
-    createdInvites HeadInvite[] @relation("creator")
-    usedInvite     HeadInvite[] @relation("user")
+    contact        Contact?
+    createdInvites HeadInvite[]   @relation("creator")
+    usedInvite     HeadInvite[]   @relation("user")
     feedback       Feedback[]
+    notifications  Notification[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -241,6 +242,38 @@ model Feedback {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+enum NotificationPriority {
+    MIN
+    LOW
+    DEFAULT
+    HIGH
+    MAX
+}
+
+enum NotificationType {
+    DEBUG
+    INFO
+    SUCCESS
+    WARNING
+    ERROR
+}
+
+model Notification {
+    id        String               @id @default(cuid())
+    userId    String?
+    user      User?                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime             @default(now())
+    message   String               @db.Text
+    priority  NotificationPriority @default(DEFAULT)
+    type      NotificationType     @default(INFO)
+    read      Boolean              @default(false)
+    archived  Boolean              @default(false)
+    visible   Boolean              @default(true)
+    href      String               @default("")
 
     @@index([userId])
 }

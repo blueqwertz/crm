@@ -19,6 +19,10 @@ export const ProjectPageTable = () => {
     include: {
       contacts: true,
       companies: true,
+      count: {
+        companies: true,
+        contacts: true,
+      },
     },
   });
 
@@ -97,7 +101,7 @@ export const ProjectPageTable = () => {
                           {project.contacts
                             .slice(
                               0,
-                              project.contacts.length <= MAX_CONTACTS
+                              project._count.contacts <= MAX_CONTACTS
                                 ? MAX_CONTACTS
                                 : MAX_CONTACTS - 1
                             )
@@ -124,26 +128,26 @@ export const ProjectPageTable = () => {
                                 </TooltipProvider>
                               );
                             })}
-                          {project.contacts.length > MAX_CONTACTS && (
+                          {project._count.contacts > MAX_CONTACTS && (
                             <>
                               <TooltipProvider>
                                 <Tooltip delayDuration={100}>
                                   <TooltipTrigger asChild>
                                     <Avatar className="-ml-2.5 h-[26px] w-[26px] border first:ml-0">
                                       <AvatarFallback className="text-[10px]">
-                                        {project.contacts.length -
+                                        {project._count.contacts -
                                           MAX_CONTACTS >
                                         9
                                           ? "9+"
                                           : "+" +
-                                            (project.contacts.length -
+                                            (project._count.contacts -
                                               (MAX_CONTACTS - 1))}
                                       </AvatarFallback>
                                     </Avatar>
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <span className="font-semibold">
-                                      {project.contacts.length -
+                                      {project._count.contacts -
                                         (MAX_CONTACTS - 1)}{" "}
                                       more
                                     </span>{" "}

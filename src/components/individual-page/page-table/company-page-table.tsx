@@ -45,19 +45,23 @@ export const CompanyPageTable = () => {
               key={company.id}
               className="flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50"
             >
-              <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
+              <div className="flex flex-col gap-0 px-4 py-4 sm:px-6">
                 <div className="flex h-8 items-center gap-2 text-base">
                   <span className="font-semibold">{company.name}</span>
-                  {/* <Badge
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                    variant={"outline"}
-                    className={cn("text-[11px] text-xs leading-3")}
-                  >
-                    {statusMaps[company.status].icon}
-                    {statusMaps[company.status].title}
-                  </Badge> */}
+                </div>
+                <div className="flex gap-1">
+                  {!!company._count.contacts && (
+                    <Badge variant={"outline"}>
+                      {company._count.contacts}{" "}
+                      {company._count.contacts === 1 ? "contact" : "contacts"}
+                    </Badge>
+                  )}
+                  {!!company._count.projects && (
+                    <Badge variant={"outline"}>
+                      {company._count.projects}{" "}
+                      {company._count.projects === 1 ? "project" : "projects"}
+                    </Badge>
+                  )}
                 </div>
                 <span className="mb-1 text-sm empty:hidden">
                   {company.info}

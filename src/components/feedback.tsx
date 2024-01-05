@@ -23,14 +23,15 @@ export const Feedback = () => {
         <PopoverTrigger asChild>
           <Button
             variant={"outline"}
-            size={"sm"}
-            className="absolute bottom-0 right-0 m-3"
+            // size={"sm"}
+            className="mr-auto"
+            // className="absolute bottom-0 right-0 m-3"
           >
             <MessageSquare className="w-3.5 h-3.5 mr-2" />
             Feedback
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="mb-1">
+        <PopoverContent align="start" className="mb-1">
           <div className="flex flex-col gap-2">
             <div className="flex flex-col">
               <span className="text-lg font-semibold">Feedback</span>

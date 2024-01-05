@@ -13,7 +13,6 @@ export const Sidebar = () => {
         <div className="p-2 sm:p-3 flex flex-col gap-2 grow">
           <SidebarSearch />
           <SidebarNav />
-          <SidebarAuth />
         </div>
       </div>
     </>

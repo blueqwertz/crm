@@ -83,7 +83,7 @@ export const ActivitiesTable: React.FC<{
       id: string;
       name: string;
       createdAt?: Date;
-      _count?: {
+      count?: {
         contacts: number;
         companies: number;
       };
@@ -92,8 +92,17 @@ export const ActivitiesTable: React.FC<{
       id: string;
       name: string;
       createdAt?: Date;
-      _count?: {
+      count?: {
         contacts: number;
+        projects: number;
+      };
+    };
+    contact?: {
+      id: string;
+      name: string;
+      createdAt?: Date;
+      count?: {
+        companies: number;
         projects: number;
       };
     };
@@ -155,7 +164,7 @@ export const ActivitiesTable: React.FC<{
                         <span className="text-muted-foreground/70">
                           {!!activity.project && (
                             <>
-                              &#x2022; From connection to{" "}
+                              &#x2022; From{" "}
                               <HoverCard>
                                 <HoverCardTrigger
                                   href={`/projects/${activity.project.id}`}
@@ -174,32 +183,32 @@ export const ActivitiesTable: React.FC<{
                                       </h4>
                                     </Link>
                                     <div className="flex gap-2 flex-wrap">
-                                      {!!activity.project._count && (
+                                      {!!activity.project.count && (
                                         <>
-                                          {!!activity.project._count
+                                          {!!activity.project.count
                                             .contacts && (
                                             <>
                                               <Badge variant={"outline"}>
                                                 {
-                                                  activity.project._count
+                                                  activity.project.count
                                                     .contacts
                                                 }{" "}
-                                                {activity.project._count
+                                                {activity.project.count
                                                   .contacts == 1
                                                   ? "contact"
                                                   : "contacts"}
                                               </Badge>
                                             </>
                                           )}
-                                          {!!activity.project._count
+                                          {!!activity.project.count
                                             .companies && (
                                             <>
                                               <Badge variant={"outline"}>
                                                 {
-                                                  activity.project._count
+                                                  activity.project.count
                                                     .companies
                                                 }{" "}
-                                                {activity.project._count
+                                                {activity.project.count
                                                   .companies == 1
                                                   ? "company"
                                                   : "companies"}
@@ -225,7 +234,7 @@ export const ActivitiesTable: React.FC<{
                           )}
                           {!!activity.company && (
                             <>
-                              &#x2022; From connection to{" "}
+                              &#x2022; From{" "}
                               <HoverCard>
                                 <HoverCardTrigger
                                   href={`/companies/${activity.company.id}`}
@@ -244,32 +253,32 @@ export const ActivitiesTable: React.FC<{
                                       </h4>
                                     </Link>
                                     <div className="flex gap-2 flex-wrap">
-                                      {!!activity.company._count && (
+                                      {!!activity.company.count && (
                                         <>
-                                          {!!activity.company._count
+                                          {!!activity.company.count
                                             .contacts && (
                                             <>
                                               <Badge variant={"outline"}>
                                                 {
-                                                  activity.company._count
+                                                  activity.company.count
                                                     .contacts
                                                 }{" "}
-                                                {activity.company._count
+                                                {activity.company.count
                                                   .projects == 1
                                                   ? "contact"
                                                   : "contacts"}
                                               </Badge>
                                             </>
                                           )}
-                                          {!!activity.company._count
+                                          {!!activity.company.count
                                             .projects && (
                                             <>
                                               <Badge variant={"outline"}>
                                                 {
-                                                  activity.company._count
+                                                  activity.company.count
                                                     .projects
                                                 }{" "}
-                                                {activity.company._count
+                                                {activity.company.count
                                                   .projects == 1
                                                   ? "project"
                                                   : "projects"}
@@ -285,6 +294,76 @@ export const ActivitiesTable: React.FC<{
                                         Created on{" "}
                                         {dayjs(
                                           activity.company.createdAt
+                                        ).format("MMMM Do, YYYY")}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </HoverCardContent>
+                              </HoverCard>
+                            </>
+                          )}
+                          {!!activity.contact && (
+                            <>
+                              &#x2022; From{" "}
+                              <HoverCard>
+                                <HoverCardTrigger
+                                  href={`/companies/${activity.contact.id}`}
+                                  className="text-blue-500 hover:underline tag"
+                                >
+                                  {activity.contact.name}
+                                </HoverCardTrigger>
+                                <HoverCardContent>
+                                  <div className="space-y-1">
+                                    <Link
+                                      href={`/projects/${activity.contact.id}`}
+                                      className="hover:underline"
+                                    >
+                                      <h4 className="text-sm font-semibold">
+                                        {activity.contact.name}
+                                      </h4>
+                                    </Link>
+                                    <div className="flex gap-2 flex-wrap">
+                                      {!!activity.contact.count && (
+                                        <>
+                                          {!!activity.contact.count
+                                            .companies && (
+                                            <>
+                                              <Badge variant={"outline"}>
+                                                {
+                                                  activity.contact.count
+                                                    .companies
+                                                }{" "}
+                                                {activity.contact.count
+                                                  .projects == 1
+                                                  ? "company"
+                                                  : "companies"}
+                                              </Badge>
+                                            </>
+                                          )}
+                                          {!!activity.contact.count
+                                            .projects && (
+                                            <>
+                                              <Badge variant={"outline"}>
+                                                {
+                                                  activity.contact.count
+                                                    .projects
+                                                }{" "}
+                                                {activity.contact.count
+                                                  .projects == 1
+                                                  ? "project"
+                                                  : "projects"}
+                                              </Badge>
+                                            </>
+                                          )}
+                                        </>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center pt-1">
+                                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                                      <span className="text-xs text-muted-foreground">
+                                        Created on{" "}
+                                        {dayjs(
+                                          activity.contact.createdAt
                                         ).format("MMMM Do, YYYY")}
                                       </span>
                                     </div>

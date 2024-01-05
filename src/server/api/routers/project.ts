@@ -12,6 +12,12 @@ export const projectRotuer = createTRPCRouter({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
               companies: z.boolean().optional().default(false),
+              count: z
+                .object({
+                  contacts: z.boolean().optional().default(false),
+                  companies: z.boolean().optional().default(false),
+                })
+                .optional(),
             })
             .optional(),
         })
@@ -23,7 +29,11 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
         },
         include: {
-          contacts: input?.include?.contacts,
+          contacts: input?.include?.contacts
+            ? {
+                take: 4,
+              }
+            : false,
           activities: input?.include?.activities
             ? {
                 orderBy: {
@@ -32,6 +42,14 @@ export const projectRotuer = createTRPCRouter({
               }
             : false,
           companies: input?.include?.companies,
+          _count: Object.values(input?.include?.count ?? {}).some(
+            (value) => value
+          ) && {
+            select: {
+              contacts: input?.include?.count?.contacts,
+              companies: input?.include?.count?.companies,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",

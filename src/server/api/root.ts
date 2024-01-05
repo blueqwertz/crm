@@ -5,6 +5,7 @@ import { projectRotuer } from "./routers/project";
 import { headRouter } from "./routers/head";
 import { activityRouer } from "./routers/activity";
 import { feedbackRouter } from "./routers/feedback";
+import { notificationRouter } from "./routers/notification";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   head: headRouter,
   activity: activityRouer,
   feedback: feedbackRouter,
+  notification: notificationRouter,
 });
 
 // export type definition of API

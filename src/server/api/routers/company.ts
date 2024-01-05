@@ -12,10 +12,12 @@ export const companyRotuer = createTRPCRouter({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
               projects: z.boolean().optional().default(false),
-              count: z.object({
-                contacts: z.boolean().optional().default(false),
-                projects: z.boolean().optional().default(false),
-              }),
+              count: z
+                .object({
+                  contacts: z.boolean().optional().default(false),
+                  projects: z.boolean().optional().default(false),
+                })
+                .optional(),
             })
             .optional(),
         })
@@ -40,8 +42,8 @@ export const companyRotuer = createTRPCRouter({
             (value) => value
           ) && {
             select: {
-              contacts: input?.include?.count.contacts,
-              projects: input?.include?.count.projects,
+              contacts: input?.include?.count?.contacts,
+              projects: input?.include?.count?.projects,
             },
           },
         },
@@ -71,7 +73,31 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
         },
         include: {
-          contacts: input.include?.contacts,
+          contacts:
+            input.include?.activities && input.include.contacts
+              ? {
+                  include: {
+                    _count: {
+                      select: {
+                        projects: true,
+                        companies: true,
+                      },
+                    },
+                    activities: {
+                      where: {
+                        companies: {
+                          none: {
+                            id: input.id,
+                          },
+                        },
+                      },
+                      orderBy: {
+                        date: "desc",
+                      },
+                    },
+                  },
+                }
+              : input.include?.contacts,
           activities: input?.include?.activities
             ? {
                 orderBy: {

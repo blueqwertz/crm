@@ -64,7 +64,7 @@ export const ContactIndividualPage: React.FC<{
                         id: project.id,
                         name: project.name,
                         createdAt: project.createdAt,
-                        _count: {
+                        count: {
                           contacts: project?._count?.contacts,
                           companies: project?._count?.companies,
                         },

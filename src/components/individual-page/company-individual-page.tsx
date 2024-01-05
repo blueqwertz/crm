@@ -3,7 +3,7 @@ import { RouterOutputs, api } from "~/utils/api";
 import { ProjectsTable } from "../tables/projects-table";
 import { ContactsTable } from "../tables/contacts-table";
 import { ActivitiesTable } from "../tables/activities-table";
-import { Activity, Project } from "@prisma/client";
+import { Activity, Contact, Project } from "@prisma/client";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
@@ -53,9 +53,32 @@ export const CompanyIndividualPage: React.FC<{
                       id: project.id,
                       name: project.name,
                       createdAt: project.createdAt,
-                      _count: {
+                      count: {
                         contacts: project?._count?.contacts,
                         companies: project?._count?.companies,
+                      },
+                    },
+                  })) ?? []
+              ) ?? []),
+              ...(company?.contacts?.flatMap(
+                (
+                  contact: Contact & {
+                    activities?: Activity[];
+                    _count?: {
+                      companies: number;
+                      projects: number;
+                    };
+                  }
+                ) =>
+                  contact.activities?.map((activity) => ({
+                    ...activity,
+                    contact: {
+                      id: contact.id,
+                      name: contact.name,
+                      createdAt: contact.createdAt,
+                      count: {
+                        companies: contact?._count?.companies,
+                        projects: contact?._count?.projects,
                       },
                     },
                   })) ?? []
