@@ -74,3 +74,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+a ~ a.tag {
+  border: 1px solid red;
+  animation: bounce 1s infinite;
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+a > a.tag {
+  border: 1px solid red;
+  animation: bounce 1s infinite;
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(2);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: scale(1);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}

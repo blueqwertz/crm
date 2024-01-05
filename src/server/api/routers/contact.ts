@@ -67,7 +67,40 @@ export const contactRotuer = createTRPCRouter({
         },
         include: {
           user: input.include?.user,
-          companies: input.include?.companies,
+          companies:
+            input.include?.activities && input.include.companies
+              ? {
+                  include: {
+                    _count: {
+                      select: {
+                        contacts: true,
+                        projects: true,
+                      },
+                    },
+                    activities: {
+                      where: {
+                        contacts: {
+                          none: {
+                            id: input.id,
+                          },
+                        },
+                        projects: {
+                          none: {
+                            contacts: {
+                              some: {
+                                id: input.id,
+                              },
+                            },
+                          },
+                        },
+                      },
+                      orderBy: {
+                        date: "desc",
+                      },
+                    },
+                  },
+                }
+              : input.include?.companies,
           activities: input.include?.activities
             ? {
                 orderBy: {
@@ -75,7 +108,31 @@ export const contactRotuer = createTRPCRouter({
                 },
               }
             : false,
-          projects: input.include?.projects,
+          projects:
+            input.include?.activities && input.include.projects
+              ? {
+                  include: {
+                    _count: {
+                      select: {
+                        contacts: true,
+                        companies: true,
+                      },
+                    },
+                    activities: {
+                      where: {
+                        contacts: {
+                          none: {
+                            id: input.id,
+                          },
+                        },
+                      },
+                      orderBy: {
+                        date: "desc",
+                      },
+                    },
+                  },
+                }
+              : input.include?.projects,
           incomingRelations: {
             include: {
               incomingContact: true,

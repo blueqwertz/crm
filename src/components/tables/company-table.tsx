@@ -117,7 +117,7 @@ export const CompanyTable: React.FC<{
             return (
               <Link
                 key={contact.id}
-                href={`/contacts/${contact.id}`}
+                href={`/companies/${contact.id}`}
                 className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">

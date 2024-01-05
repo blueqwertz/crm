@@ -4,6 +4,7 @@ import {
   Clipboard,
   Loader2,
   Mail,
+  Reply,
   Sparkles,
   Voicemail,
 } from "lucide-react";
@@ -116,10 +117,7 @@ const ActivityForm: React.FC<{
       companyIds: z.array(z.string()).optional(),
       contactIds: z.array(z.string()).optional(),
       projectIds: z.array(z.string()).optional(),
-      description: z.union([
-        z.string().min(1).max(200).optional(),
-        z.literal(""),
-      ]),
+      description: z.union([z.string().min(1).optional(), z.literal("")]),
     })
     .superRefine((values, ctx) => {
       if (
@@ -546,16 +544,16 @@ export const AddActivity: React.FC<{
       type: "Call",
     },
     {
-      icon: <Mail className="h-4 w-4" />,
-      type: "Email",
-    },
-    {
       icon: <CalendarCheck className="h-4 w-4" />,
       type: "Meeting",
     },
     {
-      icon: <Clipboard className="h-4 w-4" />,
-      type: "Task",
+      icon: <Mail className="h-4 w-4" />,
+      type: "Email",
+    },
+    {
+      icon: <Reply className="h-4 w-4" />,
+      type: "FollowUp",
     },
   ];
   return (

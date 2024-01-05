@@ -213,7 +213,7 @@ model Activity {
     head        Head         @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     description String?
     type        ActivityType @default(Call)
-    date        DateTime?
+    date        DateTime     @default(now())
 
     companies Company[]
     contacts  Contact[]

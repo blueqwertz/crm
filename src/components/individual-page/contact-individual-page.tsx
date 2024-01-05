@@ -4,6 +4,7 @@ import { ProjectsTable } from "../tables/projects-table";
 import { ActivitiesTable } from "../tables/activities-table";
 import { RelationsTable } from "../tables/relations-table";
 import { CompanyTable } from "../tables/company-table";
+import { Activity, Company, Project } from "@prisma/client";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;
@@ -45,7 +46,55 @@ export const ContactIndividualPage: React.FC<{
           <span className="font-semibold">Activities</span>
           <div className="flex w-full grow flex-col rounded-md border">
             <ActivitiesTable
-              activityData={contact?.activities ?? []}
+              activityData={[
+                ...(contact?.activities ?? []),
+                ...(contact?.projects?.flatMap(
+                  (
+                    project: Project & {
+                      activities?: Activity[];
+                      _count?: {
+                        contacts: number;
+                        companies: number;
+                      };
+                    }
+                  ) =>
+                    project.activities?.map((activity) => ({
+                      ...activity,
+                      project: {
+                        id: project.id,
+                        name: project.name,
+                        createdAt: project.createdAt,
+                        _count: {
+                          contacts: project?._count?.contacts,
+                          companies: project?._count?.companies,
+                        },
+                      },
+                    })) ?? []
+                ) ?? []),
+                ...(contact?.companies?.flatMap(
+                  (
+                    company: Company & {
+                      activities?: Activity[];
+                      _count?: {
+                        contacts: number;
+                        projects: number;
+                      };
+                    }
+                  ) =>
+                    company.activities?.map((activity) => ({
+                      ...activity,
+                      company: {
+                        id: company.id,
+                        name: company.name,
+                        createdAt: company.createdAt,
+                        count: {
+                          contacts: company?._count?.contacts,
+                          companies: company?._count?.projects,
+                        },
+                      },
+                    })) ?? []
+                ) ?? []),
+              ]}
               pageData={{ type: "Contact", id: contactId }}
             />
           </div>

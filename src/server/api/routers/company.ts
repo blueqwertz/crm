@@ -79,7 +79,31 @@ export const companyRotuer = createTRPCRouter({
                 },
               }
             : false,
-          projects: input.include?.projects,
+          projects:
+            input.include?.activities && input.include.projects
+              ? {
+                  include: {
+                    _count: {
+                      select: {
+                        contacts: true,
+                        companies: true,
+                      },
+                    },
+                    activities: {
+                      where: {
+                        companies: {
+                          none: {
+                            id: input.id,
+                          },
+                        },
+                      },
+                      orderBy: {
+                        date: "desc",
+                      },
+                    },
+                  },
+                }
+              : input.include?.projects,
         },
         orderBy: {
           createdAt: "desc",
