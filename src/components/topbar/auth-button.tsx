@@ -138,7 +138,7 @@ export const AuthButton = () => {
                   void signIn();
                 }}
                 variant={"outline"}
-                className="h-10 w-full mt-auto"
+                className="h-10 mt-auto"
               >
                 Login
                 <ArrowRight className="h-4 w-4 ml-1" />

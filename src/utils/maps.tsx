@@ -1,12 +1,14 @@
 import { ActivityType } from "@prisma/client";
 import {
   ArrowUpCircle,
+  Calendar,
   CalendarCheck,
   CheckCircle2,
   Circle,
   Clipboard,
   Mail,
   PauseCircle,
+  Presentation,
   Reply,
   Voicemail,
   XCircle,
@@ -48,7 +50,7 @@ export const typeMaps: {
   },
   Meeting: {
     title: "Meeting",
-    icon: <CalendarCheck className="h-4 w-4" />,
+    icon: <Presentation className="h-4 w-4" />,
   },
   Task: {
     title: "Task",

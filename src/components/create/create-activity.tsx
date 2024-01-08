@@ -1,9 +1,9 @@
 import {
   CalendarCheck,
   CalendarIcon,
-  Clipboard,
   Loader2,
   Mail,
+  Presentation,
   Reply,
   Sparkles,
   Voicemail,
@@ -544,7 +544,7 @@ export const AddActivity: React.FC<{
       type: "Call",
     },
     {
-      icon: <CalendarCheck className="h-4 w-4" />,
+      icon: <Presentation className="h-4 w-4" />,
       type: "Meeting",
     },
     {

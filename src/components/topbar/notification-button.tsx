@@ -62,9 +62,6 @@ export const NotificationButton: React.FC = () => {
   });
 
   const { mutate: deleteAll } = api.notification.deleteAll.useMutation({
-    onMutate: () => {
-      setLoading(true);
-    },
     onSuccess: () => {
       setLoading(false);
       void ctx.notification.getNotifications.invalidate();
@@ -86,9 +83,6 @@ export const NotificationButton: React.FC = () => {
   });
 
   const { mutate: readAll } = api.notification.readAll.useMutation({
-    onMutate: () => {
-      setLoading(true);
-    },
     onSuccess: () => {
       setLoading(false);
       void ctx.notification.getNotifications.invalidate();
@@ -115,6 +109,7 @@ export const NotificationButton: React.FC = () => {
       (notification.priority === "HIGH" || notification.priority === "MAX")
     );
   });
+
   const unreadNotification = notifications?.filter((notification) => {
     return !notification.read;
   });
@@ -139,11 +134,11 @@ export const NotificationButton: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="p-0">
         <Tabs defaultValue="inbox" className="w-[250px] sm:w-[300px]">
-          <TabsList className="grid grid-cols-2 m-1">
+          <TabsList className="grid grid-cols-2 rounded-none bg-background">
             <TabsTrigger value="inbox">Inbox</TabsTrigger>
             <TabsTrigger value="archive">Archive</TabsTrigger>
           </TabsList>
-          <TabsContent value="inbox" className="mt-2">
+          <TabsContent value="inbox" className="mt-0">
             <div className="flex h-[370px] flex-col gap-2">
               {isLoading ? (
                 <></>
@@ -179,7 +174,7 @@ export const NotificationButton: React.FC = () => {
                     onClick={() => {
                       archiveAll();
                     }}
-                    className="m-1"
+                    className="rounded-none border-0 border-t"
                     disabled={
                       !(
                         notifications?.length &&
@@ -189,14 +184,16 @@ export const NotificationButton: React.FC = () => {
                       )
                     }
                   >
-                    {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {loading && (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    )}
                     Archive all
                   </Button>
                 </>
               )}
             </div>
           </TabsContent>
-          <TabsContent value="archive" className="mt-2">
+          <TabsContent value="archive" className="mt-0">
             <div className="flex h-[370px] flex-col gap-2">
               {isLoading ? (
                 <></>
@@ -229,7 +226,7 @@ export const NotificationButton: React.FC = () => {
                   </div>
                   <Button
                     variant={"outline"}
-                    className="m-1"
+                    className="rounded-none border-0 border-t"
                     onClick={() => {
                       deleteAll();
                     }}
@@ -242,7 +239,9 @@ export const NotificationButton: React.FC = () => {
                       )
                     }
                   >
-                    {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {loading && (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    )}
                     Delete all
                   </Button>
                 </>
@@ -328,7 +327,7 @@ export const NotificationItem: React.FC<{ data: Notification }> = ({
   return (
     <div
       className={cn(
-        "flex justify-between items-center gap-2 px-3 border-b py-2 hover:cursor-pointer hover:bg-muted/50",
+        "flex justify-between group items-center gap-2 px-3 border-b py-2 hover:cursor-pointer hover:bg-muted/50",
         href !== "" && "border-blue-300"
       )}
     >
@@ -347,7 +346,7 @@ export const NotificationItem: React.FC<{ data: Notification }> = ({
         </span>
         <span className="line-clamp-2 overflow-hidden text-sm">{message}</span>
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center opacity-0 group-hover:opacity-100 transition-all">
         <Button
           variant="ghost"
           onClick={(e) => {

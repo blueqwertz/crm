@@ -9,10 +9,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { statusMaps } from "~/utils/maps";
 import { cn } from "~/utils/cn";
 import { Skeleton } from "../../ui/skeleton";
 import { ProjectPageTableEdit } from "./project-page-table-edit";
+import { ProjectStatus } from "@prisma/client";
 
 export const ProjectPageTable = () => {
   const { data: projectData } = api.project.getAll.useQuery({
@@ -62,12 +70,29 @@ export const ProjectPageTable = () => {
                 <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
                   <div className="flex h-8 items-center gap-2 text-base">
                     <span className="font-semibold">{project.name}</span>
+                    <Select>
+                      <SelectTrigger className="w-auto h-auto inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-[3px] font-medium transition-colors border text-foreground text-xs leading-3 truncate">
+                        <span className="text-muted-foreground">Status:</span>
+                        {statusMaps[project.status].icon}
+                        {statusMaps[project.status].title}
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(ProjectStatus).map((status) => {
+                          return (
+                            <SelectItem value={status}>
+                              {statusMaps[status].title}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+
                     <Badge
                       onClick={(e) => {
                         e.preventDefault();
                       }}
                       variant={"outline"}
-                      className={cn("text-[11px] text-xs leading-3")}
+                      className={cn("text-[11px] text-xs leading-3 truncate")}
                     >
                       {statusMaps[project.status].icon}
                       {statusMaps[project.status].title}

@@ -13,6 +13,7 @@ import {
   User,
   UserCog,
   Users,
+  Workflow,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -52,7 +53,8 @@ export const NavItemArray: NavItem[] = [
   {
     title: "Projects",
     path: "/projects",
-    icon: <KanbanSquare className="h-4 w-4" />,
+    // icon: <KanbanSquare className="h-4 w-4" />,
+    icon: <Workflow className="h-4 w-4" />,
   },
   {
     title: "User",
