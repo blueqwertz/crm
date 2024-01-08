@@ -47,8 +47,9 @@ model User {
     accounts      Account[]
     sessions      Session[]
 
-    headId String?
-    head   Head?   @relation(fields: [headId], references: [id])
+    headId     String?
+    head       Head?   @relation("Users", fields: [headId], references: [id])
+    ownedHeads Head[]  @relation("Owner")
 
     contact        Contact?
     createdInvites HeadInvite[]   @relation("creator")
@@ -74,16 +75,18 @@ model VerificationToken {
 
 // #region Application
 model Head {
-    id    String  @id @default(cuid())
-    name  String
-    info  String?
-    image String?
+    id      String  @id @default(cuid())
+    ownerId String
+    owner   User    @relation("Owner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    name    String
+    info    String?
+    image   String?
 
     activities Activity[]
     companies  Company[]
     contacts   Contact[]
     projects   Project[]
-    user       User[]
+    user       User[]       @relation("Users")
     invites    HeadInvite[]
 
     createdAt DateTime @default(now())
@@ -99,7 +102,7 @@ model HeadInvite {
     creator   User?   @relation("creator", fields: [creatorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
     userId String?
-    user   User?     @relation("user", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    user   User?     @relation("user", fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
     usedAt DateTime?
 
     createdAt DateTime @default(now())
