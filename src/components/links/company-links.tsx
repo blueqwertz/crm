@@ -1,4 +1,3 @@
-import type { InferSelectModel } from "drizzle-orm";
 import { ComboboxMulti } from "../ui/combobox-multi";
 import { useState } from "react";
 import { cn } from "~/utils/cn";
@@ -6,7 +5,6 @@ import { Button } from "../ui/button";
 import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
 import { Company } from "@prisma/client";
 
 export const AddCompanyRelation: React.FC<{

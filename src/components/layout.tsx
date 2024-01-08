@@ -1,7 +1,6 @@
 import React from "react";
 import { Sidebar } from "./sidebar/sidebar-index";
-import { Topbar } from "./topbar/topbar";
-import { Feedback } from "./feedback";
+import { Topbar } from "./topbar/topbar-index";
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -10,7 +9,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
     <>
       <div className="flex h-screen">
         <Sidebar />
-        <div className="h-screen flex-grow overflow-y-scroll">
+        <div className="h-screen flex flex-col flex-grow overflow-y-scroll">
           <Topbar />
           {children}
         </div>

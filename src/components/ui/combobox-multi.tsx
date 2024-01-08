@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "~/utils/cn";
+import { Skeleton } from "./skeleton";
 
 type ComboboxInput = {
   value: string[] | undefined;
@@ -53,7 +54,9 @@ export function ComboboxMulti({
           >
             {!!value && value.length ? (
               <span className="flex w-full items-center truncate">
-                {options.find((entry) => entry.value == value[0])?.label}
+                {options.find((entry) => entry.value == value[0])?.label ?? (
+                  <Skeleton className="h-6 w-24" />
+                )}
                 {value.length > 1 && <>, +{value.length - 1} more</>}
               </span>
             ) : (
