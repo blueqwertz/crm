@@ -74,7 +74,7 @@ export const ContactPageTableEdit: React.FC<{
 
   return (
     <div
-      className="flex flex-col items-center justify-center px-4 py-4 sm:px-6 shrink-0"
+      className="flex flex-col items-center justify-center mx-4 my-auto sm:mx-6 shrink-0"
       onClick={(event) => {
         event.preventDefault();
       }}

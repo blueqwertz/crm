@@ -115,13 +115,13 @@ export const AddProject = () => {
                       <SelectContent>
                         {Object.values(ProjectStatus).map((status) => {
                           return (
-                            <SelectItem value={status}>
+                            <SelectItem key={status} value={status}>
                               {statusMaps[status].title}
                             </SelectItem>
                           );
                         })}
                       </SelectContent>
-                    </Select>{" "}
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

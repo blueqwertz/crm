@@ -102,7 +102,11 @@ export const ProjectPageTableRow: React.FC<{
             <div className="flex items-center gap-2">
               {project.companies.map((company) => {
                 return (
-                  <Link key={company.id} href={`/companies/${company.id}`}>
+                  <Link
+                    passHref={true}
+                    key={company.id}
+                    href={`/companies/${company.id}`}
+                  >
                     <Badge
                       className="truncate text-xs font-normal leading-3 hover:underline"
                       variant="outline"
