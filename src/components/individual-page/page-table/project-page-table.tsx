@@ -14,10 +14,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { statusMaps } from "~/utils/maps";
-import { cn } from "~/utils/cn";
 import { Skeleton } from "../../ui/skeleton";
 import { ProjectPageTableEdit } from "./project-page-table-edit";
 import {
@@ -89,7 +87,7 @@ export const ProjectPageTableRow: React.FC<{
             <SelectContent>
               {Object.values(ProjectStatus).map((status) => {
                 return (
-                  <SelectItem value={status}>
+                  <SelectItem key={status} value={status}>
                     {statusMaps[status].title}
                   </SelectItem>
                 );

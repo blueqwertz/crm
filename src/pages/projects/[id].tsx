@@ -40,9 +40,11 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                   <h1 className="text-xl font-bold">{projectData.name}</h1>
                 )}
                 <span className="text-sm text-muted-foreground">
-                  {!!projectData?.info
-                    ? projectData.info
-                    : "View project details."}
+                  {!!projectData?.info?.length ? (
+                    projectData?.info
+                  ) : (
+                    <>View contact details.</>
+                  )}
                 </span>
               </div>
               {!!projectData?.status && (

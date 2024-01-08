@@ -12,6 +12,7 @@ import { initials } from "~/utils/initials";
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery({
     include: {
+      user: true,
       companies: true,
     },
   });

@@ -41,7 +41,11 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
                 <h1 className="text-xl font-bold">{contactData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
-                {contactData?.info ?? "View contact details."}
+                {!!contactData?.info?.length ? (
+                  contactData?.info
+                ) : (
+                  <>View contact details.</>
+                )}
               </span>
             </div>
             <EditContact contact={contactData ?? null} />

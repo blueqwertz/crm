@@ -66,7 +66,9 @@ export const CompanyPageTable = () => {
                   )} */}
                 </div>
                 <span className="mb-2 text-sm empty:hidden">
-                  {company.info}
+                  {company.info}{" "}
+                  {company.info && company.field && <>&#x2022;</>}{" "}
+                  {company.field}
                 </span>
                 <div className="flex gap-1">
                   {!!company._count.contacts && (

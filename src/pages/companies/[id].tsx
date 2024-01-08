@@ -38,7 +38,15 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
                 <h1 className="text-xl font-bold">{companyData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
-                {companyData?.info ?? "View company details."}
+                {!!companyData?.info?.length || companyData?.field?.length ? (
+                  <>
+                    {companyData.info}{" "}
+                    {companyData.info && companyData.field && <>&#x2022;</>}{" "}
+                    {companyData.field}
+                  </>
+                ) : (
+                  <>View contact details.</>
+                )}
               </span>
             </div>
             <EditCompany company={companyData ?? null} />

@@ -9,11 +9,11 @@ export const contactRotuer = createTRPCRouter({
         .object({
           include: z
             .object({
-              user: z.boolean().optional(),
-              companies: z.boolean().optional(),
-              activities: z.boolean().optional(),
-              projects: z.boolean().optional(),
-              relations: z.boolean().optional(),
+              user: z.boolean().default(false).optional(),
+              companies: z.boolean().default(false).optional(),
+              activities: z.boolean().default(false).optional(),
+              projects: z.boolean().default(false).optional(),
+              relations: z.boolean().default(false).optional(),
             })
             .optional(),
         })
@@ -50,11 +50,11 @@ export const contactRotuer = createTRPCRouter({
         id: z.string(),
         include: z
           .object({
-            user: z.boolean().optional(),
-            companies: z.boolean().optional(),
-            activities: z.boolean().optional(),
-            projects: z.boolean().optional(),
-            relations: z.boolean().optional(),
+            user: z.boolean().default(false).optional(),
+            companies: z.boolean().default(false).optional(),
+            activities: z.boolean().default(false).optional(),
+            projects: z.boolean().default(false).optional(),
+            relations: z.boolean().default(false).optional(),
           })
           .optional(),
       })
