@@ -33,16 +33,24 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
         <div className="flex flex-grow flex-col p-5">
           {/* HEADER */}
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              {!projectData && <Skeleton className="h-7 text-transparent" />}
-              {!!projectData && (
-                <h1 className="text-xl font-bold">{projectData.name}</h1>
+            <div className="flex gap-3 items-center">
+              <div className="flex flex-col">
+                {!projectData && <Skeleton className="h-7 text-transparent" />}
+                {!!projectData && (
+                  <h1 className="text-xl font-bold">{projectData.name}</h1>
+                )}
+                <span className="text-sm text-muted-foreground">
+                  {!!projectData?.info
+                    ? projectData.info
+                    : "View project details."}
+                </span>
+              </div>
+              {!!projectData?.status && (
+                <Badge variant={"outline"}>
+                  {statusMaps[projectData?.status].icon}
+                  {statusMaps[projectData?.status].title}
+                </Badge>
               )}
-              <span className="text-sm text-muted-foreground">
-                {!!projectData?.info
-                  ? projectData.info
-                  : "View project details."}
-              </span>
             </div>
             <EditProject project={projectData ?? null} />
           </div>
@@ -61,6 +69,9 @@ import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
 import { EditProject } from "~/components/individual-page/edit-button/edit-project";
+import { statusMaps } from "~/utils/maps";
+import { ProjectStatus } from "@prisma/client";
+import { Badge } from "~/components/ui/badge";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>
