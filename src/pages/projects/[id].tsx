@@ -33,27 +33,28 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
         <div className="flex flex-grow flex-col p-5">
           {/* HEADER */}
           <div className="flex items-center justify-between">
-            <div className="flex gap-3 items-center">
-              <div className="flex flex-col">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
                 {!projectData && <Skeleton className="h-7 text-transparent" />}
                 {!!projectData && (
                   <h1 className="text-xl font-bold">{projectData.name}</h1>
                 )}
-                <span className="text-sm text-muted-foreground">
-                  {!!projectData?.info?.length ? (
-                    projectData?.info
-                  ) : (
-                    <>View contact details.</>
-                  )}
-                </span>
+                {!!projectData?.status && (
+                  <Badge variant={"outline"}>
+                    {statusMaps[projectData?.status].icon}
+                    {statusMaps[projectData?.status].title}
+                  </Badge>
+                )}
               </div>
-              {!!projectData?.status && (
-                <Badge variant={"outline"}>
-                  {statusMaps[projectData?.status].icon}
-                  {statusMaps[projectData?.status].title}
-                </Badge>
-              )}
+              <span className="text-sm text-muted-foreground">
+                {!!projectData?.info?.length ? (
+                  projectData?.info
+                ) : (
+                  <>View contact details.</>
+                )}
+              </span>
             </div>
+
             <EditProject project={projectData ?? null} />
           </div>
           <Breadcrumbs lastItem={projectData?.name ?? "..."} />

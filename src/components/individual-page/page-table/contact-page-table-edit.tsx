@@ -25,7 +25,7 @@ import { Button } from "../../ui/button";
 import { Combobox } from "../../ui/combobox";
 import { Input } from "../../ui/input";
 import { Contact } from "@prisma/client";
-import { EditContact } from "../edit-button/edtit-contact";
+import { EditContact } from "../edit-button/edit-contact";
 
 export const ContactPageTableEdit: React.FC<{
   contact: Contact;

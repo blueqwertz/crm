@@ -78,7 +78,7 @@ const ProjectEdit: React.FC<{
               {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Remove from project</TooltipContent>
+          <TooltipContent>Remove project</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </>

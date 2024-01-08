@@ -63,7 +63,7 @@ import type { GetServerSidePropsContext } from "next";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
-import { EditContact } from "~/components/individual-page/edit-button/edtit-contact";
+import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>

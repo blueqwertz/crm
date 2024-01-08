@@ -68,23 +68,19 @@ export const AddCompanyRelation: React.FC<{
     },
   });
 
-  if (!data) {
-    return (
-      <>
-        <Skeleton></Skeleton>
-      </>
-    );
-  }
-
   const options =
-    data
-      .filter((option) => !companyData?.some((entry) => entry.id == option.id))
-      .map((option) => {
-        return {
-          value: option.id ?? "",
-          label: option.name ?? "",
-        };
-      }) ?? [];
+    (data &&
+      data
+        .filter(
+          (option) => !companyData?.some((entry) => entry.id == option.id)
+        )
+        .map((option) => {
+          return {
+            value: option.id ?? "",
+            label: option.name ?? "",
+          };
+        })) ??
+    [];
 
   return (
     <>

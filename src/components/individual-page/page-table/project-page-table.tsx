@@ -165,9 +165,9 @@ export const ProjectPageTableRow: React.FC<{
                         </TooltipTrigger>
                         <TooltipContent>
                           <span className="font-semibold">
-                            {project._count.contacts - (MAX_CONTACTS - 1)} more
+                            {project._count.contacts} contacts
                           </span>{" "}
-                          contacts involved
+                          involved
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

@@ -164,7 +164,7 @@ export const EditContact: React.FC<{
               className="w-full"
               onClick={(e) => {
                 e.preventDefault();
-                form.handleSubmit(onSubmit)();
+                void form.handleSubmit(onSubmit)();
               }}
             >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

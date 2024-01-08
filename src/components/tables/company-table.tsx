@@ -78,7 +78,7 @@ const CompanyEdit: React.FC<{
               {!!loading && <Loader2 className="h-4 w-4 animate-spin" />}
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Remove from company</TooltipContent>
+          <TooltipContent>Remove company</TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </>
