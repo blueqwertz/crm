@@ -119,7 +119,7 @@ export const AuthButton = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup
                     onClick={() => {
-                      signOut();
+                      void signOut();
                     }}
                   >
                     <DropdownMenuItem>

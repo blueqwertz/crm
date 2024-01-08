@@ -1,13 +1,16 @@
 import { api } from "~/utils/api";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
 import { Skeleton } from "../../ui/skeleton";
 import { CompanyPageTableEdit } from "./company-page-table-edit";
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+dayjs.extend(advancedFormat);
 
 export const CompanyPageTable = () => {
   const { data: companyData } = api.company.getAll.useQuery({
     include: {
+      lastActivity: true,
       count: {
         contacts: true,
         projects: true,
@@ -47,7 +50,20 @@ export const CompanyPageTable = () => {
             >
               <div className="flex flex-col gap-0 px-4 py-4 sm:px-6">
                 <div className="flex h-8 items-center gap-2 text-base">
-                  <span className="font-semibold">{company.name}</span>
+                  <span className="font-semibold truncate">{company.name}</span>
+                  {/* {!!company.activities?.[0] && (
+                    <Badge variant={"outline"}>
+                      <span className="text-muted-foreground">
+                        Last contact:
+                      </span>
+                      <span className="font-medium">
+                        {dayjs().to(company.activities?.[0]?.date)} &#x2022;{" "}
+                        {dayjs(company.activities?.[0]?.date).format(
+                          "MMMM Do, YYYY"
+                        )}
+                      </span>
+                    </Badge>
+                  )} */}
                 </div>
                 <div className="flex gap-1">
                   {!!company._count.contacts && (

@@ -11,6 +11,7 @@ export const companyRotuer = createTRPCRouter({
             .object({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
+              lastActivity: z.boolean().optional().default(false),
               projects: z.boolean().optional().default(false),
               count: z
                 .object({
@@ -30,13 +31,20 @@ export const companyRotuer = createTRPCRouter({
         },
         include: {
           contacts: input?.include?.contacts,
-          activities: input?.include?.activities
+          activities: input?.include?.lastActivity
             ? {
+                take: 1,
                 orderBy: {
                   date: "desc",
                 },
               }
-            : false,
+            : input?.include?.activities
+              ? {
+                  orderBy: {
+                    date: "desc",
+                  },
+                }
+              : false,
           projects: input?.include?.projects,
           _count: Object.values(input?.include?.count ?? {}).some(
             (value) => value

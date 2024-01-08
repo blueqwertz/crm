@@ -120,7 +120,7 @@ export const SidebarAuth = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup
                     onClick={() => {
-                      signOut();
+                      void signOut();
                     }}
                   >
                     <DropdownMenuItem>

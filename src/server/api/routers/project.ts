@@ -1,3 +1,4 @@
+import { ProjectStatus } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -93,52 +94,6 @@ export const projectRotuer = createTRPCRouter({
       });
     }),
 
-  getProjectContacts: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.project.findFirst({
-        where: {
-          headId: ctx.session.user.head.id,
-          id: input.id,
-        },
-        include: {
-          contacts: true,
-        },
-      });
-    }),
-
-  getProjectCompanies: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.project.findFirst({
-        where: {
-          headId: ctx.session.user.head.id,
-          id: input.id,
-        },
-        include: {
-          companies: true,
-        },
-      });
-    }),
-
-  getProjectActivities: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.project.findFirst({
-        where: {
-          headId: ctx.session.user.head.id,
-          id: input.id,
-        },
-        include: {
-          activities: {
-            orderBy: {
-              date: "desc",
-            },
-          },
-        },
-      });
-    }),
-
   addOne: protectedProcedure
     .input(
       z.object({
@@ -165,6 +120,29 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+        },
+      });
+    }),
+
+  updateOne: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          name: z.string().optional(),
+          status: z.nativeEnum(ProjectStatus).optional(),
+        }),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.project.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.id,
+        },
+        data: {
+          name: input.data.name,
+          status: input.data.status,
         },
       });
     }),

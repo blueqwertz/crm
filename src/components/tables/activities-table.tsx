@@ -14,25 +14,17 @@ import "@/utils/relative";
 import { cn } from "~/utils/cn";
 import { typeMaps } from "~/utils/maps";
 import { Separator } from "../ui/separator";
-import { Activity, Project } from "@prisma/client";
+import { Activity } from "@prisma/client";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import Link from "next/link";
-dayjs.extend(advancedFormat);
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Badge } from "../ui/badge";
-import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineIcon,
-  TimelineTrack,
-  TimelineContent,
-} from "@saas-ui/react";
+dayjs.extend(advancedFormat);
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
   const [loading, setLoading] = useState(false);
@@ -307,7 +299,7 @@ export const ActivitiesTable: React.FC<{
                               &#x2022; From{" "}
                               <HoverCard>
                                 <HoverCardTrigger
-                                  href={`/companies/${activity.contact.id}`}
+                                  href={`/contacts/${activity.contact.id}`}
                                   className="text-blue-500 hover:underline tag"
                                 >
                                   {activity.contact.name}
@@ -315,7 +307,7 @@ export const ActivitiesTable: React.FC<{
                                 <HoverCardContent>
                                   <div className="space-y-1">
                                     <Link
-                                      href={`/projects/${activity.contact.id}`}
+                                      href={`/contacts/${activity.contact.id}`}
                                       className="hover:underline"
                                     >
                                       <h4 className="text-sm font-semibold">

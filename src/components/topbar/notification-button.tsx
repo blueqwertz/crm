@@ -123,7 +123,7 @@ export const NotificationButton: React.FC = () => {
       }}
     >
       <DropdownMenuTrigger
-        className="rounded-md bg-transparent shadow outline-none"
+        className="rounded-md bg-transparent outline-none"
         asChild
       >
         <Button variant={"outline"} className="w-[40px]">
