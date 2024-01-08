@@ -41,13 +41,10 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
                 <h1 className="text-xl font-bold">{contactData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
-                View contact details.
+                {contactData?.info ?? "View contact details."}
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"} className="px-4">
-              <Brush className="mr-2 h-4 w-4" />
-              Edit
-            </Button>
+            <EditContact contact={contactData ?? null} />
           </div>
           <Breadcrumbs lastItem={contactData?.name} />
           <ContactIndividualPage contactId={id} contact={contactData ?? null} />
@@ -62,6 +59,7 @@ import type { GetServerSidePropsContext } from "next";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
+import { EditContact } from "~/components/individual-page/edit-button/edtit-contact";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>

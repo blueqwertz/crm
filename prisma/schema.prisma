@@ -15,12 +15,12 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?
+    access_token      String?
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -270,7 +270,7 @@ model Notification {
     userId    String?
     user      User?                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     createdAt DateTime             @default(now())
-    message   String               @db.Text
+    message   String
     priority  NotificationPriority @default(DEFAULT)
     type      NotificationType     @default(INFO)
     read      Boolean              @default(false)

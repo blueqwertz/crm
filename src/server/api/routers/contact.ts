@@ -192,6 +192,42 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
+  updateOne: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          name: z.string().min(2).max(50),
+          email: z.union([z.string().email().optional(), z.literal("")]),
+          companyIds: z.array(z.string()).optional(),
+          info: z.union([z.string().max(200).optional(), z.literal("")]),
+          mobile: z.string().optional(),
+        }),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.contact.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.id,
+        },
+        data: {
+          name: input.data.name,
+          email: input.data.email,
+          info: input.data.info,
+          mobile: input.data.mobile,
+          companies: {
+            connect: input.data.companyIds?.map((id) => {
+              return {
+                headId: ctx.session.user.head.id,
+                id,
+              };
+            }),
+          },
+        },
+      });
+    }),
+
   addLink: protectedProcedure
     .input(
       z.object({

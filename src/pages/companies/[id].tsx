@@ -5,8 +5,6 @@ import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { CompanyIndividualPage } from "~/components/individual-page/company-individual-page";
-import { Button } from "~/components/ui/button";
-import { Brush, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
@@ -40,13 +38,10 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
                 <h1 className="text-xl font-bold">{companyData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
-                View company details.
+                {companyData?.info ?? "View company details."}
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"} className="px-4">
-              <Brush className="mr-2 h-4 w-4" />
-              Edit
-            </Button>
+            <EditCompany company={companyData ?? null} />
           </div>
           <Breadcrumbs lastItem={companyData?.name ?? id} />
           <CompanyIndividualPage companyId={id} company={companyData ?? null} />
@@ -62,7 +57,7 @@ import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
-import { Input } from "~/components/ui/input";
+import { EditCompany } from "~/components/individual-page/edit-button/edit-company";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>

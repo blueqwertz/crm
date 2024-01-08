@@ -39,13 +39,12 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                 <h1 className="text-xl font-bold">{projectData.name}</h1>
               )}
               <span className="text-sm text-muted-foreground">
-                View project details.
+                {!!projectData?.info
+                  ? projectData.info
+                  : "View project details."}
               </span>
             </div>
-            <Button size={"sm"} variant={"outline"} className="px-4">
-              <Brush className="mr-2 h-4 w-4" />
-              Edit
-            </Button>
+            <EditProject project={projectData ?? null} />
           </div>
           <Breadcrumbs lastItem={projectData?.name ?? "..."} />
           <ProjectIndividualPage projectId={id} project={projectData ?? null} />
@@ -61,6 +60,7 @@ import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
+import { EditProject } from "~/components/individual-page/edit-button/edit-project";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>

@@ -177,6 +177,31 @@ export const companyRotuer = createTRPCRouter({
       });
     }),
 
+  updateOne: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        data: z.object({
+          name: z.string().min(2).max(50),
+          info: z.string().max(200).optional(),
+          field: z.string().max(200).optional(),
+        }),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.company.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.id,
+        },
+        data: {
+          name: input.data.name,
+          info: input.data.info,
+          field: input.data.field ?? "",
+        },
+      });
+    }),
+
   addContact: protectedProcedure
     .input(
       z.object({

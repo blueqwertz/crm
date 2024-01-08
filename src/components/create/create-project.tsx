@@ -15,6 +15,15 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { ProjectStatus } from "@prisma/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { statusMaps } from "~/utils/maps";
 
 export const AddProject = () => {
   const ctx = api.useUtils();
@@ -23,6 +32,7 @@ export const AddProject = () => {
 
   const formSchema = z.object({
     name: z.string().min(2).max(50),
+    status: z.nativeEnum(ProjectStatus),
     info: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
@@ -30,10 +40,10 @@ export const AddProject = () => {
     onMutate: () => {
       setLoading(true);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await ctx.project.getAll.invalidate();
       setLoading(false);
       setOpen(false);
-      void ctx.project.getAll.invalidate();
     },
     onError: () => {
       setLoading(false);
@@ -44,6 +54,7 @@ export const AddProject = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      status: ProjectStatus.NotStarted,
       info: "",
     },
   });
@@ -79,6 +90,38 @@ export const AddProject = () => {
                     <FormControl>
                       <Input placeholder="Name" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <div className="flex items-center space-x-2">
+                            {statusMaps[field.value].icon}
+                            <SelectValue placeholder="Set status" />
+                          </div>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(ProjectStatus).map((status) => {
+                          return (
+                            <SelectItem value={status}>
+                              {statusMaps[status].title}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>{" "}
                     <FormMessage />
                   </FormItem>
                 )}

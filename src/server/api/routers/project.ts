@@ -99,6 +99,7 @@ export const projectRotuer = createTRPCRouter({
       z.object({
         projectData: z.object({
           name: z.string().min(2).max(50),
+          status: z.nativeEnum(ProjectStatus).optional(),
           info: z.string().max(200).optional(),
         }),
       })
@@ -108,6 +109,7 @@ export const projectRotuer = createTRPCRouter({
         data: {
           headId: ctx.session.user.head.id,
           name: input.projectData.name,
+          status: input.projectData.status,
           info: input.projectData.info,
         },
       });
@@ -131,6 +133,7 @@ export const projectRotuer = createTRPCRouter({
         data: z.object({
           name: z.string().optional(),
           status: z.nativeEnum(ProjectStatus).optional(),
+          info: z.string().optional(),
         }),
       })
     )
@@ -143,6 +146,7 @@ export const projectRotuer = createTRPCRouter({
         data: {
           name: input.data.name,
           status: input.data.status,
+          info: input.data.info,
         },
       });
     }),

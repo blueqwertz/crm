@@ -65,6 +65,9 @@ export const CompanyPageTable = () => {
                     </Badge>
                   )} */}
                 </div>
+                <span className="mb-2 text-sm empty:hidden">
+                  {company.info}
+                </span>
                 <div className="flex gap-1">
                   {!!company._count.contacts && (
                     <Badge variant={"outline"}>
@@ -79,9 +82,6 @@ export const CompanyPageTable = () => {
                     </Badge>
                   )}
                 </div>
-                <span className="mb-1 text-sm empty:hidden">
-                  {company.info}
-                </span>
               </div>
               <CompanyPageTableEdit companyId={company.id} />
             </Link>

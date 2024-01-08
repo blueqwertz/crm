@@ -64,7 +64,6 @@ export const ProjectPageTableRow: React.FC<{
     <Link
       passHref={true}
       href={`/projects/${project.id}`}
-      key={project.id}
       className="flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50"
     >
       <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
@@ -218,7 +217,7 @@ export const ProjectPageTable = () => {
         )}
         {!!projectData &&
           projectData?.map((project) => {
-            return <ProjectPageTableRow project={project} />;
+            return <ProjectPageTableRow key={project.id} project={project} />;
           })}
       </div>
     </>
