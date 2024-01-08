@@ -64,7 +64,7 @@ export const ContactPageTable = () => {
                     <span className="truncate font-semibold">
                       {contact.name}
                     </span>
-                    {!!contact.companies?.length && (
+                    {/* {!!contact.companies?.length && (
                       <>
                         <Badge
                           className="gap-0 truncate text-xs"
@@ -94,7 +94,7 @@ export const ContactPageTable = () => {
                           ))}
                         </Badge>
                       </>
-                    )}
+                    )} */}
                     <div className="flex gap-1">
                       {!!contact.user &&
                         contact.user.id == sessionData?.user.id && (
@@ -113,8 +113,29 @@ export const ContactPageTable = () => {
                   <span className="mb-1 text-sm empty:hidden">
                     {contact.info}
                   </span>
-                  {(!!contact.user || !!contact.email || !!contact.mobile) && (
+                  {(!!contact.user ||
+                    !!contact.email ||
+                    !!contact.mobile ||
+                    !!contact.companies.length) && (
                     <div className="flex flex-wrap gap-2 text-xs">
+                      {!!contact.companies &&
+                        contact.companies.map((company) => {
+                          return (
+                            <>
+                              <div className="flex items-center gap-1">
+                                <Link href={`/companies/${company.id}`}>
+                                  <Badge
+                                    className="truncate hover:underline"
+                                    variant={"secondary"}
+                                  >
+                                    <Briefcase className="mr-1 h-3 w-3" />
+                                    {company.name}
+                                  </Badge>
+                                </Link>
+                              </div>
+                            </>
+                          );
+                        })}
                       {(!!contact.email || !!contact.user?.email) && (
                         <div className="flex items-center gap-1">
                           <div
@@ -122,10 +143,7 @@ export const ContactPageTable = () => {
                           //   contact.email ?? contact.user?.email
                           // }`}
                           >
-                            <Badge
-                              variant={"outline"}
-                              className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded  px-1.5 py-1 text-xs font-medium leading-3"
-                            >
+                            <Badge variant={"secondary"}>
                               <Mail className="mr-1 h-3 w-3" />
                               {!!contact.email && contact.email}
                               {!contact.email && contact.user?.email}
@@ -133,32 +151,9 @@ export const ContactPageTable = () => {
                           </div>
                         </div>
                       )}
-                      {/* {!!contact.companies &&
-                        contact.companies.map((company) => {
-                          return (
-                            <>
-                              <div className="flex items-center gap-1">
-                                <Link
-                                  href={`/companies/${company.company?.id}`}
-                                >
-                                  <Badge
-                                    className="truncate hover:underline"
-                                    variant={"outline"}
-                                  >
-                                    <Briefcase className="mr-1 h-3 w-3" />
-                                    {company.company?.name}
-                                  </Badge>
-                                </Link>
-                              </div>
-                            </>
-                          );
-                        })} */}
                       {!!contact.mobile && (
                         <div className="flex items-center gap-1">
-                          <Badge
-                            variant={"outline"}
-                            className="text-emphasis inline-flex items-center justify-center gap-x-1 truncate rounded px-1.5 py-1 text-xs font-medium leading-3"
-                          >
+                          <Badge variant={"secondary"}>
                             <Voicemail className="mr-1 h-3 w-3" />
                             {contact.mobile}
                           </Badge>

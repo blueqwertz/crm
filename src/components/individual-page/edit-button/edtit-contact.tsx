@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Brush } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
@@ -24,10 +24,12 @@ import {
 } from "../../ui/form";
 import { api } from "~/utils/api";
 import { RouterOutputs } from "~/utils/api";
+import { Contact } from "@prisma/client";
 
 export const EditContact: React.FC<{
-  contact: RouterOutputs["contact"]["getOne"];
-}> = ({ contact }) => {
+  children?: ReactNode;
+  contact: RouterOutputs["contact"]["getOne"] | Contact;
+}> = ({ contact, children }) => {
   const [open, setOpen] = useState(false);
 
   const ctx = api.useUtils();
@@ -58,6 +60,7 @@ export const EditContact: React.FC<{
     },
     onSuccess: async () => {
       await ctx.contact.getOne.invalidate();
+      await ctx.contact.getAll.invalidate();
       setLoading(false);
       setOpen(false);
     },
@@ -67,16 +70,19 @@ export const EditContact: React.FC<{
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     saveChanges({ id: contact?.id ?? "", data: values });
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Brush className="w-4 h-4 mr-2" />
-          Edit
-        </Button>
+        {children ?? (
+          <Button variant="outline">
+            <Brush className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -86,7 +92,12 @@ export const EditContact: React.FC<{
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form
+            onSubmit={() => {
+              console.log(form.getValues());
+            }}
+            className="space-y-3"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -148,7 +159,14 @@ export const EditContact: React.FC<{
                 >
                   Close
                 </div> */}
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              onClick={(e) => {
+                e.preventDefault();
+                form.handleSubmit(onSubmit)();
+              }}
+            >
               {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Save changes
             </Button>

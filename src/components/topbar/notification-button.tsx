@@ -152,15 +152,15 @@ export const NotificationButton: React.FC = () => {
                         if (!notification.archived) {
                           return (
                             <NotificationItem
-                              data={notification}
                               key={notification.id}
+                              data={notification}
                             />
                           );
                         }
                       })
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground">
+                        <div className="flex h-10 w-10 bg-muted items-center justify-center rounded-full text-muted-foreground">
                           <Inbox className="h-5 w-5" />
                         </div>
                         <span className="text-sm text-muted-foreground">
@@ -215,8 +215,8 @@ export const NotificationButton: React.FC = () => {
                       })
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground">
-                          <Inbox className="h-5 w-5" />
+                        <div className="flex h-10 w-10 bg-muted items-center justify-center rounded-full text-muted-foreground">
+                          <Archive className="h-5 w-5" />
                         </div>
                         <span className="text-sm text-muted-foreground">
                           No archived notifications

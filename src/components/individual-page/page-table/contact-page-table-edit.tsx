@@ -25,6 +25,7 @@ import { Button } from "../../ui/button";
 import { Combobox } from "../../ui/combobox";
 import { Input } from "../../ui/input";
 import { Contact } from "@prisma/client";
+import { EditContact } from "../edit-button/edtit-contact";
 
 export const ContactPageTableEdit: React.FC<{
   contact: Contact;
@@ -73,15 +74,20 @@ export const ContactPageTableEdit: React.FC<{
 
   return (
     <div
-      className="flex flex-col items-center justify-center px-4 py-4 sm:px-6"
+      className="flex flex-col items-center justify-center px-4 py-4 sm:px-6 shrink-0"
       onClick={(event) => {
         event.preventDefault();
       }}
     >
       <div key={`cpte-${contact.id}`} className="flex">
+        <EditContact contact={contact}>
+          <div className="box-content cursor-pointer rounded-none border border-r-0 rounded-l-md p-2 text-muted-foreground transition-colors hover:bg-accent">
+            <Pencil className="h-4 w-4" />
+          </div>
+        </EditContact>
         <Popover open={linkOpen} onOpenChange={setLinkOpen}>
           <PopoverTrigger asChild>
-            <div className="box-content cursor-pointer rounded-none border border-r-0 rounded-l-md p-2 text-muted-foreground transition-colors hover:bg-accent">
+            <div className="box-content cursor-pointer rounded-none border border-r-0 p-2 text-muted-foreground transition-colors hover:bg-accent">
               <Link className="h-4 w-4" />
             </div>
           </PopoverTrigger>
