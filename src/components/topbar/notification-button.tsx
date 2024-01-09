@@ -18,7 +18,6 @@ import {
   Loader2,
   ServerCrash,
   Wrench,
-  XOctagon,
 } from "lucide-react";
 import "@/utils/relative";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -134,9 +133,19 @@ export const NotificationButton: React.FC = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="p-0">
         <Tabs defaultValue="inbox" className="w-[250px] sm:w-[300px]">
-          <TabsList className="grid grid-cols-2 rounded-none bg-background">
-            <TabsTrigger value="inbox">Inbox</TabsTrigger>
-            <TabsTrigger value="archive">Archive</TabsTrigger>
+          <TabsList className="grid grid-cols-2 rounded-none bg-background p-0">
+            <TabsTrigger
+              value="inbox"
+              className="border-b h-full rounded-none -mx-px data-[state=active]:border-black"
+            >
+              Inbox
+            </TabsTrigger>
+            <TabsTrigger
+              value="archive"
+              className="border-b h-full rounded-none -mx-px data-[state=active]:border-black"
+            >
+              Archive
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="inbox" className="mt-0">
             <div className="flex h-[370px] flex-col gap-2">
@@ -144,7 +153,7 @@ export const NotificationButton: React.FC = () => {
                 <></>
               ) : (
                 <>
-                  <div className="flex w-full grow flex-col overflow-y-scroll border-t">
+                  <div className="flex w-full grow flex-col overflow-y-scroll">
                     {!!notifications?.find(
                       (notification) => notification.archived === false
                     ) ? (
@@ -199,7 +208,7 @@ export const NotificationButton: React.FC = () => {
                 <></>
               ) : (
                 <>
-                  <div className="flex w-full grow flex-col overflow-y-auto border-t">
+                  <div className="flex w-full grow flex-col overflow-y-auto">
                     {!!notifications?.find(
                       (notification) => notification.archived === true
                     ) ? (

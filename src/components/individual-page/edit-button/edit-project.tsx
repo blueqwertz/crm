@@ -91,7 +91,7 @@ export const EditProject: React.FC<{
     >
       <DialogTrigger asChild>
         {children ?? (
-          <Button variant="outline">
+          <Button variant="outline" size={"sm"}>
             <Brush className="w-4 h-4 mr-2" />
             Edit
           </Button>

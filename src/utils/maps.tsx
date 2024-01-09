@@ -62,7 +62,7 @@ export const typeMaps: {
     icon: <Clipboard className="h-4 w-4" />,
   },
   FollowUp: {
-    title: "FollowUp",
+    title: "Follow Up",
     icon: <Reply className="h-4 w-4" />,
   },
 };

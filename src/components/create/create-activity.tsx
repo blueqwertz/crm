@@ -46,6 +46,7 @@ import { ComboboxMulti } from "../ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { ActivityType } from "@prisma/client";
+import { statusMaps, typeMaps } from "~/utils/maps";
 
 const ActivityForm: React.FC<{
   entry: {
@@ -199,7 +200,9 @@ const ActivityForm: React.FC<{
                         </SelectTrigger>
                         <SelectContent>
                           {Object.keys(ActivityType).map((status) => (
-                            <SelectItem value={status}>{status}</SelectItem>
+                            <SelectItem value={status}>
+                              {typeMaps[status as ActivityType].title}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>

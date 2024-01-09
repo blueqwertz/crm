@@ -73,7 +73,7 @@ export const EditCompany: React.FC<{
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" size={"sm"}>
           <Brush className="w-4 h-4 mr-2" />
           Edit
         </Button>

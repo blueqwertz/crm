@@ -78,7 +78,7 @@ export const EditContact: React.FC<{
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children ?? (
-          <Button variant="outline">
+          <Button variant="outline" size={"sm"}>
             <Brush className="w-4 h-4 mr-2" />
             Edit
           </Button>
