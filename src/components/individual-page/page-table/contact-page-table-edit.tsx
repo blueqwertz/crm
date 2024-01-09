@@ -44,7 +44,7 @@ export const ContactPageTableEdit: React.FC<{
 
   const ctx = api.useUtils();
 
-  const { mutate: deleteContact } = api.contact.deleteOne.useMutation({
+  const { mutate: deleteContact } = api.contact.delete.useMutation({
     onMutate: () => {
       setDeleteLoading(true);
     },

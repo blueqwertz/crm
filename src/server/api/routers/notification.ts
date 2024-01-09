@@ -1,9 +1,24 @@
 import { z } from "zod";
-
+import { EventEmitter } from "events";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { observable } from "@trpc/server/observable";
 
 export const notificationRouter = createTRPCRouter({
-  sendNotification: protectedProcedure
+  onSend: protectedProcedure.subscription(({ ctx }) => {
+    return observable<Notification>((emit) => {
+      const onAdd = (data: Notification) => {
+        // emit data to client
+        emit.next(data);
+      };
+      ctx.ee.on("notification_send", onAdd);
+      // unsubscribe function when client disconnects or stops subscribing
+      return () => {
+        ctx.ee.off("notification_send", onAdd);
+      };
+    });
+  }),
+
+  send: protectedProcedure
     .input(
       z.object({
         data: z.object({
@@ -18,12 +33,17 @@ export const notificationRouter = createTRPCRouter({
         }),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.db.notification.create({
+    .mutation(async ({ ctx, input }) => {
+      const notification = await ctx.db.notification.create({
         data: input.data,
       });
+
+      ctx.ee.emit("notification_send", notification);
+
+      return notification;
     }),
-  getNotifications: protectedProcedure.query(({ ctx }) => {
+
+  get: protectedProcedure.query(({ ctx }) => {
     return ctx.db.notification.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -39,7 +59,8 @@ export const notificationRouter = createTRPCRouter({
       ],
     });
   }),
-  setArchive: protectedProcedure
+
+  archive: protectedProcedure
     .input(
       z.object({
         data: z.object({
@@ -59,6 +80,7 @@ export const notificationRouter = createTRPCRouter({
         },
       });
     }),
+
   archiveAll: protectedProcedure.mutation(({ ctx }) => {
     return ctx.db.notification.updateMany({
       where: {
@@ -69,7 +91,8 @@ export const notificationRouter = createTRPCRouter({
       },
     });
   }),
-  setRead: protectedProcedure
+
+  read: protectedProcedure
     .input(
       z.object({
         data: z.object({
@@ -89,6 +112,7 @@ export const notificationRouter = createTRPCRouter({
         },
       });
     }),
+
   readAll: protectedProcedure.mutation(({ ctx }) => {
     return ctx.db.notification.updateMany({
       where: {
@@ -99,6 +123,7 @@ export const notificationRouter = createTRPCRouter({
       },
     });
   }),
+
   delete: protectedProcedure
     .input(z.object({ data: z.object({ id: z.string().cuid() }) }))
     .mutation(({ ctx, input }) => {
@@ -113,6 +138,7 @@ export const notificationRouter = createTRPCRouter({
         },
       });
     }),
+
   deleteAll: protectedProcedure.mutation(({ ctx }) => {
     return ctx.db.notification.updateMany({
       where: {

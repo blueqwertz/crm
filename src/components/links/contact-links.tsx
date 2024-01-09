@@ -22,7 +22,7 @@ export const AddContactRelation: React.FC<{
 
   const ctx = api.useUtils();
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addContact } = api.contact.add.useMutation({
     onMutate: () => {
       setDisabled(true);
     },

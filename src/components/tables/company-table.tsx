@@ -42,7 +42,7 @@ const CompanyEdit: React.FC<{
         setLoading(true);
       },
       onSuccess: async () => {
-        await ctx.contact.getOne.invalidate();
+        await ctx.contact.get.invalidate();
         setLoading(false);
       },
       onError: () => {
@@ -94,11 +94,11 @@ export const CompanyTable: React.FC<{
       <AddCompanyRelation pageData={pageData} companyData={companyData} />
       {!companyData && (
         <>
-          <div className="flex items-center gap-2 border-b px-4 py-4">
+          <div className="flex items-center gap-2 border-b px-4 py-3">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
-          <div className="flex items-center gap-2 px-4 py-4">
+          <div className="flex items-center gap-2 px-4 py-3">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
@@ -118,7 +118,7 @@ export const CompanyTable: React.FC<{
               <Link
                 key={contact.id}
                 href={`/companies/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none hover:bg-muted/50"
+                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={contact.image!} />

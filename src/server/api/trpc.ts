@@ -8,13 +8,18 @@
  */
 
 import { initTRPC, TRPCError } from "@trpc/server";
+import * as trpcNext from "@trpc/server/adapters/next";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
 import { getServerAuthSession } from "~/server/auth";
+import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
+import EventEmitter from "events";
+import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
+import { IncomingMessage } from "http";
+import ws from "ws";
 
 /**
  * 1. CONTEXT
@@ -27,6 +32,8 @@ import { db } from "~/server/db";
 interface CreateContextOptions {
   session: Session | null;
 }
+
+const ee = new EventEmitter();
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -42,6 +49,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
+    ee,
   };
 };
 
@@ -54,8 +62,9 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
 
-  // Get the session from the server using the getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
+
+  // Get the session from the server using the getServerSession wrapper function
 
   return createInnerTRPCContext({
     session,

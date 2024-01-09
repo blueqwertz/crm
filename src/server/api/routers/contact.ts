@@ -44,7 +44,7 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
-  getOne: protectedProcedure
+  get: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -149,7 +149,7 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
-  addOne: protectedProcedure
+  add: protectedProcedure
     .input(
       z.object({
         contactData: z.object({
@@ -181,7 +181,7 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
-  deleteOne: protectedProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.db.contact.delete({
@@ -192,7 +192,7 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
-  updateOne: protectedProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),

@@ -29,7 +29,7 @@ export const AddContactRelationLink: React.FC<{ id: string }> = ({ id }) => {
       setLinkLoading(true);
     },
     onSuccess: async () => {
-      await ctx.contact.getOne.invalidate();
+      await ctx.contact.get.invalidate();
       setLinkValue(undefined);
       setLinkIndex(0);
       setLinkOpen(false);

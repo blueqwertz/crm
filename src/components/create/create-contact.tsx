@@ -35,7 +35,7 @@ export const AddContact = () => {
     mobile: z.string().optional(),
   });
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addContact } = api.contact.add.useMutation({
     onMutate: () => {
       setLoading(true);
     },

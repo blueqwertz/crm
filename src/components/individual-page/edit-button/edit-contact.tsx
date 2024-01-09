@@ -28,7 +28,7 @@ import { Contact } from "@prisma/client";
 
 export const EditContact: React.FC<{
   children?: ReactNode;
-  contact: RouterOutputs["contact"]["getOne"] | Contact;
+  contact: RouterOutputs["contact"]["get"] | Contact;
 }> = ({ contact, children }) => {
   const [open, setOpen] = useState(false);
 
@@ -54,12 +54,12 @@ export const EditContact: React.FC<{
     delayError: 600,
   });
 
-  const { mutate: saveChanges } = api.contact.updateOne.useMutation({
+  const { mutate: saveChanges } = api.contact.update.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.contact.getOne.invalidate();
+      await ctx.contact.get.invalidate();
       await ctx.contact.getAll.invalidate();
       setLoading(false);
       setOpen(false);

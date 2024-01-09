@@ -59,7 +59,7 @@ export const AddCompanyRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.contact.getOne.invalidate();
+      void ctx.contact.get.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {

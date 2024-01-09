@@ -10,7 +10,7 @@ import { Layout } from "~/components/layout";
 import { db } from "~/server/db";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: contactData, isLoading } = api.contact.getOne.useQuery({
+  const { data: contactData, isLoading } = api.contact.get.useQuery({
     id,
     include: {
       activities: true,
@@ -78,7 +78,7 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.contact.getOne.fetch({
+  await helpers.contact.get.fetch({
     id,
     include: {
       activities: true,

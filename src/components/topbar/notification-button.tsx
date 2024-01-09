@@ -29,8 +29,7 @@ import { Notification } from "@prisma/client";
 import dayjs from "dayjs";
 
 export const NotificationButton: React.FC = () => {
-  const { data: notifications, isLoading } =
-    api.notification.getNotifications.useQuery();
+  const { data: notifications, isLoading } = api.notification.get.useQuery();
 
   const ctx = api.useUtils();
 
@@ -42,7 +41,7 @@ export const NotificationButton: React.FC = () => {
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.notification.getNotifications.invalidate();
+      void ctx.notification.get.invalidate();
     },
     onError: (e) => {
       setLoading(false);
@@ -63,7 +62,7 @@ export const NotificationButton: React.FC = () => {
   const { mutate: deleteAll } = api.notification.deleteAll.useMutation({
     onSuccess: () => {
       setLoading(false);
-      void ctx.notification.getNotifications.invalidate();
+      void ctx.notification.get.invalidate();
     },
     onError: (e) => {
       setLoading(false);
@@ -84,7 +83,7 @@ export const NotificationButton: React.FC = () => {
   const { mutate: readAll } = api.notification.readAll.useMutation({
     onSuccess: () => {
       setLoading(false);
-      void ctx.notification.getNotifications.invalidate();
+      void ctx.notification.get.invalidate();
     },
     onError: (e) => {
       setLoading(false);
@@ -270,12 +269,12 @@ export const NotificationItem: React.FC<{ data: Notification }> = ({
 
   const [loading, setLoading] = useState(false);
 
-  const { mutate: setArchive } = api.notification.setArchive.useMutation({
+  const { mutate: setArchive } = api.notification.archive.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
-      void ctx.notification.getNotifications.invalidate();
+      void ctx.notification.get.invalidate();
     },
     onError: (e) => {
       setLoading(false);

@@ -23,7 +23,7 @@ const RelationItem: React.FC<{
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.contact.getOne.invalidate();
+      await ctx.contact.get.invalidate();
       setLoading(false);
     },
     onError: () => {
@@ -109,7 +109,7 @@ export const RelationsTable: React.FC<{
 
   const { mutate: deleteLink } = useMutation({
     onSuccess: () => {
-      void ctx.contact.getOne.invalidate();
+      void ctx.contact.get.invalidate();
     },
   });
   return (

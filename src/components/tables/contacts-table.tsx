@@ -94,11 +94,11 @@ export const ContactsTable: React.FC<{
       <AddContactRelation pageData={pageData} contactData={contactData} />
       {!contactData && (
         <>
-          <div className="flex items-center gap-2 border-b px-4 py-4">
+          <div className="flex items-center gap-2 border-b px-4 py-3">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
-          <div className="flex items-center gap-2 px-4 py-4">
+          <div className="flex items-center gap-2 px-4 py-3">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-8 flex-grow rounded-md" />
           </div>
@@ -118,7 +118,7 @@ export const ContactsTable: React.FC<{
               <Link
                 key={contact.id}
                 href={`/contacts/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-4 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
+                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
               >
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={contact.image!} />

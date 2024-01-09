@@ -35,7 +35,7 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.contact.getOne.invalidate();
+      await ctx.contact.get.invalidate();
       await ctx.company.getOne.invalidate();
       await ctx.project.getOne.invalidate();
       setLoading(false);
@@ -125,7 +125,7 @@ export const ActivitiesTable: React.FC<{
       )}
       {!!activityData && (
         <>
-          <div className="py-2">
+          <div>
             {activityData
               .sort(
                 (a, b) =>
@@ -153,7 +153,7 @@ export const ActivitiesTable: React.FC<{
                     <div className="flex flex-col">
                       <span className="leading-none text-xs text-muted-foreground">
                         {dayjs().to(activity.date)}{" "}
-                        <span className="text-muted-foreground/70">
+                        <span>
                           {!!activity.project && (
                             <>
                               &#x2022; From{" "}

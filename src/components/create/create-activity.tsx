@@ -64,7 +64,7 @@ const ActivityForm: React.FC<{
   const { data: contacts } = api.contact.getAll.useQuery();
   const { data: projects } = api.project.getAll.useQuery();
 
-  const { mutate: addContact } = api.contact.addOne.useMutation({
+  const { mutate: addContact } = api.contact.add.useMutation({
     onSuccess: (contactCreated) => {
       form.setValue("contactIds", [
         ...form.getValues("contactIds")!,
@@ -99,7 +99,7 @@ const ActivityForm: React.FC<{
       setLoading(true);
     },
     onSuccess: () => {
-      void ctx.contact.getOne.invalidate();
+      void ctx.contact.get.invalidate();
       void ctx.company.getOne.invalidate();
       void ctx.project.getOne.invalidate();
       setLoading(false);
