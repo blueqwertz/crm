@@ -36,6 +36,7 @@ export const ContactIndividualPage: React.FC<{
             <span className="font-semibold">Relations</span>
             <div className="w-full overflow-hidden rounded-md border">
               <RelationsTable
+                pageData={{ type: "Contact", id: contactId }}
                 outgoingRelations={contact?.outgoingRelations ?? []}
                 incomingRelations={contact?.incomingRelations ?? []}
               />

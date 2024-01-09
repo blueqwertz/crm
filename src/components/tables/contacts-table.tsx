@@ -57,8 +57,8 @@ const ContactEdit: React.FC<{
           <TooltipTrigger asChild>
             <Button
               size={"icon"}
-              className="ml-auto h-7 w-7 shrink-0 text-muted-foreground bg-transparent"
               variant={"ghost"}
+              className="ml-auto h-7 w-7 shrink-0 text-muted-foreground bg-transparent hover:bg-transparent"
               onClick={(e) => {
                 e.preventDefault();
                 if (pageData.type === "Project") {

@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Brush } from "lucide-react";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
@@ -24,7 +24,7 @@ import {
 } from "../../ui/form";
 import { api } from "~/utils/api";
 import { RouterOutputs } from "~/utils/api";
-import { ProjectStatus } from "@prisma/client";
+import { Project, ProjectStatus } from "@prisma/client";
 import {
   Select,
   SelectContent,
@@ -33,10 +33,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { statusMaps } from "~/utils/maps";
+import { set } from "date-fns";
 
 export const EditProject: React.FC<{
-  project: RouterOutputs["project"]["getOne"];
-}> = ({ project }) => {
+  children?: ReactNode;
+  project: RouterOutputs["project"]["getOne"] | Project;
+}> = ({ project, children }) => {
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
@@ -52,6 +54,7 @@ export const EditProject: React.FC<{
       setLoading(true);
     },
     onSuccess: async () => {
+      await ctx.project.getAll.invalidate();
       await ctx.project.getOne.invalidate();
       setLoading(false);
       setOpen(false);
@@ -80,12 +83,19 @@ export const EditProject: React.FC<{
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        setOpen(!open);
+      }}
+    >
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Brush className="w-4 h-4 mr-2" />
-          Edit
-        </Button>
+        {children ?? (
+          <Button variant="outline">
+            <Brush className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -122,7 +132,7 @@ export const EditProject: React.FC<{
                     <FormControl>
                       <SelectTrigger>
                         <div className="flex items-center space-x-2">
-                          {statusMaps[field.value].icon}
+                          {statusMaps[field.value].iconLarge}
                           <SelectValue placeholder="Set status" />
                         </div>
                       </SelectTrigger>
@@ -154,7 +164,14 @@ export const EditProject: React.FC<{
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button
+              disabled={loading}
+              className="w-full"
+              onClick={(e) => {
+                e.preventDefault();
+                form.handleSubmit(onSubmit)();
+              }}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Save changes
             </Button>

@@ -186,9 +186,9 @@ export const ActivitiesTable: React.FC<{
                                                     .contacts
                                                 }{" "}
                                                 {activity.project.count
-                                                  .contacts == 1
-                                                  ? "contact"
-                                                  : "contacts"}
+                                                  .contacts > 1
+                                                  ? "contacts"
+                                                  : "contact"}
                                               </Badge>
                                             </>
                                           )}
@@ -201,9 +201,9 @@ export const ActivitiesTable: React.FC<{
                                                     .companies
                                                 }{" "}
                                                 {activity.project.count
-                                                  .companies == 1
-                                                  ? "company"
-                                                  : "companies"}
+                                                  .companies > 1
+                                                  ? "companies"
+                                                  : "company"}
                                               </Badge>
                                             </>
                                           )}
@@ -256,9 +256,9 @@ export const ActivitiesTable: React.FC<{
                                                     .contacts
                                                 }{" "}
                                                 {activity.company.count
-                                                  .projects == 1
-                                                  ? "contact"
-                                                  : "contacts"}
+                                                  .projects > 1
+                                                  ? "contacts"
+                                                  : "contact"}
                                               </Badge>
                                             </>
                                           )}
@@ -271,9 +271,9 @@ export const ActivitiesTable: React.FC<{
                                                     .projects
                                                 }{" "}
                                                 {activity.company.count
-                                                  .projects == 1
-                                                  ? "project"
-                                                  : "projects"}
+                                                  .projects > 1
+                                                  ? "projects"
+                                                  : "project"}
                                               </Badge>
                                             </>
                                           )}
@@ -326,9 +326,9 @@ export const ActivitiesTable: React.FC<{
                                                     .companies
                                                 }{" "}
                                                 {activity.contact.count
-                                                  .projects == 1
-                                                  ? "company"
-                                                  : "companies"}
+                                                  .projects > 1
+                                                  ? "companies"
+                                                  : "company"}
                                               </Badge>
                                             </>
                                           )}
@@ -341,9 +341,9 @@ export const ActivitiesTable: React.FC<{
                                                     .projects
                                                 }{" "}
                                                 {activity.contact.count
-                                                  .projects == 1
-                                                  ? "project"
-                                                  : "projects"}
+                                                  .projects > 1
+                                                  ? "projects"
+                                                  : "project"}
                                               </Badge>
                                             </>
                                           )}

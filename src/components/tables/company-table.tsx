@@ -27,8 +27,8 @@ const CompanyEdit: React.FC<{
       onMutate: () => {
         setLoading(true);
       },
-      onSuccess: () => {
-        void ctx.project.getOne.invalidate();
+      onSuccess: async () => {
+        await ctx.project.getOne.invalidate();
         setLoading(false);
       },
       onError: () => {
@@ -41,8 +41,8 @@ const CompanyEdit: React.FC<{
       onMutate: () => {
         setLoading(true);
       },
-      onSuccess: () => {
-        void ctx.contact.getOne.invalidate();
+      onSuccess: async () => {
+        await ctx.contact.getOne.invalidate();
         setLoading(false);
       },
       onError: () => {

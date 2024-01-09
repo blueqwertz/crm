@@ -1,11 +1,101 @@
 import { Skeleton } from "../ui/skeleton";
-import { MoveHorizontal, MoveRight } from "lucide-react";
+import { Loader2, MoveHorizontal, MoveLeft, MoveRight, X } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
 import { Contact, ContactRelation } from "@prisma/client";
+import { AddContactRelationLink } from "../links/contact-relation-links";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "~/utils/api";
+import React, { useState } from "react";
+
+const RelationItem: React.FC<{
+  relation: {
+    outgoingContact: Contact;
+    incomingContact: Contact;
+    mode: number;
+  };
+}> = ({ relation }) => {
+  const ctx = api.useUtils();
+  const [loading, setLoading] = useState(false);
+  const { mutate: deleteContactRelation } = api.contact.deleteLink.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: async () => {
+      await ctx.contact.getOne.invalidate();
+      setLoading(false);
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
+
+  return (
+    <div className="flex grow justify-between items-center gap-3 border-b p-2 last:border-none">
+      <div
+        className={cn(
+          buttonVariants({ variant: "outline", size: "sm" }),
+          "pointer-events-none h-[40px] flex-1 justify-start",
+          {
+            "text-muted-foreground": relation.mode != 2,
+          }
+        )}
+      >
+        {relation.outgoingContact.name}
+      </div>
+
+      <Button size={"icon"} variant={"outline"} className="pointer-events-none">
+        {
+          [
+            <MoveHorizontal className="h-5 w-5" />,
+            <MoveRight className="h-5 w-5" />,
+            <MoveLeft className="h-5 w-5" />,
+          ][relation.mode]
+        }
+      </Button>
+
+      <Link
+        href={`/contacts/${relation.incomingContact.id}`}
+        className={cn(
+          buttonVariants({ variant: "outline", size: "sm" }),
+          "h-[40px] flex-1 justify-start",
+          {
+            "text-muted-foreground": relation.mode == 2,
+          }
+        )}
+      >
+        {relation.incomingContact.name}
+      </Link>
+      <Button
+        className="w-7 h-7 text-muted-foreground bg-transparent hover:bg-transparent"
+        variant={"ghost"}
+        size={"icon"}
+        onClick={() => {
+          deleteContactRelation({
+            contactOne: relation.outgoingContact.id,
+            contactTwo: relation.incomingContact.id,
+            mode: relation.mode,
+          });
+        }}
+      >
+        <div>
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <X className="h-4 w-4" />
+          )}
+        </div>
+      </Button>
+    </div>
+  );
+};
 
 export const RelationsTable: React.FC<{
+  pageData: {
+    id: string;
+    type: "Contact";
+  };
   outgoingRelations: (ContactRelation & {
     outgoingContact: Contact;
     incomingContact: Contact;
@@ -14,9 +104,17 @@ export const RelationsTable: React.FC<{
     outgoingContact: Contact;
     incomingContact: Contact;
   })[];
-}> = ({ outgoingRelations, incomingRelations }) => {
+}> = ({ outgoingRelations, incomingRelations, pageData }) => {
+  const ctx = api.useUtils();
+
+  const { mutate: deleteLink } = useMutation({
+    onSuccess: () => {
+      void ctx.contact.getOne.invalidate();
+    },
+  });
   return (
     <>
+      <AddContactRelationLink id={pageData.id} />
       {!outgoingRelations && !incomingRelations && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4">
@@ -49,36 +147,7 @@ export const RelationsTable: React.FC<{
                 });
               })
               .map((relation) => {
-                return (
-                  <div className="flex grow justify-between gap-3 border-b p-2 last:border-none">
-                    <div
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
-                      )}
-                    >
-                      {relation.outgoingContact.name}
-                    </div>
-
-                    <Button
-                      size={"icon"}
-                      variant={"outline"}
-                      className="pointer-events-none"
-                    >
-                      <MoveHorizontal className="h-5 w-5" />
-                    </Button>
-
-                    <Link
-                      href={`/contacts/${relation.incomingContact.id}`}
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start"
-                      )}
-                    >
-                      {relation.incomingContact.name}
-                    </Link>
-                  </div>
-                );
+                return <RelationItem relation={{ ...relation, mode: 0 }} />;
               })}
             {outgoingRelations
               .filter((out) => {
@@ -87,36 +156,7 @@ export const RelationsTable: React.FC<{
                 });
               })
               .map((relation) => {
-                return (
-                  <div className="flex grow justify-between gap-3 border-b p-2 last:border-none">
-                    <div
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
-                      )}
-                    >
-                      {relation.outgoingContact.name}
-                    </div>
-
-                    <Button
-                      size={"icon"}
-                      variant={"outline"}
-                      className="pointer-events-none"
-                    >
-                      <MoveRight className="h-5 w-5" />
-                    </Button>
-
-                    <Link
-                      href={`/contacts/${relation.incomingContact.id}`}
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start"
-                      )}
-                    >
-                      {relation.incomingContact.name}
-                    </Link>
-                  </div>
-                );
+                return <RelationItem relation={{ ...relation, mode: 1 }} />;
               })}
 
             {incomingRelations
@@ -126,36 +166,7 @@ export const RelationsTable: React.FC<{
                 });
               })
               .map((relation) => {
-                return (
-                  <div className="-m-px flex grow justify-between gap-3 border-b p-2 last:border-none">
-                    <Link
-                      href={`/contacts/${relation.outgoingContact.id}`}
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "h-[40px] flex-1 justify-start"
-                      )}
-                    >
-                      {relation.outgoingContact.name}
-                    </Link>
-
-                    <Button
-                      size={"icon"}
-                      variant={"outline"}
-                      className="pointer-events-none"
-                    >
-                      <MoveRight className="h-5 w-5" />
-                    </Button>
-
-                    <div
-                      className={cn(
-                        buttonVariants({ variant: "outline", size: "sm" }),
-                        "pointer-events-none h-[40px] flex-1 justify-start text-muted-foreground"
-                      )}
-                    >
-                      {relation.incomingContact.name}
-                    </div>
-                  </div>
-                );
+                return <RelationItem relation={{ ...relation, mode: 2 }} />;
               })}
           </div>
         </>

@@ -38,9 +38,10 @@ export function Combobox({
   children,
 }: ComboboxInput) {
   const [input, setInput] = React.useState("");
+  const [open, setOpen] = React.useState(false);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         {children ?? (
           <Button
@@ -72,12 +73,13 @@ export function Combobox({
                 key={option.value}
                 onSelect={() => {
                   setValue(option.value, option.label);
+                  setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value?.includes(option.value) ? "opacity-100" : "opacity-0",
+                    value?.includes(option.value) ? "opacity-100" : "opacity-0"
                   )}
                 />
                 {option.label}

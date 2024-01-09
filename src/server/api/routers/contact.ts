@@ -268,6 +268,36 @@ export const contactRotuer = createTRPCRouter({
       });
     }),
 
+  deleteLink: protectedProcedure
+    .input(
+      z.object({
+        contactOne: z.string(),
+        contactTwo: z.string(),
+        mode: z.number(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.$transaction(async (tx) => {
+        if (input.mode === 0 || input.mode === 1) {
+          await tx.contactRelation.deleteMany({
+            where: {
+              outgoingContactId: input.contactOne,
+              incomingContactId: input.contactTwo,
+            },
+          });
+        }
+
+        if (input.mode === 0 || input.mode === 2) {
+          await tx.contactRelation.deleteMany({
+            where: {
+              outgoingContactId: input.contactTwo,
+              incomingContactId: input.contactOne,
+            },
+          });
+        }
+      });
+    }),
+
   addCompany: protectedProcedure
     .input(
       z.object({

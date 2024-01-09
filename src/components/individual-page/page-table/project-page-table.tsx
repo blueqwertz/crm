@@ -109,7 +109,7 @@ export const ProjectPageTableRow: React.FC<{
                   >
                     <Badge
                       className="truncate text-xs font-normal leading-3 hover:underline"
-                      variant="outline"
+                      variant="secondary"
                     >
                       <Briefcase className="mr-1 h-3 w-3" />
                       {company.name}
@@ -178,7 +178,7 @@ export const ProjectPageTableRow: React.FC<{
           </>
         )}
       </div>
-      <ProjectPageTableEdit projectId={project.id} />
+      <ProjectPageTableEdit project={project} />
     </Link>
   );
 };
