@@ -60,6 +60,12 @@ model User {
   feedback       Feedback[]
   notifications  Notification[]
 
+  activityPolicy ActivityPolicy[]
+  companyPolicy  CompanyPolicy[]
+  contactPolicy  ContactPolicy[]
+  headPolicy     HeadPolicy[]
+  projectPolicy  ProjectPolicy[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -91,6 +97,12 @@ model Head {
   projects   Project[]
   user       User[]       @relation("Users")
   invites    HeadInvite[]
+
+  activityPolicy ActivityPolicy[]
+  companyPolicy  CompanyPolicy[]
+  contactPolicy  ContactPolicy[]
+  headPolicy     HeadPolicy[]
+  projectPolicy  ProjectPolicy[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -137,6 +149,8 @@ model Contact {
   outgoingRelations ContactRelation[] @relation("outgoingContact")
   incomingRelations ContactRelation[] @relation("incomingContact")
 
+  policies ContactPolicy[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -171,6 +185,8 @@ model Company {
   contacts   Contact[]
   projects   Project[]
 
+  policies CompanyPolicy[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -200,6 +216,8 @@ model Project {
   companies  Company[]
   contacts   Contact[]
 
+  policies ProjectPolicy[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -226,15 +244,89 @@ model Activity {
   contacts  Contact[]
   projects  Project[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityPolicy ActivityPolicy[]
 
   @@index([headId])
 }
 
 // #endregion
 
-// #region Role
+// #region Access Control
+
+model ActivityPolicy {
+  id         String   @id
+  headId     String
+  activityId String
+  userId     String
+  canRead    Boolean  @default(false)
+  canEdit    Boolean  @default(false)
+  canDelete  Boolean  @default(false)
+  activity   Activity @relation(fields: [activityId], references: [id])
+  Head       Head     @relation(fields: [headId], references: [id], onDelete: Cascade)
+  User       User     @relation(fields: [userId], references: [id])
+
+  @@unique([headId, userId, activityId])
+}
+
+model CompanyPolicy {
+  id        String  @id
+  headId    String
+  companyId String
+  userId    String
+  canRead   Boolean @default(false)
+  canEdit   Boolean @default(false)
+  canDelete Boolean @default(false)
+  company   Company @relation(fields: [companyId], references: [id])
+  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([headId, userId, companyId])
+}
+
+model ContactPolicy {
+  id        String  @id
+  headId    String
+  contactId String
+  userId    String
+  canRead   Boolean @default(false)
+  canEdit   Boolean @default(false)
+  canDelete Boolean @default(false)
+  contact   Contact @relation(fields: [contactId], references: [id])
+  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([headId, userId, contactId])
+}
+
+model HeadPolicy {
+  id        String  @id
+  headId    String
+  userId    String
+  canRead   Boolean @default(false)
+  canEdit   Boolean @default(false)
+  canDelete Boolean @default(false)
+  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, headId])
+}
+
+model ProjectPolicy {
+  id        String  @id
+  headId    String
+  projectId String
+  userId    String
+  canRead   Boolean @default(false)
+  canEdit   Boolean @default(false)
+  canDelete Boolean @default(false)
+  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([headId, userId, projectId])
+}
 
 model Role {
   id          Int     @id @default(autoincrement())
