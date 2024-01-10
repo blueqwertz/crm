@@ -1,5 +1,9 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type GetServerSidePropsContext } from "next";
+import {
+  NextApiRequest,
+  type GetServerSidePropsContext,
+  NextApiResponse,
+} from "next";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { env } from "~/env";
@@ -61,49 +65,31 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
   callbacks: {
-    session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub ?? "";
-        session.user.name = token.name ?? "";
-        session.user.email = token.email ?? "";
-        session.user.head = {
-          id: token.head.id ?? "",
-          name: token.head.name ?? "",
-        };
-        if (token.image) session.user.image = token.image as string;
-      }
-      return session;
-    },
-    async jwt({ token }) {
+    async session({ session, user }) {
       const dbUser = await db.user.findFirst({
         where: {
-          id: token.sub,
+          id: user.id,
         },
         include: {
           head: true,
         },
       });
 
-      if (!dbUser) {
-        return token;
+      if (dbUser) {
+        session.user.id = dbUser.id;
+        session.user.name = dbUser.name ?? "";
+        session.user.email = dbUser.email ?? "";
+        session.user.head = {
+          id: dbUser.head?.id ?? "",
+          name: dbUser.head?.name ?? "",
+        };
+        if (dbUser.image) session.user.image = dbUser.image;
       }
 
-      return {
-        ...token,
-        name: dbUser.name,
-        email: dbUser.email,
-        image: dbUser.image,
-        head: {
-          id: dbUser.headId ?? "",
-          name: dbUser?.head?.name ?? "",
-        },
-      };
+      return session;
     },
   },
   adapter: PrismaAdapter(db),
-  session: {
-    strategy: "jwt",
-  },
   secret: env.NEXTAUTH_SECRET,
   providers: [
     GithubProvider({

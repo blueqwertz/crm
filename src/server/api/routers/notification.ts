@@ -2,21 +2,22 @@ import { z } from "zod";
 import { EventEmitter } from "events";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { observable } from "@trpc/server/observable";
+import { NotificationPriority, NotificationType } from "@prisma/client";
 
 export const notificationRouter = createTRPCRouter({
-  onSend: protectedProcedure.subscription(({ ctx }) => {
-    return observable<Notification>((emit) => {
-      const onAdd = (data: Notification) => {
-        // emit data to client
-        emit.next(data);
-      };
-      ctx.ee.on("notification_send", onAdd);
-      // unsubscribe function when client disconnects or stops subscribing
-      return () => {
-        ctx.ee.off("notification_send", onAdd);
-      };
-    });
-  }),
+  // onSend: protectedProcedure.subscription(({ ctx }) => {
+  //   return observable<Notification>((emit) => {
+  //     const onAdd = (data: Notification) => {
+  //       // emit data to client
+  //       emit.next(data);
+  //     };
+  //     ctx.ee.on("notification_send", onAdd);
+  //     // unsubscribe function when client disconnects or stops subscribing
+  //     return () => {
+  //       ctx.ee.off("notification_send", onAdd);
+  //     };
+  //   });
+  // }),
 
   send: protectedProcedure
     .input(
@@ -24,12 +25,8 @@ export const notificationRouter = createTRPCRouter({
         data: z.object({
           userId: z.string().cuid(),
           message: z.string(),
-          type: z
-            .enum(["DEBUG", "INFO", "WARNING", "ERROR", "SUCCESS"])
-            .default("INFO"),
-          priority: z
-            .enum(["MIN", "LOW", "DEFAULT", "HIGH", "MAX"])
-            .default("DEFAULT"),
+          type: z.nativeEnum(NotificationType).default("INFO"),
+          priority: z.nativeEnum(NotificationPriority).default("DEFAULT"),
         }),
       })
     )

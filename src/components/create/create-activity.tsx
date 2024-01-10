@@ -113,7 +113,7 @@ const ActivityForm: React.FC<{
 
   const formSchema = z
     .object({
-      type: z.enum(["Call", "Meeting", "Email", "Task", "FollowUp"]),
+      type: z.nativeEnum(ActivityType),
       date: z.date(),
       companyIds: z.array(z.string()).optional(),
       contactIds: z.array(z.string()).optional(),

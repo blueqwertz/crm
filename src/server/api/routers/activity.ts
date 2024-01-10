@@ -1,3 +1,4 @@
+import { ActivityType } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -11,9 +12,7 @@ export const activityRouer = createTRPCRouter({
           companyIds: z.array(z.string()).optional(),
           contactIds: z.array(z.string()).optional(),
           projectIds: z.array(z.string()).optional(),
-          type: z
-            .enum(["Call", "Meeting", "Email", "Task", "FollowUp"])
-            .optional(),
+          type: z.nativeEnum(ActivityType).optional(),
           date: z.date().optional(),
         })
         .superRefine((values, ctx) => {

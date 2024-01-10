@@ -31,6 +31,12 @@ import dayjs from "dayjs";
 export const NotificationButton: React.FC = () => {
   const { data: notifications, isLoading } = api.notification.get.useQuery();
 
+  api.notification.onSend.useSubscription(undefined, {
+    onData(data) {
+      console.log(data);
+    },
+  });
+
   const ctx = api.useUtils();
 
   const [loading, setLoading] = useState(false);
@@ -135,13 +141,13 @@ export const NotificationButton: React.FC = () => {
           <TabsList className="grid grid-cols-2 rounded-none bg-background p-0">
             <TabsTrigger
               value="inbox"
-              className="border-b h-full rounded-none -mx-px data-[state=active]:border-black"
+              className="border-b h-full rounded-none -mx-px data-[state=active]:border-muted-foreground"
             >
               Inbox
             </TabsTrigger>
             <TabsTrigger
               value="archive"
-              className="border-b h-full rounded-none -mx-px data-[state=active]:border-black"
+              className="border-b h-full rounded-none -mx-px data-[state=active]:border-muted-foreground"
             >
               Archive
             </TabsTrigger>
@@ -169,7 +175,7 @@ export const NotificationButton: React.FC = () => {
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-2">
                         <div className="flex h-10 w-10 bg-muted items-center justify-center rounded-full text-muted-foreground">
-                          <Inbox className="h-5 w-5" />
+                          <Inbox className="h-4 w-4" />
                         </div>
                         <span className="text-sm text-muted-foreground">
                           No new notifications
@@ -224,7 +230,7 @@ export const NotificationButton: React.FC = () => {
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-2">
                         <div className="flex h-10 w-10 bg-muted items-center justify-center rounded-full text-muted-foreground">
-                          <Archive className="h-5 w-5" />
+                          <Archive className="h-4 w-4" />
                         </div>
                         <span className="text-sm text-muted-foreground">
                           No archived notifications
