@@ -57,9 +57,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (
-  opts:
-    | NodeHTTPCreateContextFnOptions<IncomingMessage, WebSocket>
-    | trpcNext.CreateNextContextOptions
+  opts: trpcNext.CreateNextContextOptions
 ) => {
   const { req, res } = opts;
 

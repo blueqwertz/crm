@@ -1,9 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import {
-  NextApiRequest,
-  type GetServerSidePropsContext,
-  NextApiResponse,
-} from "next";
+import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { env } from "~/env";
@@ -65,32 +61,49 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
   callbacks: {
-    async session({ session, user }) {
+    session({ session, token }) {
+      if (token) {
+        session.user.id = token.sub ?? "";
+        session.user.name = token.name ?? "";
+        session.user.email = token.email ?? "";
+        session.user.head = {
+          id: token.head.id ?? "",
+          name: token.head.name ?? "",
+        };
+        if (token.image) session.user.image = token.image as string;
+      }
+      return session;
+    },
+    async jwt({ token }) {
       const dbUser = await db.user.findFirst({
         where: {
-          id: user.id,
+          id: token.sub,
         },
         include: {
           head: true,
         },
       });
 
-      if (dbUser) {
-        session.user.id = dbUser.id;
-        session.user.name = dbUser.name ?? "";
-        session.user.email = dbUser.email ?? "";
-        session.user.head = {
-          id: dbUser.head?.id ?? "",
-          name: dbUser.head?.name ?? "",
-        };
-        if (dbUser.image) session.user.image = dbUser.image;
+      if (!dbUser) {
+        return token;
       }
 
-      return session;
+      return {
+        ...token,
+        name: dbUser.name,
+        email: dbUser.email,
+        image: dbUser.image,
+        head: {
+          id: dbUser.headId ?? "",
+          name: dbUser?.head?.name ?? "",
+        },
+      };
     },
   },
   adapter: PrismaAdapter(db),
-  secret: env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,
