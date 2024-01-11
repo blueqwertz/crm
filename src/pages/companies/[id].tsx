@@ -8,7 +8,7 @@ import { CompanyIndividualPage } from "~/components/individual-page/company-indi
 import { Layout } from "~/components/layout";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: companyData, isLoading } = api.company.getOne.useQuery({
+  const { data: companyData, isLoading } = api.company.get.useQuery({
     id,
     include: {
       contacts: true,
@@ -66,13 +66,14 @@ import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
 import { EditCompany } from "~/components/individual-page/edit-button/edit-company";
+import { EventEmitter } from "events";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: { db, session: await getSession(context) },
+    ctx: { db, session: await getSession(context), ee: new EventEmitter() },
     transformer: superjson,
   });
   const id = context.params?.id ?? "";
@@ -80,7 +81,7 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.company.getOne.fetch({
+  await helpers.company.get.fetch({
     id,
     include: {
       contacts: true,

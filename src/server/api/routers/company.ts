@@ -61,7 +61,7 @@ export const companyRotuer = createTRPCRouter({
       });
     }),
 
-  getOne: protectedProcedure
+  get: protectedProcedure
     .input(
       z.object({
         id: z.string(),

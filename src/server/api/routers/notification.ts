@@ -5,19 +5,19 @@ import { observable } from "@trpc/server/observable";
 import { NotificationPriority, NotificationType } from "@prisma/client";
 
 export const notificationRouter = createTRPCRouter({
-  // onSend: protectedProcedure.subscription(({ ctx }) => {
-  //   return observable<Notification>((emit) => {
-  //     const onAdd = (data: Notification) => {
-  //       // emit data to client
-  //       emit.next(data);
-  //     };
-  //     ctx.ee.on("notification_send", onAdd);
-  //     // unsubscribe function when client disconnects or stops subscribing
-  //     return () => {
-  //       ctx.ee.off("notification_send", onAdd);
-  //     };
-  //   });
-  // }),
+  onSend: protectedProcedure.subscription(({ ctx }) => {
+    return observable<Notification>((emit) => {
+      const onAdd = (data: Notification) => {
+        // emit data to client
+        emit.next(data);
+      };
+      ctx.ee.on("notification_send", onAdd);
+      // unsubscribe function when client disconnects or stops subscribing
+      return () => {
+        ctx.ee.off("notification_send", onAdd);
+      };
+    });
+  }),
 
   send: protectedProcedure
     .input(

@@ -42,7 +42,7 @@ const ProjectEdit: React.FC<{
         setLoading(true);
       },
       onSuccess: () => {
-        void ctx.company.getOne.invalidate();
+        void ctx.company.get.invalidate();
         setLoading(false);
       },
       onError: () => {

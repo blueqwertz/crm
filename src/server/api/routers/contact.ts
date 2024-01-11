@@ -23,6 +23,12 @@ export const contactRotuer = createTRPCRouter({
       return ctx.db.contact.findMany({
         where: {
           headId: ctx.session.user.head.id,
+          policies: {
+            some: {
+              userId: ctx.session.user.id,
+              canRead: true,
+            },
+          },
         },
         include: {
           user: input?.include?.user,
@@ -64,6 +70,12 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          policies: {
+            some: {
+              userId: ctx.session.user.id,
+              canRead: true,
+            },
+          },
         },
         include: {
           user: input.include?.user,

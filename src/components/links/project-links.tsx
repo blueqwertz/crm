@@ -60,7 +60,7 @@ export const AddProjectRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.company.getOne.invalidate();
+      void ctx.company.get.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -69,9 +69,8 @@ export const AddProjectRelation: React.FC<{
     },
   });
 
-  const options =
-    (data &&
-      data
+  const options = data
+    ? data
         .filter(
           (option) => !projectData?.some((entry) => entry.id == option.id)
         )
@@ -80,8 +79,8 @@ export const AddProjectRelation: React.FC<{
             value: option.id,
             label: option.name,
           };
-        })) ??
-    [];
+        })
+    : [];
 
   return (
     <>

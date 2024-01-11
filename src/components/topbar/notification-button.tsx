@@ -31,11 +31,11 @@ import dayjs from "dayjs";
 export const NotificationButton: React.FC = () => {
   const { data: notifications, isLoading } = api.notification.get.useQuery();
 
-  api.notification.onSend.useSubscription(undefined, {
-    onData(data) {
-      console.log(data);
-    },
-  });
+  // api.notification.onSend.useSubscription(undefined, {
+  //   onData(data) {
+  //     console.log(data);
+  //   },
+  // });
 
   const ctx = api.useUtils();
 

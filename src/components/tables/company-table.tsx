@@ -28,7 +28,7 @@ const CompanyEdit: React.FC<{
         setLoading(true);
       },
       onSuccess: async () => {
-        await ctx.project.getOne.invalidate();
+        await ctx.project.get.invalidate();
         setLoading(false);
       },
       onError: () => {

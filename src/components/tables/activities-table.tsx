@@ -36,8 +36,8 @@ const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
     },
     onSuccess: async () => {
       await ctx.contact.get.invalidate();
-      await ctx.company.getOne.invalidate();
-      await ctx.project.getOne.invalidate();
+      await ctx.company.get.invalidate();
+      await ctx.project.get.invalidate();
       setLoading(false);
     },
     onError: () => {

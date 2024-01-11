@@ -37,7 +37,7 @@ import { set } from "date-fns";
 
 export const EditProject: React.FC<{
   children?: ReactNode;
-  project: RouterOutputs["project"]["getOne"] | Project;
+  project: RouterOutputs["project"]["get"] | Project;
 }> = ({ project, children }) => {
   const ctx = api.useUtils();
 
@@ -55,7 +55,7 @@ export const EditProject: React.FC<{
     },
     onSuccess: async () => {
       await ctx.project.getAll.invalidate();
-      await ctx.project.getOne.invalidate();
+      await ctx.project.get.invalidate();
       setLoading(false);
       setOpen(false);
     },
@@ -169,7 +169,7 @@ export const EditProject: React.FC<{
               className="w-full"
               onClick={(e) => {
                 e.preventDefault();
-                form.handleSubmit(onSubmit)();
+                void form.handleSubmit(onSubmit)();
               }}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

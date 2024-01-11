@@ -7,7 +7,7 @@ import { Activity, Contact, Project } from "@prisma/client";
 
 export const CompanyIndividualPage: React.FC<{
   companyId: string;
-  company: RouterOutputs["company"]["getOne"];
+  company: RouterOutputs["company"]["get"];
 }> = ({ companyId, company }) => {
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">

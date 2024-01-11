@@ -44,7 +44,7 @@ export const AddCompanyRelation: React.FC<{
     },
     onSuccess: () => {
       setLoading(false);
-      void ctx.project.getOne.invalidate();
+      void ctx.project.get.invalidate();
       setSelectedOption(undefined);
     },
     onError: () => {
@@ -68,9 +68,8 @@ export const AddCompanyRelation: React.FC<{
     },
   });
 
-  const options =
-    (data &&
-      data
+  const options = !!data
+    ? data
         .filter(
           (option) => !companyData?.some((entry) => entry.id == option.id)
         )
@@ -79,8 +78,8 @@ export const AddCompanyRelation: React.FC<{
             value: option.id ?? "",
             label: option.name ?? "",
           };
-        })) ??
-    [];
+        })
+    : [];
 
   return (
     <>

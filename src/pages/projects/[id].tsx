@@ -9,7 +9,7 @@ import { Brush, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: projectData, isLoading } = api.project.getOne.useQuery({
+  const { data: projectData, isLoading } = api.project.get.useQuery({
     id,
     include: {
       activities: true,
@@ -75,13 +75,14 @@ import { EditProject } from "~/components/individual-page/edit-button/edit-proje
 import { statusMaps } from "~/utils/maps";
 import { ProjectStatus } from "@prisma/client";
 import { Badge } from "~/components/ui/badge";
+import EventEmitter from "events";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: { db, session: await getSession(context) },
+    ctx: { db, session: await getSession(context), ee: new EventEmitter() },
     transformer: superjson,
   });
   const id = context.params?.id ?? "";
@@ -89,7 +90,7 @@ export async function getServerSideProps(
    * Prefetching the `post.byId` query.
    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
    */
-  await helpers.project.getOne.fetch({
+  await helpers.project.get.fetch({
     id,
     include: {
       activities: true,

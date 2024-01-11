@@ -8,7 +8,7 @@ import { Activity, Company, Project } from "@prisma/client";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;
-  contact: RouterOutputs["contact"]["getOne"];
+  contact: RouterOutputs["contact"]["get"];
 }> = ({ contactId, contact }) => {
   return (
     <>

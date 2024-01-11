@@ -28,7 +28,7 @@ const ContactEdit: React.FC<{
         setLoading(true);
       },
       onSuccess: () => {
-        void ctx.project.getOne.invalidate();
+        void ctx.project.get.invalidate();
         setLoading(false);
       },
       onError: () => {
@@ -42,7 +42,7 @@ const ContactEdit: React.FC<{
         setLoading(true);
       },
       onSuccess: () => {
-        void ctx.company.getOne.invalidate();
+        void ctx.company.get.invalidate();
         setLoading(false);
       },
       onError: () => {

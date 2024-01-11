@@ -48,11 +48,11 @@ model User {
   sessions      Session[]
 
   headId     String?
-  head       Head?   @relation("Users", fields: [headId], references: [id])
+  head       Head?   @relation("Members", fields: [headId], references: [id])
   ownedHeads Head[]  @relation("Owner")
 
   roleId Int  @default(1)
-  Role   Role @relation(fields: [roleId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
 
   contact        Contact?
   createdInvites HeadInvite[]   @relation("creator")
@@ -91,11 +91,11 @@ model Head {
   info    String?
   image   String?
 
+  members    User[]       @relation("Members")
   activities Activity[]
   companies  Company[]
   contacts   Contact[]
   projects   Project[]
-  user       User[]       @relation("Users")
   invites    HeadInvite[]
 
   activityPolicy ActivityPolicy[]

@@ -26,7 +26,7 @@ import { api } from "~/utils/api";
 import { RouterOutputs } from "~/utils/api";
 
 export const EditCompany: React.FC<{
-  company: RouterOutputs["company"]["getOne"];
+  company: RouterOutputs["company"]["get"];
 }> = ({ company }) => {
   const ctx = api.useUtils();
 
@@ -43,7 +43,7 @@ export const EditCompany: React.FC<{
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.company.getOne.invalidate();
+      await ctx.company.get.invalidate();
       setLoading(false);
       setOpen(false);
     },

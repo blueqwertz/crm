@@ -6,7 +6,7 @@ import { CompanyTable } from "../tables/company-table";
 
 export const ProjectIndividualPage: React.FC<{
   projectId: string;
-  project: RouterOutputs["project"]["getOne"];
+  project: RouterOutputs["project"]["get"];
 }> = ({ projectId, project }) => {
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">

@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { Role } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
@@ -22,6 +23,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  role: Role;
   head: {
     id: string;
     name: string;
@@ -31,6 +33,7 @@ export interface User {
 
 declare module "next-auth/jwt" {
   interface JWT {
+    role: Role;
     head: {
       id: string;
       name: string;
@@ -43,6 +46,7 @@ declare module "next-auth" {
     user: User & {
       id: string;
       image: string;
+      role: Role;
       head: {
         id: string;
         name: string;
@@ -66,6 +70,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub ?? "";
         session.user.name = token.name ?? "";
         session.user.email = token.email ?? "";
+        session.user.role = token.role ?? "";
         session.user.head = {
           id: token.head.id ?? "",
           name: token.head.name ?? "",
@@ -80,6 +85,7 @@ export const authOptions: NextAuthOptions = {
           id: token.sub,
         },
         include: {
+          role: true,
           head: true,
         },
       });
@@ -93,6 +99,7 @@ export const authOptions: NextAuthOptions = {
         name: dbUser.name,
         email: dbUser.email,
         image: dbUser.image,
+        role: dbUser.role,
         head: {
           id: dbUser.headId ?? "",
           name: dbUser?.head?.name ?? "",

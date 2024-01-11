@@ -100,8 +100,8 @@ const ActivityForm: React.FC<{
     },
     onSuccess: () => {
       void ctx.contact.get.invalidate();
-      void ctx.company.getOne.invalidate();
-      void ctx.project.getOne.invalidate();
+      void ctx.company.get.invalidate();
+      void ctx.project.get.invalidate();
       setLoading(false);
       form.reset();
       setOpen(false);

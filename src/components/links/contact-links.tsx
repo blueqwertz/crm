@@ -44,7 +44,7 @@ export const AddContactRelation: React.FC<{
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.company.getOne.invalidate();
+      await ctx.company.get.invalidate();
       setLoading(false);
       setSelectedOption(undefined);
     },
@@ -59,7 +59,7 @@ export const AddContactRelation: React.FC<{
       setLoading(true);
     },
     onSuccess: async () => {
-      await ctx.project.getOne.invalidate();
+      await ctx.project.get.invalidate();
       setLoading(false);
       setSelectedOption(undefined);
     },
@@ -69,9 +69,8 @@ export const AddContactRelation: React.FC<{
     },
   });
 
-  const options =
-    (data &&
-      data
+  const options = !!data
+    ? data
         .filter(
           (option) => !contactData?.some((entry) => entry.id == option.id)
         )
@@ -80,8 +79,8 @@ export const AddContactRelation: React.FC<{
             value: option.id,
             label: option.name,
           };
-        })) ??
-    [];
+        })
+    : [];
 
   return (
     <>

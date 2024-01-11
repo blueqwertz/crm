@@ -64,13 +64,14 @@ import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
 import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
+import EventEmitter from "events";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>
 ) {
   const helpers = createServerSideHelpers({
     router: appRouter,
-    ctx: { db, session: await getSession(context) },
+    ctx: { db, session: await getSession(context), ee: new EventEmitter() },
     transformer: superjson,
   });
   const id = context.params?.id ?? "";
