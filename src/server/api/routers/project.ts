@@ -257,7 +257,7 @@ export const projectRotuer = createTRPCRouter({
                           policies: {
                             some: {
                               userId: ctx.session.user.id,
-                              canDelete: true,
+                              canEdit: true,
                             },
                           },
                         }
@@ -308,7 +308,7 @@ export const projectRotuer = createTRPCRouter({
                           policies: {
                             some: {
                               userId: ctx.session.user.id,
-                              canDelete: true,
+                              canEdit: true,
                             },
                           },
                         }
@@ -362,7 +362,7 @@ export const projectRotuer = createTRPCRouter({
                           policies: {
                             some: {
                               userId: ctx.session.user.id,
-                              canDelete: true,
+                              canEdit: true,
                             },
                           },
                         }
@@ -416,7 +416,7 @@ export const projectRotuer = createTRPCRouter({
                           policies: {
                             some: {
                               userId: ctx.session.user.id,
-                              canDelete: true,
+                              canEdit: true,
                             },
                           },
                         }
@@ -469,7 +469,7 @@ export const projectRotuer = createTRPCRouter({
                           policies: {
                             some: {
                               userId: ctx.session.user.id,
-                              canDelete: true,
+                              canEdit: true,
                             },
                           },
                         }

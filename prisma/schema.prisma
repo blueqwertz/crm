@@ -230,9 +230,10 @@ model Activity {
   contacts  Contact[]
   projects  Project[]
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityPolicy ActivityPolicy[]
+  policies ActivityPolicy[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([headId])
 }

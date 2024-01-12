@@ -40,6 +40,10 @@ export const activityRouer = createTRPCRouter({
         })
     )
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.role.canCreateActivity) {
+        return null;
+      }
+
       return ctx.db.activity.create({
         data: {
           description: input.description,
@@ -76,6 +80,36 @@ export const activityRouer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canDeleteAllActivity
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canDeleteConnectedActivity
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canDeleteAllActivity
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
       });
     }),
