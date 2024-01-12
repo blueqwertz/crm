@@ -146,8 +146,8 @@ model Contact {
   companies  Company[]
   projects   Project[]
 
-  outgoingRelations ContactRelation[] @relation("outgoingContact")
-  incomingRelations ContactRelation[] @relation("incomingContact")
+  outgoingRelations Contact[] @relation("ContactToContact")
+  incomingRelations Contact[] @relation("ContactToContact")
 
   policies ContactPolicy[]
 
@@ -155,20 +155,6 @@ model Contact {
   updatedAt DateTime @updatedAt
 
   @@index([headId])
-}
-
-model ContactRelation {
-  outgoingContactId String
-  outgoingContact   Contact @relation("outgoingContact", fields: [outgoingContactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  incomingContactId String
-  incomingContact   Contact @relation("incomingContact", fields: [incomingContactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@id([outgoingContactId, incomingContactId])
-  @@index([outgoingContactId])
-  @@index([incomingContactId])
 }
 
 model Company {
@@ -256,74 +242,88 @@ model Activity {
 // #region Access Control
 
 model ActivityPolicy {
-  id         String   @id
-  headId     String
+  id     String @id @default(cuid())
+  headId String
+  Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   activityId String
-  userId     String
-  canRead    Boolean  @default(false)
-  canEdit    Boolean  @default(false)
-  canDelete  Boolean  @default(false)
-  activity   Activity @relation(fields: [activityId], references: [id])
-  Head       Head     @relation(fields: [headId], references: [id], onDelete: Cascade)
-  User       User     @relation(fields: [userId], references: [id])
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  canRead   Boolean @default(false)
+  canEdit   Boolean @default(false)
+  canDelete Boolean @default(false)
 
   @@unique([headId, userId, activityId])
 }
 
 model CompanyPolicy {
-  id        String  @id
-  headId    String
+  id     String @id @default(cuid())
+  headId String
+  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   companyId String
-  userId    String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   canRead   Boolean @default(false)
   canEdit   Boolean @default(false)
   canDelete Boolean @default(false)
-  company   Company @relation(fields: [companyId], references: [id])
-  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id])
 
   @@unique([headId, userId, companyId])
 }
 
 model ContactPolicy {
-  id        String  @id
-  headId    String
+  id     String @id @default(cuid())
+  headId String
+  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   contactId String
-  userId    String
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   canRead   Boolean @default(false)
   canEdit   Boolean @default(false)
   canDelete Boolean @default(false)
-  contact   Contact @relation(fields: [contactId], references: [id])
-  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id])
 
   @@unique([headId, userId, contactId])
 }
 
 model HeadPolicy {
-  id        String  @id
-  headId    String
-  userId    String
+  id     String @id @default(cuid())
+  headId String
+  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   canRead   Boolean @default(false)
   canEdit   Boolean @default(false)
   canDelete Boolean @default(false)
-  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
-  user      User    @relation(fields: [userId], references: [id])
 
   @@unique([userId, headId])
 }
 
 model ProjectPolicy {
-  id        String  @id
-  headId    String
+  id     String @id @default(cuid())
+  headId String
+  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   projectId String
-  userId    String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   canRead   Boolean @default(false)
   canEdit   Boolean @default(false)
   canDelete Boolean @default(false)
-  head      Head    @relation(fields: [headId], references: [id], onDelete: Cascade)
-  project   Project @relation(fields: [projectId], references: [id])
-  user      User    @relation(fields: [userId], references: [id])
 
   @@unique([headId, userId, projectId])
 }
@@ -344,8 +344,8 @@ model Role {
   canReadConnectedContact   Boolean @default(false)
   canEditAllContact         Boolean @default(false)
   canEditConnectedContact   Boolean @default(false)
-  canRemoveAllContact       Boolean @default(false)
-  canRemoveConnectedContact Boolean @default(false)
+  canDeleteAllContact       Boolean @default(false)
+  canDeleteConnectedContact Boolean @default(false)
   canLinkAllContact         Boolean @default(false)
   canLinkConnectedContact   Boolean @default(false)
   canUnlinkAllContact       Boolean @default(false)
@@ -357,8 +357,8 @@ model Role {
   canReadConnectedCompany   Boolean @default(false)
   canEditAllCompany         Boolean @default(false)
   canEditConnectedCompany   Boolean @default(false)
-  canRemoveAllCompany       Boolean @default(false)
-  canRemoveConnectedCompany Boolean @default(false)
+  canDeleteAllCompany       Boolean @default(false)
+  canDeleteConnectedCompany Boolean @default(false)
 
   // PROJECT
   canCreateProject          Boolean @default(false)
@@ -366,8 +366,8 @@ model Role {
   canReadConnectedProject   Boolean @default(false)
   canEditAllProject         Boolean @default(false)
   canEditConnectedProject   Boolean @default(false)
-  canRemoveAllProject       Boolean @default(false)
-  canRemoveConnectedProject Boolean @default(false)
+  canDeleteAllProject       Boolean @default(false)
+  canDeleteConnectedProject Boolean @default(false)
 
   // ACTIVITY
   canCreateActivity          Boolean @default(false)
@@ -375,8 +375,8 @@ model Role {
   canReadConnectedActivity   Boolean @default(false)
   canEditAllActivity         Boolean @default(false)
   canEditConnectedActivity   Boolean @default(false)
-  canRemoveAllActivity       Boolean @default(false)
-  canRemoveConnectedActivity Boolean @default(false)
+  canDeleteAllActivity       Boolean @default(false)
+  canDeleteConnectedActivity Boolean @default(false)
 }
 
 // #endregion

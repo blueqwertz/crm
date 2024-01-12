@@ -14,6 +14,7 @@ export const ContactPageTable = () => {
     include: {
       user: true,
       companies: true,
+      policies: true,
     },
   });
   const { data: sessionData } = useSession();
@@ -164,7 +165,9 @@ export const ContactPageTable = () => {
                   )}
                 </div>
               </div>
-              <ContactPageTableEdit contact={contact} />
+              <ContactPageTableEdit
+                contact={{ ...contact, policies: contact.policies?.[0] }}
+              />
             </Link>
           );
         })}

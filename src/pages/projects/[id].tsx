@@ -4,8 +4,6 @@ import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
-import { Button } from "~/components/ui/button";
-import { Brush, Wrench } from "lucide-react";
 import { Layout } from "~/components/layout";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
@@ -73,7 +71,6 @@ import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
 import { EditProject } from "~/components/individual-page/edit-button/edit-project";
 import { statusMaps } from "~/utils/maps";
-import { ProjectStatus } from "@prisma/client";
 import { Badge } from "~/components/ui/badge";
 import EventEmitter from "events";
 

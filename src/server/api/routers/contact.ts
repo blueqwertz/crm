@@ -13,6 +13,7 @@ export const contactRotuer = createTRPCRouter({
               companies: z.boolean().default(false).optional(),
               activities: z.boolean().default(false).optional(),
               projects: z.boolean().default(false).optional(),
+              policies: z.boolean().default(false).optional(),
               relations: z.boolean().default(false).optional(),
             })
             .optional(),
@@ -23,12 +24,40 @@ export const contactRotuer = createTRPCRouter({
       return ctx.db.contact.findMany({
         where: {
           headId: ctx.session.user.head.id,
-          policies: {
-            some: {
-              userId: ctx.session.user.id,
-              canRead: true,
-            },
-          },
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           user: input?.include?.user,
@@ -41,6 +70,13 @@ export const contactRotuer = createTRPCRouter({
               }
             : false,
           projects: input?.include?.projects,
+          policies: input?.include?.policies
+            ? {
+                where: {
+                  userId: ctx.session.user.id,
+                },
+              }
+            : {},
           incomingRelations: input?.include?.relations,
           outgoingRelations: input?.include?.relations,
         },
@@ -70,12 +106,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
-          policies: {
-            some: {
-              userId: ctx.session.user.id,
-              canRead: true,
-            },
-          },
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           user: input.include?.user,
@@ -145,18 +209,8 @@ export const contactRotuer = createTRPCRouter({
                   },
                 }
               : input.include?.projects,
-          incomingRelations: {
-            include: {
-              incomingContact: true,
-              outgoingContact: true,
-            },
-          },
-          outgoingRelations: {
-            include: {
-              incomingContact: true,
-              outgoingContact: true,
-            },
-          },
+          incomingRelations: true,
+          outgoingRelations: true,
         },
       });
     }),
@@ -174,6 +228,11 @@ export const contactRotuer = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
+      // POLICY
+      if (!ctx.session.user.role.canCreateContact) {
+        return null;
+      }
+
       return ctx.db.contact.create({
         data: {
           headId: ctx.session.user.head.id,
@@ -200,6 +259,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canDeleteAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canDeleteConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canDeleteAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
       });
     }),
@@ -222,6 +315,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           name: input.data.name,
@@ -248,36 +375,72 @@ export const contactRotuer = createTRPCRouter({
         mode: z.number(),
       })
     )
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       if (input.contactOne == input.contactTwo) {
         return null;
       }
 
-      return ctx.db.$transaction(async (tx) => {
-        if (input.mode === 0 || input.mode === 1) {
-          await tx.contactRelation.createMany({
-            data: [
-              {
-                outgoingContactId: input.contactOne,
-                incomingContactId: input.contactTwo,
-              },
-            ],
-            skipDuplicates: true,
-          });
-        }
-
-        if (input.mode === 0 || input.mode === 2) {
-          await tx.contactRelation.createMany({
-            data: [
-              {
-                outgoingContactId: input.contactTwo,
-                incomingContactId: input.contactOne,
-              },
-            ],
-            skipDuplicates: true,
-          });
-        }
+      const update = await ctx.db.contact.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.contactOne,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
+        },
+        data: {
+          outgoingRelations:
+            input.mode == 0 || input.mode == 1
+              ? {
+                  connect: {
+                    id: input.contactTwo,
+                  },
+                }
+              : {},
+          incomingRelations:
+            input.mode == 0 || input.mode == 2
+              ? {
+                  connect: {
+                    id: input.contactTwo,
+                  },
+                }
+              : {},
+        },
       });
+      console.log(update);
+
+      return update;
     }),
 
   deleteLink: protectedProcedure
@@ -289,24 +452,67 @@ export const contactRotuer = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.db.$transaction(async (tx) => {
-        if (input.mode === 0 || input.mode === 1) {
-          await tx.contactRelation.deleteMany({
-            where: {
-              outgoingContactId: input.contactOne,
-              incomingContactId: input.contactTwo,
-            },
-          });
-        }
+      if (input.contactOne == input.contactTwo) {
+        return null;
+      }
 
-        if (input.mode === 0 || input.mode === 2) {
-          await tx.contactRelation.deleteMany({
-            where: {
-              outgoingContactId: input.contactTwo,
-              incomingContactId: input.contactOne,
-            },
-          });
-        }
+      return ctx.db.contact.update({
+        where: {
+          headId: ctx.session.user.head.id,
+          id: input.contactOne,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
+        },
+        data: {
+          outgoingRelations:
+            input.mode == 0 || input.mode == 1
+              ? {
+                  disconnect: {
+                    id: input.contactTwo,
+                  },
+                }
+              : {},
+          incomingRelations:
+            input.mode == 0 || input.mode == 2
+              ? {
+                  disconnect: {
+                    id: input.contactTwo,
+                  },
+                }
+              : {},
+        },
       });
     }),
 
@@ -322,6 +528,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.contactId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           companies: {
@@ -346,6 +586,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.contactId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           companies: {
@@ -370,6 +644,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.contactId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           projects: {
@@ -394,6 +702,40 @@ export const contactRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.contactId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllContact
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedContact
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllContact
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           projects: {

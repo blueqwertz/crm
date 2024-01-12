@@ -3,10 +3,9 @@ import { Loader2, MoveHorizontal, MoveLeft, MoveRight, X } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
-import { Contact, ContactRelation } from "@prisma/client";
+import { Contact } from "@prisma/client";
 import { AddContactRelationLink } from "../links/contact-relation-links";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import React, { useState } from "react";
 
 const RelationItem: React.FC<{
@@ -96,22 +95,10 @@ export const RelationsTable: React.FC<{
     id: string;
     type: "Contact";
   };
-  outgoingRelations: (ContactRelation & {
-    outgoingContact: Contact;
-    incomingContact: Contact;
-  })[];
-  incomingRelations: (ContactRelation & {
-    outgoingContact: Contact;
-    incomingContact: Contact;
-  })[];
-}> = ({ outgoingRelations, incomingRelations, pageData }) => {
-  const ctx = api.useUtils();
-
-  const { mutate: deleteLink } = useMutation({
-    onSuccess: () => {
-      void ctx.contact.get.invalidate();
-    },
-  });
+  contact: Contact;
+  outgoingRelations: Contact[];
+  incomingRelations: Contact[];
+}> = ({ outgoingRelations, incomingRelations, pageData, contact }) => {
   return (
     <>
       <AddContactRelationLink id={pageData.id} />
@@ -143,30 +130,54 @@ export const RelationsTable: React.FC<{
             {outgoingRelations
               .filter((out) => {
                 return incomingRelations.find((rec) => {
-                  return out.incomingContact.id === rec.outgoingContact.id;
+                  return out.id === rec.id;
                 });
               })
               .map((relation) => {
-                return <RelationItem relation={{ ...relation, mode: 0 }} />;
+                return (
+                  <RelationItem
+                    relation={{
+                      incomingContact: relation,
+                      outgoingContact: contact,
+                      mode: 0,
+                    }}
+                  />
+                );
               })}
             {outgoingRelations
               .filter((out) => {
                 return !incomingRelations.find((rec) => {
-                  return out.incomingContact.id === rec.outgoingContact.id;
+                  return out.id === rec.id;
                 });
               })
               .map((relation) => {
-                return <RelationItem relation={{ ...relation, mode: 1 }} />;
+                return (
+                  <RelationItem
+                    relation={{
+                      incomingContact: relation,
+                      outgoingContact: contact,
+                      mode: 1,
+                    }}
+                  />
+                );
               })}
 
             {incomingRelations
               .filter((rec) => {
                 return !outgoingRelations.find((out) => {
-                  return out.incomingContact.id === rec.outgoingContact.id;
+                  return out.id === rec.id;
                 });
               })
               .map((relation) => {
-                return <RelationItem relation={{ ...relation, mode: 2 }} />;
+                return (
+                  <RelationItem
+                    relation={{
+                      incomingContact: relation,
+                      outgoingContact: contact,
+                      mode: 2,
+                    }}
+                  />
+                );
               })}
           </div>
         </>

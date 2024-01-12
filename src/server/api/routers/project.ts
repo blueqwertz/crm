@@ -28,6 +28,36 @@ export const projectRotuer = createTRPCRouter({
       return ctx.db.project.findMany({
         where: {
           headId: ctx.session.user.head.id,
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           contacts: input?.include?.contacts
@@ -76,6 +106,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           id: input.id,
           headId: ctx.session.user.head.id,
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           contacts: input.include?.contacts,
@@ -105,6 +165,10 @@ export const projectRotuer = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.role.canCreateProject) {
+        return null;
+      }
+
       return ctx.db.project.create({
         data: {
           headId: ctx.session.user.head.id,
@@ -122,6 +186,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canDeleteAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canDeleteConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canDeleteAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
       });
     }),
@@ -142,6 +236,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           name: input.data.name,
@@ -163,6 +287,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.projectId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           contacts: {
@@ -187,6 +341,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.projectId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           contacts: {
@@ -211,6 +395,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.projectId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           companies: {
@@ -234,6 +448,36 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.projectId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllProject
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedProject
+                      ? {
+                          contacts: {
+                            some: {
+                              userId: ctx.session.user.id,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllProject
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           companies: {

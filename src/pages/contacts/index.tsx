@@ -3,8 +3,10 @@ import { ContactPageTable } from "~/components/individual-page/page-table/contac
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { AddContact } from "~/components/create/create-contact";
 import { Layout } from "~/components/layout";
+import { useSession } from "next-auth/react";
 
 export default function Contacts() {
+  const { data: sessionData } = useSession();
   return (
     <>
       <Head>
@@ -22,7 +24,7 @@ export default function Contacts() {
                 View all of your contacts.
               </span>
             </div>
-            <AddContact />
+            {sessionData?.user.role.canCreateContact && <AddContact />}
           </div>
           <Breadcrumbs />
           <ContactPageTable />

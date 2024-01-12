@@ -28,6 +28,40 @@ export const companyRotuer = createTRPCRouter({
       return ctx.db.company.findMany({
         where: {
           headId: ctx.session.user.head.id,
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadConnectedCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           contacts: input?.include?.contacts,
@@ -79,6 +113,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           id: input.id,
           headId: ctx.session.user.head.id,
+          // POLICY
+          ...(!ctx.session.user.role.canReadAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canReadConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canReadAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canRead: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         include: {
           contacts:
@@ -156,6 +224,10 @@ export const companyRotuer = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.role.canCreateCompany) {
+        return null;
+      }
+
       return ctx.db.company.create({
         data: {
           headId: ctx.session.user.head.id,
@@ -173,6 +245,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canDeleteAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canDeleteConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canDeleteAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canDelete: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
       });
     }),
@@ -193,6 +299,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.id,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           name: input.data.name,
@@ -214,6 +354,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.companyId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           contacts: {
@@ -238,6 +412,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.companyId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           contacts: {
@@ -262,6 +470,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.companyId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           projects: {
@@ -286,6 +528,40 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           id: input.companyId,
+          // POLICY
+          ...(!ctx.session.user.role.canEditAllCompany
+            ? {
+                OR: [
+                  {
+                    ...(ctx.session.user.role.canEditConnectedCompany
+                      ? {
+                          projects: {
+                            some: {
+                              contacts: {
+                                some: {
+                                  userId: ctx.session.user.id,
+                                },
+                              },
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                  {
+                    ...(!ctx.session.user.role.canEditAllCompany
+                      ? {
+                          policies: {
+                            some: {
+                              userId: ctx.session.user.id,
+                              canEdit: true,
+                            },
+                          },
+                        }
+                      : {}),
+                  },
+                ],
+              }
+            : {}),
         },
         data: {
           projects: {

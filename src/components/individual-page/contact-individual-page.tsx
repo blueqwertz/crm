@@ -4,7 +4,7 @@ import { ProjectsTable } from "../tables/projects-table";
 import { ActivitiesTable } from "../tables/activities-table";
 import { RelationsTable } from "../tables/relations-table";
 import { CompanyTable } from "../tables/company-table";
-import { Activity, Company, Project } from "@prisma/client";
+import { Activity, Company, Contact, Project } from "@prisma/client";
 
 export const ContactIndividualPage: React.FC<{
   contactId: string;
@@ -37,6 +37,7 @@ export const ContactIndividualPage: React.FC<{
             <div className="w-full overflow-hidden rounded-md border">
               <RelationsTable
                 pageData={{ type: "Contact", id: contactId }}
+                contact={contact as Contact}
                 outgoingRelations={contact?.outgoingRelations ?? []}
                 incomingRelations={contact?.incomingRelations ?? []}
               />
