@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import initials from "initials";
 
 export const AuthButton = () => {
   const { data: sessionData, status } = useSession();
@@ -54,8 +55,8 @@ export const AuthButton = () => {
                   >
                     <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
                       <AvatarImage src={sessionData.user?.image} />
-                      <AvatarFallback>
-                        {sessionData.user?.name?.charAt(0)}
+                      <AvatarFallback className="text-xs">
+                        {initials(sessionData.user?.name).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <span className="font-medium truncate">

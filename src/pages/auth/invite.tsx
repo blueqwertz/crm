@@ -2,11 +2,11 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
-import { Check, Command, Loader2 } from "lucide-react";
+import { Check, Command, Loader2, LogOut } from "lucide-react";
 import Head from "next/head";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function AuthenticationPage() {
   const [checkLoading, setCheckLoading] = useState(false);
@@ -115,6 +115,15 @@ export default function AuthenticationPage() {
                 Enter
               </Button>
             </div>
+            <Button
+              variant={"link"}
+              className="text-muted-foreground"
+              onClick={() => {
+                void signOut();
+              }}
+            >
+              Logout
+            </Button>
           </div>
         </div>
       </div>

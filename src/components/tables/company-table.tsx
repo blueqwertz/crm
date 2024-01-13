@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import initials from "initials";
 
 const CompanyEdit: React.FC<{
   id: string;
@@ -123,7 +124,7 @@ export const CompanyTable: React.FC<{
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={contact.image!} />
                   <AvatarFallback className="text-[11px]">
-                    {contact.name?.[0]}
+                    {initials(contact.name).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-base font-medium">{contact.name}</span>

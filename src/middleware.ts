@@ -9,9 +9,9 @@ export default withAuth(
     // const isAdmin = token?.role === "ADMIN";
     const hasHead = !!token?.head?.id;
 
-    console.log("MIDDLEWARE", { ...token, role: { name: token?.role.name } });
+    console.log("MIDDLEWARE", { ...token });
 
-    const isAuthPage = ["/auth/login"].find((value) =>
+    const isAuthPage = ["/auth/login", "/auth/signup"].find((value) =>
       req.nextUrl.pathname.startsWith(value)
     );
 

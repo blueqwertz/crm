@@ -5,27 +5,46 @@ import { cn } from "~/utils/cn";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Github, Loader2 } from "lucide-react";
+import { Github, Loader2, Mailbox, Send } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { api } from "~/utils/api";
 
-// eslint-disable-next-line
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+export function UserAuthForm({
+  mode = "login",
+}: {
+  mode?: "login" | "signup";
+}) {
+  const [githubLoading, setGithubLoading] = React.useState<boolean>(false);
+  const [emailLoading, setEmailLoading] = React.useState<boolean>(false);
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [username, setUsername] = React.useState<string>("");
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
+
+  const { mutate: signInWithEmail } = api.user.signup.useMutation({
+    onMutate: () => {
+      setEmailLoading(true);
+    },
+    onSuccess: () => {
+      void signIn("credentials", { callbackUrl: "/", email, password });
+    },
+    onError: () => {
+      setEmailLoading(false);
+    },
+  });
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6")}>
       <Button
         variant="outline"
         type="button"
-        disabled={isLoading}
+        disabled={githubLoading || emailLoading}
         onClick={() => {
           void signIn("github", { callbackUrl: "/" });
-          setIsLoading(true);
+          setGithubLoading(true);
         }}
       >
-        {isLoading ? (
+        {githubLoading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Github className="mr-2 h-4 w-4" />
@@ -48,28 +67,71 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             Email
           </Label>
           <Input
+            name="email"
             id="email"
-            placeholder="name@example.com"
+            placeholder="Email"
             type="email"
-            autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            disabled={true}
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
+          {mode === "signup" && (
+            <>
+              <Label className="sr-only" htmlFor="username">
+                Name
+              </Label>
+              <Input
+                name="username"
+                id="username"
+                placeholder="Name"
+                type="text"
+                autoCorrect="off"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+              />
+            </>
+          )}
           <Label className="sr-only" htmlFor="email">
             Passwort
           </Label>
           <Input
+            name="password"
             id="password"
             placeholder="Password"
-            type="email"
-            autoCapitalize="none"
-            autoComplete="email"
+            type="password"
+            autoComplete="password"
             autoCorrect="off"
-            disabled={true}
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
         </div>
-        <Button disabled={true}>Sign In with Email</Button>
+        <Button
+          disabled={
+            !(email.length && password.length) || emailLoading || githubLoading
+          }
+          onClick={() => {
+            if (mode == "login") {
+              setEmailLoading(true);
+              void signIn("credentials", { callbackUrl: "/", email, password });
+            } else {
+              void signInWithEmail({ username, email, password });
+            }
+          }}
+        >
+          {emailLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Mailbox className="w-4 h-4 mr-2" />
+          )}
+          Sign In with Email
+        </Button>
       </div>
     </div>
   );

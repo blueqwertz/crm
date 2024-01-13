@@ -4,8 +4,10 @@ import { CompanyPageTable } from "~/components/individual-page/page-table/compan
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import { AddCompany } from "~/components/create/create-company";
 import { Layout } from "~/components/layout";
+import { useSession } from "next-auth/react";
 
 export default function Companies() {
+  const { data: sessionData } = useSession();
   return (
     <>
       <Head>
@@ -23,7 +25,7 @@ export default function Companies() {
                 View all companies.
               </span>
             </div>
-            <AddCompany />
+            {sessionData?.user.role.canCreateCompany && <AddCompany />}
           </div>
           <Breadcrumbs />
           <CompanyPageTable />

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ContactPageTableEdit } from "./contact-page-table-edit";
 import { Skeleton } from "../../ui/skeleton";
 import { cn } from "~/utils/cn";
-import { initials } from "~/utils/initials";
+import initials from "initials";
 
 export const ContactPageTable = () => {
   const { data: contactData } = api.contact.getAll.useQuery({
@@ -58,7 +58,7 @@ export const ContactPageTable = () => {
                     alt=""
                   />
                   <AvatarFallback className="text-xs">
-                    {initials(contact.name)}
+                    {initials(contact.name).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col gap-1">

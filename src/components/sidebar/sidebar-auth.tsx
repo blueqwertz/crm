@@ -29,6 +29,7 @@ import {
   DropdownMenuPortal,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import initials from "initials";
 
 export const SidebarAuth = () => {
   const { data: sessionData, status } = useSession();
@@ -56,7 +57,7 @@ export const SidebarAuth = () => {
                     <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
                       <AvatarImage src={sessionData.user?.image} />
                       <AvatarFallback>
-                        {sessionData.user?.name?.charAt(0)}
+                        {initials(sessionData.user?.name).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <span className="font-medium truncate">

@@ -26,6 +26,8 @@ import {
   ProjectStatus,
 } from "@prisma/client";
 import { useState } from "react";
+import initials from "initials";
+import { cn } from "~/utils/cn";
 
 export const ProjectPageTableRow: React.FC<{
   project: Project & {
@@ -57,6 +59,7 @@ export const ProjectPageTableRow: React.FC<{
   });
 
   const MAX_CONTACTS = 4;
+  const MAX_COMPANIES = 4;
 
   return (
     <Link
@@ -100,7 +103,7 @@ export const ProjectPageTableRow: React.FC<{
         {(!!project.contacts?.length || !!project.companies?.length) && (
           <>
             <div className="flex items-center gap-2">
-              {project.companies.map((company) => {
+              {/* {project.companies.map((company) => {
                 return (
                   <Link
                     passHref={true}
@@ -116,8 +119,64 @@ export const ProjectPageTableRow: React.FC<{
                     </Badge>
                   </Link>
                 );
-              })}
-              <div className="flex gap-0">
+              })} */}
+              <div
+                className={cn("flex items-center gap-0", {
+                  hidden: project.companies.length < 1,
+                })}
+              >
+                {project.companies
+                  .slice(
+                    0,
+                    project._count.companies <= MAX_COMPANIES
+                      ? MAX_COMPANIES
+                      : MAX_COMPANIES - 1
+                  )
+                  .map((company) => {
+                    return (
+                      <TooltipProvider key={company.id}>
+                        <Tooltip delayDuration={100}>
+                          <TooltipTrigger asChild>
+                            <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                              <AvatarImage src={company.image!} />
+                              <AvatarFallback className="text-[10px]">
+                                {initials(company.name).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span>
+                              <span className="font-semibold">
+                                {company.name}
+                              </span>
+                            </span>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    );
+                  })}
+                {project._count.companies > MAX_COMPANIES && (
+                  <>
+                    <Avatar className="-ml-2.5 h-[26px] w-[26px] border first:ml-0">
+                      <AvatarFallback className="text-[10px]">
+                        {project._count.companies - MAX_COMPANIES > 9
+                          ? "9+"
+                          : "+" +
+                            (project._count.companies - (MAX_COMPANIES - 1))}
+                      </AvatarFallback>
+                    </Avatar>
+                  </>
+                )}
+                <span className="text-muted-foreground italic text-xs ml-1.5">
+                  {project._count.companies}{" "}
+                  {project._count.companies > 1 ? "companies" : "company"}
+                </span>
+              </div>
+              <div
+                className={cn("flex items-center gap-0", {
+                  hidden: project.contacts.length < 1,
+                })}
+              >
                 {project.contacts
                   .slice(
                     0,
@@ -133,7 +192,7 @@ export const ProjectPageTableRow: React.FC<{
                             <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
                               <AvatarImage src={contact.image!} />
                               <AvatarFallback className="text-[10px]">
-                                {contact.name?.[0]}
+                                {initials(contact.name).toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           </TooltipTrigger>
@@ -150,29 +209,20 @@ export const ProjectPageTableRow: React.FC<{
                   })}
                 {project._count.contacts > MAX_CONTACTS && (
                   <>
-                    <TooltipProvider>
-                      <Tooltip delayDuration={100}>
-                        <TooltipTrigger asChild>
-                          <Avatar className="-ml-2.5 h-[26px] w-[26px] border first:ml-0">
-                            <AvatarFallback className="text-[10px]">
-                              {project._count.contacts - MAX_CONTACTS > 9
-                                ? "9+"
-                                : "+" +
-                                  (project._count.contacts -
-                                    (MAX_CONTACTS - 1))}
-                            </AvatarFallback>
-                          </Avatar>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span className="font-semibold">
-                            {project._count.contacts} contacts
-                          </span>{" "}
-                          involved
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Avatar className="-ml-2.5 h-[26px] w-[26px] border first:ml-0">
+                      <AvatarFallback className="text-[10px]">
+                        {project._count.contacts - MAX_CONTACTS > 9
+                          ? "9+"
+                          : "+" +
+                            (project._count.contacts - (MAX_CONTACTS - 1))}
+                      </AvatarFallback>
+                    </Avatar>
                   </>
                 )}
+                <span className="text-muted-foreground italic text-xs ml-1.5">
+                  {project._count.contacts}{" "}
+                  {project._count.contacts > 1 ? "contacts" : "contact"}
+                </span>
               </div>
             </div>
           </>

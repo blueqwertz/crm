@@ -3,8 +3,10 @@ import { Role } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env";
 import { db } from "~/server/db";
+import { compare } from "bcrypt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -115,6 +117,48 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
+    }),
+
+    CredentialsProvider({
+      name: "Sign in",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials.password) {
+          console.log("CREDENTIALS ERROR", credentials);
+          return null;
+        }
+
+        const user = await db.user.findUnique({
+          where: {
+            email: credentials.email,
+          },
+          include: {
+            role: true,
+            head: true,
+          },
+        });
+
+        if (!user || !user.password) {
+          return null;
+        }
+
+        const isPasswordValid = await compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          return null;
+        }
+
+        return user;
+      },
     }),
   ],
 };

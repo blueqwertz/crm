@@ -43,13 +43,17 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
+  password      String?
   image         String?
   accounts      Account[]
   sessions      Session[]
 
   headId     String?
-  head       Head?   @relation("Members", fields: [headId], references: [id])
-  ownedHeads Head[]  @relation("Owner")
+  head       Head?   @relation("HeadMembers", fields: [headId], references: [id])
+  ownedHeads Head[]  @relation("HeadOwner")
+
+  teams      Team[] @relation("TeamMembers")
+  ownedTeams Team[] @relation("TeamOwner")
 
   roleId Int  @default(1)
   role   Role @relation(fields: [roleId], references: [id])
@@ -86,16 +90,17 @@ model VerificationToken {
 model Head {
   id      String  @id @default(cuid())
   ownerId String
-  owner   User    @relation("Owner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  owner   User    @relation("HeadOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   name    String
   info    String?
   image   String?
 
-  members    User[]       @relation("Members")
+  members    User[]       @relation("HeadMembers")
   activities Activity[]
   companies  Company[]
   contacts   Contact[]
   projects   Project[]
+  teams      Team[]
   invites    HeadInvite[]
 
   activityPolicy ActivityPolicy[]
@@ -126,6 +131,24 @@ model HeadInvite {
   @@index([headId])
   @@index([creatorId])
   @@index([userId])
+}
+
+model Team {
+  id     String @id @default(cuid())
+  headId String
+  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  ownerId String
+  owner   User   @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  members User[] @relation("TeamMembers")
+
+  name  String
+  info  String?
+  image String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Contact {

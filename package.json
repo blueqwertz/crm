@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.3",
+    "@types/bcrypt": "^5.0.2",
     "@types/eslint": "^8.44.7",
     "@types/node": "^18.17.0",
     "@types/react": "^18.2.37",
@@ -83,6 +84,7 @@
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "autoprefixer": "^10.4.14",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "^0.20.6",

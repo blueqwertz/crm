@@ -14,6 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import initials from "initials";
 
 const ProjectEdit: React.FC<{
   id: string;
@@ -123,7 +124,7 @@ export const ProjectsTable: React.FC<{
                 <Avatar className="h-7 w-7 border">
                   <AvatarImage src={project.image!} />
                   <AvatarFallback className="text-[11px]">
-                    {project.name?.[0]}
+                    {initials(project.name).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <span className="truncate text-base">

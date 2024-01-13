@@ -23,19 +23,19 @@ export default function AuthenticationPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Login to your account
+                Register your account
               </h1>
               <p className="text-sm text-muted-foreground">
-                Enter your email below to login to your account
+                Enter your email below to register your account
               </p>
             </div>
-            <UserAuthForm />
+            <UserAuthForm mode="signup" />
             <div className="flex justify-center">
               <Link
-                href={"/auth/signup"}
+                href={"/auth/login"}
                 className="text-muted-foreground text-sm hover:underline flex items-center"
               >
-                Register instead
+                Login instead
               </Link>
             </div>
           </div>

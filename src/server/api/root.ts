@@ -6,6 +6,7 @@ import { headRouter } from "./routers/head";
 import { activityRouer } from "./routers/activity";
 import { feedbackRouter } from "./routers/feedback";
 import { notificationRouter } from "./routers/notification";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -13,6 +14,7 @@ import { notificationRouter } from "./routers/notification";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  user: userRouter,
   contact: contactRotuer,
   company: companyRotuer,
   project: projectRotuer,

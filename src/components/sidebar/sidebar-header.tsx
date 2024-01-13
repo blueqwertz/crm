@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { ModeToggle } from "../theme-toggle";
 import { SidebarAuth } from "./sidebar-auth";
 import { Button } from "../ui/button";
+import initials from "initials";
 
 export const SidebarHeader = () => {
   const { data: sessionData } = useSession();
@@ -15,7 +16,9 @@ export const SidebarHeader = () => {
         >
           <Avatar className="h-7 w-7 shrink-0 border text-xs mr-2">
             <AvatarImage />
-            <AvatarFallback>{sessionData?.user.head.name?.[0]}</AvatarFallback>
+            <AvatarFallback className="text-xs">
+              {initials(sessionData?.user.head.name ?? "").toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           <span className="truncate text-sm font-medium">
             {sessionData?.user.head.name}

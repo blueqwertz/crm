@@ -4,8 +4,10 @@ import { Breadcrumbs } from "~/components/breadcrumbs";
 import { ProjectPageTable } from "~/components/individual-page/page-table/project-page-table";
 import { AddProject } from "~/components/create/create-project";
 import { Layout } from "~/components/layout";
+import { useSession } from "next-auth/react";
 
 export default function Projects() {
+  const { data: sessionData } = useSession();
   return (
     <>
       <Head>
@@ -23,7 +25,7 @@ export default function Projects() {
                 View all projects.
               </span>
             </div>
-            <AddProject />
+            {sessionData?.user.role.canCreateProject && <AddProject />}
           </div>
           <Breadcrumbs />
           <ProjectPageTable />
