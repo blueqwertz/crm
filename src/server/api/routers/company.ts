@@ -1,6 +1,7 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { PolicyQuery } from "~/utils/policyQuery";
 
 export const companyRotuer = createTRPCRouter({
   getAll: protectedProcedure
@@ -29,39 +30,11 @@ export const companyRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           // POLICY
-          ...(!ctx.session.user.role.canReadAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canReadConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canReadConnectedCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canRead: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+          }),
         },
         include: {
           contacts: input?.include?.contacts,
@@ -114,39 +87,11 @@ export const companyRotuer = createTRPCRouter({
           id: input.id,
           headId: ctx.session.user.head.id,
           // POLICY
-          ...(!ctx.session.user.role.canReadAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canReadConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canReadAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canRead: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+          }),
         },
         include: {
           contacts:
@@ -224,8 +169,9 @@ export const companyRotuer = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // POLICY
       if (!ctx.session.user.role.canCreateCompany) {
-        return null;
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
       return ctx.db.company.create({
@@ -246,39 +192,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.id,
           // POLICY
-          ...(!ctx.session.user.role.canDeleteAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canDeleteConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canDeleteAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canDelete: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "delete",
+          }),
         },
       });
     }),
@@ -300,39 +218,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.id,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "edit",
+          }),
         },
         data: {
           name: input.data.name,
@@ -355,39 +245,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.companyId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "edit",
+          }),
         },
         data: {
           contacts: {
@@ -413,39 +275,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.companyId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "edit",
+          }),
         },
         data: {
           contacts: {
@@ -471,39 +305,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.companyId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "edit",
+          }),
         },
         data: {
           projects: {
@@ -529,39 +335,11 @@ export const companyRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.companyId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllCompany
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedCompany
-                      ? {
-                          projects: {
-                            some: {
-                              contacts: {
-                                some: {
-                                  userId: ctx.session.user.id,
-                                },
-                              },
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllCompany
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "company",
+            operation: "edit",
+          }),
         },
         data: {
           projects: {

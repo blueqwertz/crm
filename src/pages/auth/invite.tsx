@@ -37,16 +37,20 @@ export default function AuthenticationPage() {
     },
   });
 
-  const { mutate: checkInvite } = api.head.checkInvite.useMutation({
-    onMutate: () => {
-      setCheck(false);
-      setCheckLoading(true);
-    },
-    onSuccess: (data) => {
-      setCheckLoading(false);
-      !!data && setCheck(true);
-    },
-  });
+  // const { mutate: checkInvite } = api.head.checkInvite.useMutation({
+  //   onMutate: () => {
+  //     setCheck(false);
+  //     setCheckLoading(true);
+  //   },
+  //   onSuccess: (data) => {
+  //     setCheckLoading(false);
+  //     !!data && setCheck(true);
+  //   },
+  //   onError: () => {
+  //     setCheckLoading(false);
+  //     setCheck(false);
+  //   },
+  // });
 
   const queryParameters = useSearchParams();
 
@@ -88,12 +92,12 @@ export default function AuthenticationPage() {
                   placeholder="Invite code"
                   value={codeInput}
                   onChange={(e) => {
-                    clearTimeout(inputTimer);
-                    setInputTimer(() => {
-                      return setTimeout(() => {
-                        checkInvite({ inviteCode: e.target.value });
-                      }, 600);
-                    });
+                    // clearTimeout(inputTimer);
+                    // setInputTimer(() => {
+                    //   return setTimeout(() => {
+                    //     checkInvite({ inviteCode: e.target.value });
+                    //   }, 600);
+                    // });
                     setCodeInput(e.target.value);
                   }}
                 />

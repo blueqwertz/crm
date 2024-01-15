@@ -52,12 +52,12 @@ export const ContactPageTable = () => {
               )}
             >
               <div className="flex shrink gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
-                <Avatar className="h-8 w-8 border group-hover:text-sm">
+                <Avatar className="h-8 w-8 text-xs">
                   <AvatarImage
                     src={contact.image ?? contact.user?.image ?? ""}
                     alt=""
                   />
-                  <AvatarFallback className="text-xs">
+                  <AvatarFallback>
                     {initials(contact.name).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -166,7 +166,7 @@ export const ContactPageTable = () => {
                 </div>
               </div>
               <ContactPageTableEdit
-                contact={{ ...contact, policies: contact.policies?.[0] }}
+                contact={{ ...contact, policy: contact.policies?.[0] }}
               />
             </Link>
           );

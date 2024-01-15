@@ -28,11 +28,13 @@ export const userRouter = createTRPCRouter({
       if (emailSignedUp.length != 0) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "E-Mail existierts bereits. Bitte wähle eine Andere",
+          message: "Email already exists.",
         });
       }
 
       const hashedPassword = await hash(password, 10);
+
+      console.log(hashedPassword);
 
       const account = await ctx.db.user.create({
         data: {

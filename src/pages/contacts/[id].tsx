@@ -4,10 +4,11 @@ import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ContactIndividualPage } from "~/components/individual-page/contact-individual-page";
-import { Button } from "~/components/ui/button";
-import { Brush } from "lucide-react";
 import { Layout } from "~/components/layout";
 import { db } from "~/server/db";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import initials from "initials";
+import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: contactData, isLoading } = api.contact.get.useQuery({
@@ -35,18 +36,29 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
         <div className="flex flex-grow flex-col p-5">
           {/* HEADER */}
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              {!contactData && <Skeleton className="h-7 text-transparent" />}
-              {!!contactData && (
-                <h1 className="text-xl font-bold">{contactData.name}</h1>
-              )}
-              <span className="text-sm text-muted-foreground">
-                {!!contactData?.info?.length ? (
-                  contactData?.info
-                ) : (
-                  <>View contact details.</>
+            <div className="flex items-center gap-2">
+              <Avatar className="h-12 w-12 text-lg">
+                <AvatarImage
+                  src={contactData?.image ?? contactData?.user?.image ?? ""}
+                  alt=""
+                />
+                <AvatarFallback>
+                  {initials(contactData?.name ?? "").toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                {!contactData && <Skeleton className="h-7 text-transparent" />}
+                {!!contactData && (
+                  <h1 className="text-xl font-bold">{contactData.name}</h1>
                 )}
-              </span>
+                <span className="text-sm text-muted-foreground">
+                  {!!contactData?.info?.length ? (
+                    contactData?.info
+                  ) : (
+                    <>View contact details.</>
+                  )}
+                </span>
+              </div>
             </div>
             <EditContact contact={contactData ?? null} />
           </div>
@@ -63,7 +75,6 @@ import type { GetServerSidePropsContext } from "next";
 import superjson from "superjson";
 import { appRouter } from "~/server/api/root";
 import { getSession } from "next-auth/react";
-import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
 import EventEmitter from "events";
 
 export async function getServerSideProps(

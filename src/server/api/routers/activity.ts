@@ -1,4 +1,5 @@
 import { ActivityType } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -41,7 +42,7 @@ export const activityRouer = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session.user.role.canCreateActivity) {
-        return null;
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
       return ctx.db.activity.create({

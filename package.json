@@ -41,6 +41,8 @@
     "@trpc/next": "canary",
     "@trpc/react-query": "canary",
     "@trpc/server": "canary",
+    "@upstash/ratelimit": "^1.0.0",
+    "@upstash/redis": "^1.28.0",
     "@vercel/analytics": "^1.1.1",
     "better-sqlite3": "^9.2.2",
     "class-variance-authority": "^0.7.0",

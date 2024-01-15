@@ -1,4 +1,5 @@
 import { ProjectStatus } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -166,7 +167,7 @@ export const projectRotuer = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.session.user.role.canCreateProject) {
-        return null;
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
 
       return ctx.db.project.create({

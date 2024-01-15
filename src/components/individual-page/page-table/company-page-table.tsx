@@ -5,6 +5,9 @@ import { Skeleton } from "../../ui/skeleton";
 import { CompanyPageTableEdit } from "./company-page-table-edit";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import initials from "initials";
+import { Calendar } from "lucide-react";
 dayjs.extend(advancedFormat);
 
 export const CompanyPageTable = () => {
@@ -48,10 +51,17 @@ export const CompanyPageTable = () => {
               key={company.id}
               className="flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50"
             >
-              <div className="flex flex-col gap-0 px-4 py-4 sm:px-6">
-                <div className="flex h-8 items-center gap-2 text-base">
+              <div className="flex flex-col px-4 py-4 sm:px-6 gap-1">
+                <div className="flex items-center gap-2">
+                  <Avatar className="text-xs w-8 h-8">
+                    <AvatarImage src={company.image ?? ""} />
+                    <AvatarFallback>
+                      {initials(company.name).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="font-semibold truncate">{company.name}</span>
-                  {/* {!!company.activities?.[0] && (
+                </div>
+                {/* {!!company.activities?.[0] && (
                     <Badge variant={"outline"}>
                       <span className="text-muted-foreground">
                         Last contact:
@@ -64,15 +74,14 @@ export const CompanyPageTable = () => {
                       </span>
                     </Badge>
                   )} */}
-                </div>
                 {(!!company.info || !!company.field) && (
-                  <span className="mb-2 text-sm">
+                  <div className="text-sm flex gap-1 items-center">
                     {company.info}{" "}
                     {company.info && company.field && <>&#x2022;</>}{" "}
                     {company.field}
-                  </span>
+                  </div>
                 )}
-                <div className="flex gap-1">
+                <div className="flex gap-1 empty:hidden mt-1">
                   {!!company._count.contacts && (
                     <Badge variant={"outline"}>
                       {company._count.contacts}{" "}
@@ -83,6 +92,12 @@ export const CompanyPageTable = () => {
                     <Badge variant={"outline"}>
                       {company._count.projects}{" "}
                       {company._count.projects === 1 ? "project" : "projects"}
+                    </Badge>
+                  )}
+                  {!!company.createdAt && (
+                    <Badge variant={"secondary"}>
+                      <Calendar className="w-3 h-3" />
+                      {dayjs(company.createdAt).format("MMMM Do, YYYY")}
                     </Badge>
                   )}
                 </div>

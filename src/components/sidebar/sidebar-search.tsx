@@ -5,7 +5,7 @@ export const SidebarSearch = () => {
     <>
       <div>
         <Input
-          placeholder="Coming soon..."
+          placeholder="Search..."
           disabled={true}
           className="h-8 focus-visible:ring-0 focus-visible:ring-transparent"
         />

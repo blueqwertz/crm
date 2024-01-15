@@ -128,7 +128,7 @@ export const ProjectsTable: React.FC<{
                   </AvatarFallback>
                 </Avatar>
                 <span className="truncate text-base">
-                  <span className="font-semibold">{project.name}</span>
+                  <span className="font-medium">{project.name}</span>
                 </span>
                 <ProjectEdit id={project.id} pageData={pageData} />
               </Link>

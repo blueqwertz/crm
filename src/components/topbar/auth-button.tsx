@@ -142,7 +142,6 @@ export const AuthButton = () => {
                 className="h-10 mt-auto"
               >
                 Login
-                <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </>
           )}

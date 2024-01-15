@@ -28,7 +28,7 @@ import { EditContact } from "../edit-button/edit-contact";
 import { useSession } from "next-auth/react";
 
 export const ContactPageTableEdit: React.FC<{
-  contact: Contact & { policies: ContactPolicy | undefined };
+  contact: Contact & { policy: ContactPolicy | undefined };
 }> = ({ contact }) => {
   const { data: sessionData } = useSession();
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -39,9 +39,6 @@ export const ContactPageTableEdit: React.FC<{
   const [linkValue, setLinkValue] = useState<string | undefined>(undefined);
 
   const { data: contactData } = api.contact.getAll.useQuery();
-  // const { data: linkedContacts } = api.contact.getContactLinks.useQuery({
-  //   id: contact.id,
-  // });
 
   const ctx = api.useUtils();
 
@@ -57,6 +54,7 @@ export const ContactPageTableEdit: React.FC<{
       setLinkLoading(false);
     },
   });
+
   const { mutate: linkContact } = api.contact.addLink.useMutation({
     onMutate: () => {
       setLinkLoading(true);
@@ -82,7 +80,9 @@ export const ContactPageTableEdit: React.FC<{
         event.preventDefault();
       }}
     >
-      {sessionData?.user.role.canEditAllContact && (
+      {(sessionData?.user.role.canEditAllContact ||
+        sessionData?.user.role.canEditConnectedContact ||
+        contact.policy?.canEdit) && (
         <>
           <EditContact contact={contact}>
             <div className="box-content cursor-pointer rounded-none border-r last:border-r-0 p-2 text-muted-foreground transition-colors hover:bg-accent">
@@ -172,7 +172,8 @@ export const ContactPageTableEdit: React.FC<{
         </>
       )}
       {(sessionData?.user.role.canDeleteAllContact ||
-        sessionData?.user.role.canDeleteConnectedContact) && (
+        sessionData?.user.role.canDeleteConnectedContact ||
+        contact.policy?.canDelete) && (
         <div
           className="box-content border-r last:border-r-0 h-4 w-4 cursor-pointer p-2 text-red-500 transition-colors hover:bg-accent"
           onClick={() => {

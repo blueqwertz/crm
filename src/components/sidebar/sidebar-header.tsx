@@ -12,7 +12,7 @@ export const SidebarHeader = () => {
       <div className="flex gap-2 border-b items-center justify-center h-14 px-2 sm:px-3 py-1">
         <Button
           variant={"outline"}
-          className="grow justify-start px-3 truncate"
+          className="grow justify-start px-2 truncate"
         >
           <Avatar className="h-7 w-7 shrink-0 border text-xs mr-2">
             <AvatarImage />

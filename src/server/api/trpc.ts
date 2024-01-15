@@ -15,8 +15,6 @@ import { ZodError } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 import EventEmitter from "events";
-import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
-import { IncomingMessage } from "http";
 
 /**
  * 1. CONTEXT

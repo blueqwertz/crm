@@ -32,22 +32,30 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
         <div className="flex flex-grow flex-col p-5">
           {/* HEADER */}
           <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              {!companyData && <Skeleton className="h-7 text-transparent" />}
-              {!!companyData && (
-                <h1 className="text-xl font-bold">{companyData.name}</h1>
-              )}
-              <span className="text-sm text-muted-foreground">
-                {!!companyData?.info?.length || companyData?.field?.length ? (
-                  <>
-                    {companyData.info}{" "}
-                    {companyData.info && companyData.field && <>&#x2022;</>}{" "}
-                    {companyData.field}
-                  </>
-                ) : (
-                  <>View contact details.</>
+            <div className="flex items-center gap-2">
+              <Avatar className="h-12 w-12 text-lg">
+                <AvatarImage src={companyData?.image ?? ""} alt="" />
+                <AvatarFallback>
+                  {initials(companyData?.name ?? "").toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col">
+                {!companyData && <Skeleton className="h-7 text-transparent" />}
+                {!!companyData && (
+                  <h1 className="text-xl font-bold">{companyData.name}</h1>
                 )}
-              </span>
+                <span className="text-sm text-muted-foreground">
+                  {!!companyData?.info?.length || companyData?.field?.length ? (
+                    <>
+                      {companyData.info}{" "}
+                      {companyData.info && companyData.field && <>&#x2022;</>}{" "}
+                      {companyData.field}
+                    </>
+                  ) : (
+                    <>View contact details.</>
+                  )}
+                </span>
+              </div>
             </div>
             <EditCompany company={companyData ?? null} />
           </div>
@@ -67,6 +75,8 @@ import { getSession } from "next-auth/react";
 import { db } from "~/server/db";
 import { EditCompany } from "~/components/individual-page/edit-button/edit-company";
 import { EventEmitter } from "events";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import initials from "initials";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>

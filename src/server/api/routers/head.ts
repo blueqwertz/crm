@@ -3,10 +3,28 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
+import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
+import { Redis } from "@upstash/redis"; // see below for cloudflare and fastly adapters
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  analytics: true,
+  prefix: "@upstash/ratelimit",
+});
+
 export const headRouter = createTRPCRouter({
   checkInvite: protectedProcedure
     .input(z.object({ inviteCode: z.string() }))
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.session.user.id);
+
+      if (!success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+        });
+      }
+
       return ctx.db.headInvite.findFirst({
         where: {
           id: input.inviteCode,
@@ -18,6 +36,13 @@ export const headRouter = createTRPCRouter({
   useInvite: protectedProcedure
     .input(z.object({ inviteCode: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.session.user.id);
+
+      if (!success) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+        });
+      }
       return ctx.db.$transaction(async (tx) => {
         const invite = await tx.headInvite.update({
           where: {
