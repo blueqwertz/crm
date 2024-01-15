@@ -123,7 +123,7 @@ export const IncludePolicyQuery = ({
   session: Session;
   entity: "contact" | "company" | "project" | "activity";
   operation: "read" | "edit" | "delete";
-  args?: Object;
+  args?: object;
 }) => {
   if (!include) {
     return undefined;

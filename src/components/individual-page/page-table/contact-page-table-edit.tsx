@@ -80,9 +80,8 @@ export const ContactPageTableEdit: React.FC<{
         event.preventDefault();
       }}
     >
-      {(sessionData?.user.role.canEditAllContact ||
-        sessionData?.user.role.canEditConnectedContact ||
-        contact.policy?.canEdit) && (
+      {((sessionData?.user.role.canEditAllContact ?? false) ||
+        (contact.policy?.canEdit ?? false)) && (
         <>
           <EditContact contact={contact}>
             <div className="box-content cursor-pointer rounded-none border-r last:border-r-0 p-2 text-muted-foreground transition-colors hover:bg-accent">
@@ -171,9 +170,8 @@ export const ContactPageTableEdit: React.FC<{
           </Popover>
         </>
       )}
-      {(sessionData?.user.role.canDeleteAllContact ||
-        sessionData?.user.role.canDeleteConnectedContact ||
-        contact.policy?.canDelete) && (
+      {((sessionData?.user.role.canDeleteAllContact ?? false) ||
+        (contact.policy?.canDelete ?? false)) && (
         <div
           className="box-content border-r last:border-r-0 h-4 w-4 cursor-pointer p-2 text-red-500 transition-colors hover:bg-accent"
           onClick={() => {
