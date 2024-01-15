@@ -74,7 +74,7 @@ const ActivityForm: React.FC<{
     },
   });
 
-  const { mutate: addCompany } = api.company.addOne.useMutation({
+  const { mutate: addCompany } = api.company.add.useMutation({
     onSuccess: (companyCreated) => {
       form.setValue("companyIds", [
         ...form.getValues("companyIds")!,

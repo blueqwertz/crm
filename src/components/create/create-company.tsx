@@ -27,7 +27,7 @@ export const AddCompany = () => {
     field: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
-  const { mutate: addCompany } = api.company.addOne.useMutation({
+  const { mutate: addCompany } = api.company.add.useMutation({
     onMutate: () => {
       setLoading(true);
     },

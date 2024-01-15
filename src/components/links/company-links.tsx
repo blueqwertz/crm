@@ -21,7 +21,7 @@ export const AddCompanyRelation: React.FC<{
 
   const ctx = api.useUtils();
 
-  const { mutate: addCompany } = api.company.addOne.useMutation({
+  const { mutate: addCompany } = api.company.add.useMutation({
     onMutate: () => {
       setDisabled(true);
     },

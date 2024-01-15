@@ -1,31 +1,25 @@
-[
-  {
-    "id": "clqzsekbz00104xt5prz2k2z6",
-    "headId": "clqzs90yv0001700gf14cggvf",
-    "description": "",
-    "type": "Meeting",
-    "date": "2024-01-04T22:36:50.812Z",
-    "createdAt": "2024-01-04T22:36:51.695Z",
-    "updatedAt": "2024-01-04T22:36:51.695Z"
-  },
-  {
-    "id": "clqzseigb000y4xt54msmikl3",
-    "headId": "clqzs90yv0001700gf14cggvf",
-    "description": "",
-    "type": "Email",
-    "date": "2024-01-04T22:36:46.527Z",
-    "createdAt": "2024-01-04T22:36:49.260Z",
-    "updatedAt": "2024-01-04T22:36:49.260Z"
-  },
-  {
-    "id": "clqzsefh9000w4xt57st25ejj",
-    "headId": "clqzs90yv0001700gf14cggvf",
-    "description": "",
-    "type": "Call",
-    "date": "2024-01-04T22:36:43.578Z",
-    "createdAt": "2024-01-04T22:36:45.405Z",
-    "updatedAt": "2024-01-04T22:36:45.405Z"
-  },
-  { "id": "clqzua6vl00144xt5h3jclkmi", "headId": "clqzs90yv0001700gf14cggvf" },
-  { "id": "clqzsslr100124xt59ni2t6ss", "headId": "clqzs90yv0001700gf14cggvf" }
-]
+{
+  "OR": [
+    {
+      "companies": {
+        "policies": {
+          "some": { "userId": "clr6w9snc0008ahtvdect4u8h", "canRead": true }
+        }
+      }
+    },
+    {
+      "projects": {
+        "policies": {
+          "some": { "userId": "clr6w9snc0008ahtvdect4u8h", "canRead": true }
+        }
+      }
+    },
+    {
+      "activities": {
+        "policies": {
+          "some": { "userId": "clr6w9snc0008ahtvdect4u8h", "canRead": true }
+        }
+      }
+    }
+  ]
+}

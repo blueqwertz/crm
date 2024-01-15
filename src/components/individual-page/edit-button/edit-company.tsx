@@ -38,7 +38,7 @@ export const EditCompany: React.FC<{
     field: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
-  const { mutate: saveChanges } = api.company.updateOne.useMutation({
+  const { mutate: saveChanges } = api.company.update.useMutation({
     onMutate: () => {
       setLoading(true);
     },

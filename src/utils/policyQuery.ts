@@ -6,7 +6,7 @@ export const PolicyQuery = ({
   operation,
 }: {
   session: Session;
-  entity: "contact" | "company" | "project";
+  entity: "contact" | "company" | "project" | "activity";
   operation: "read" | "edit" | "delete";
 }) => {
   const rolePolicyQuery = {
@@ -38,6 +38,11 @@ export const PolicyQuery = ({
           edit: session.user.role.canEditAllProject,
           delete: session.user.role.canDeleteAllProject,
         },
+        activity: {
+          read: session.user.role.canReadAllActivity,
+          edit: session.user.role.canEditAllActivity,
+          delete: session.user.role.canDeleteAllActivity,
+        },
       },
       connected: {
         contact: {
@@ -55,90 +60,79 @@ export const PolicyQuery = ({
           edit: session.user.role.canEditConnectedProject,
           delete: session.user.role.canDeleteConnectedProject,
         },
+        activity: {
+          read: session.user.role.canReadConnectedActivity,
+          edit: session.user.role.canEditConnectedActivity,
+          delete: session.user.role.canDeleteConnectedActivity,
+        },
       },
     },
   };
 
+  if (rolePolicyQuery.role.all[entity][operation]) {
+    return undefined;
+  }
+
   return {
-    ...(!rolePolicyQuery.role.all[entity][operation]
-      ? {
-          OR: [
-            {
-              ...(rolePolicyQuery.role.connected[entity][operation]
-                ? {
-                    OR: [
-                      ...(entity != "project"
-                        ? [
-                            {
-                              projects: {
-                                some: {
-                                  contacts: {
-                                    some: {
-                                      userId: session.user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                            {
-                              projects: {
-                                some: {
-                                  policies: {
-                                    some: {
-                                      userId: session.user.id,
-                                      ...rolePolicyQuery.policy[operation],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          ]
-                        : []),
-                      ...(entity != "company"
-                        ? [
-                            {
-                              companies: {
-                                some: {
-                                  contacts: {
-                                    some: {
-                                      userId: session.user.id,
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                            {
-                              companies: {
-                                some: {
-                                  policies: {
-                                    some: {
-                                      userId: session.user.id,
-                                      ...rolePolicyQuery.policy[operation],
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          ]
-                        : []),
-                    ],
-                  }
-                : {}),
-            },
-            {
-              ...(!rolePolicyQuery.role.all[entity][operation]
-                ? {
+    OR: [
+      ...(rolePolicyQuery.role.connected[entity][operation]
+        ? [
+            ...{
+              contact: { include: ["projects"] },
+              company: { include: ["projects"] },
+              project: { include: [] },
+              activity: {
+                include: ["companies", "contacts", "projects"],
+              },
+            }[entity].include.flatMap((entry) => [
+              {
+                [entry]: {
+                  some: {
                     policies: {
                       some: {
                         userId: session.user.id,
                         ...rolePolicyQuery.policy[operation],
                       },
                     },
-                  }
-                : {}),
-            },
-          ],
-        }
-      : {}),
+                  },
+                },
+              },
+            ]),
+          ]
+        : []),
+      {
+        policies: {
+          some: {
+            userId: session.user.id,
+            ...rolePolicyQuery.policy[operation],
+          },
+        },
+      },
+    ],
+  };
+};
+
+export const IncludePolicyQuery = ({
+  include,
+  session,
+  entity,
+  operation,
+  args,
+}: {
+  include: boolean;
+  session: Session;
+  entity: "contact" | "company" | "project" | "activity";
+  operation: "read" | "edit" | "delete";
+  args?: Object;
+}) => {
+  if (!include) {
+    return undefined;
+  }
+
+  return {
+    ...args,
+    where: {
+      ...PolicyQuery({ session, entity, operation }),
+    },
   };
 };

@@ -1,6 +1,7 @@
 import { ProjectStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { PolicyQuery } from "~/utils/policyQuery";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -30,35 +31,11 @@ export const projectRotuer = createTRPCRouter({
         where: {
           headId: ctx.session.user.head.id,
           // POLICY
-          ...(!ctx.session.user.role.canReadAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canReadConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canReadAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canRead: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "read",
+          }),
         },
         include: {
           contacts: input?.include?.contacts

@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { PolicyQuery } from "~/utils/policyQuery";
+import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
 
 export const contactRotuer = createTRPCRouter({
   getAll: protectedProcedure
@@ -34,25 +34,30 @@ export const contactRotuer = createTRPCRouter({
         },
         include: {
           user: input?.include?.user,
-          companies: input?.include?.companies
-            ? {
-                where: {
-                  ...PolicyQuery({
-                    session: ctx.session,
-                    entity: "company",
-                    operation: "read",
-                  }),
-                },
-              }
-            : {},
-          activities: input?.include?.activities
-            ? {
-                orderBy: {
-                  date: "desc",
-                },
-              }
-            : false,
-          projects: input?.include?.projects,
+          companies: IncludePolicyQuery({
+            include: input?.include?.companies ?? false,
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+          }),
+          activities: IncludePolicyQuery({
+            include: input?.include?.activities ?? false,
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+            args: {
+              orderBy: {
+                date: "desc",
+              },
+            },
+          }),
+          projects: IncludePolicyQuery({
+            include: input?.include?.projects ?? false,
+            session: ctx.session,
+            entity: "project",
+            operation: "read",
+          }),
+          // TODO
           policies: input?.include?.policies
             ? {
                 where: {
@@ -60,8 +65,18 @@ export const contactRotuer = createTRPCRouter({
                 },
               }
             : {},
-          incomingRelations: input?.include?.relations,
-          outgoingRelations: input?.include?.relations,
+          incomingRelations: IncludePolicyQuery({
+            include: input?.include?.relations ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+          }),
+          outgoingRelations: IncludePolicyQuery({
+            include: input?.include?.relations ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+          }),
         },
         orderBy: {
           createdAt: "desc",
@@ -98,9 +113,17 @@ export const contactRotuer = createTRPCRouter({
         },
         include: {
           user: input.include?.user,
+          // TODO
           companies:
             input.include?.activities && input.include.companies
               ? {
+                  where: {
+                    ...PolicyQuery({
+                      session: ctx.session,
+                      entity: "company",
+                      operation: "read",
+                    }),
+                  },
                   include: {
                     _count: {
                       select: {
@@ -110,6 +133,11 @@ export const contactRotuer = createTRPCRouter({
                     },
                     activities: {
                       where: {
+                        ...PolicyQuery({
+                          session: ctx.session,
+                          entity: "activity",
+                          operation: "read",
+                        }),
                         contacts: {
                           none: {
                             id: input.id,
@@ -131,17 +159,34 @@ export const contactRotuer = createTRPCRouter({
                     },
                   },
                 }
-              : input.include?.companies,
-          activities: input.include?.activities
-            ? {
-                orderBy: {
-                  date: "desc",
-                },
-              }
-            : false,
+              : IncludePolicyQuery({
+                  include: input?.include?.companies ?? false,
+                  session: ctx.session,
+                  entity: "company",
+                  operation: "read",
+                }),
+          activities: IncludePolicyQuery({
+            include: input?.include?.companies ?? false,
+            session: ctx.session,
+            entity: "activity",
+            operation: "read",
+            args: {
+              orderBy: {
+                date: "desc",
+              },
+            },
+          }),
+          // TODO
           projects:
             input.include?.activities && input.include.projects
               ? {
+                  where: {
+                    ...PolicyQuery({
+                      session: ctx.session,
+                      entity: "project",
+                      operation: "read",
+                    }),
+                  },
                   include: {
                     _count: {
                       select: {
@@ -163,9 +208,24 @@ export const contactRotuer = createTRPCRouter({
                     },
                   },
                 }
-              : input.include?.projects,
-          incomingRelations: true,
-          outgoingRelations: true,
+              : IncludePolicyQuery({
+                  include: input?.include?.projects ?? false,
+                  session: ctx.session,
+                  entity: "project",
+                  operation: "read",
+                }),
+          incomingRelations: IncludePolicyQuery({
+            include: input?.include?.relations ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+          }),
+          outgoingRelations: IncludePolicyQuery({
+            include: input?.include?.relations ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+          }),
         },
       });
     }),
@@ -259,6 +319,11 @@ export const contactRotuer = createTRPCRouter({
               return {
                 headId: ctx.session.user.head.id,
                 id,
+                ...PolicyQuery({
+                  session: ctx.session,
+                  entity: "company",
+                  operation: "edit",
+                }),
               };
             }),
           },
@@ -351,6 +416,11 @@ export const contactRotuer = createTRPCRouter({
               ? {
                   disconnect: {
                     id: input.contactTwo,
+                    ...PolicyQuery({
+                      session: ctx.session,
+                      entity: "contact",
+                      operation: "edit",
+                    }),
                   },
                 }
               : {},
@@ -359,6 +429,11 @@ export const contactRotuer = createTRPCRouter({
               ? {
                   disconnect: {
                     id: input.contactTwo,
+                    ...PolicyQuery({
+                      session: ctx.session,
+                      entity: "contact",
+                      operation: "edit",
+                    }),
                   },
                 }
               : {},
@@ -374,15 +449,6 @@ export const contactRotuer = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log(
-        JSON.stringify(
-          PolicyQuery({
-            session: ctx.session,
-            entity: "contact",
-            operation: "edit",
-          })
-        )
-      );
       return ctx.db.contact.update({
         where: {
           headId: ctx.session.user.head.id,
@@ -399,6 +465,11 @@ export const contactRotuer = createTRPCRouter({
             connect: input.companyIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "company",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -429,6 +500,11 @@ export const contactRotuer = createTRPCRouter({
             disconnect: input.companyIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "company",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -459,6 +535,11 @@ export const contactRotuer = createTRPCRouter({
             connect: input.projectIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "project",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -489,6 +570,11 @@ export const contactRotuer = createTRPCRouter({
             disconnect: input.projectIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "project",
+                operation: "edit",
+              }),
             })),
           },
         },

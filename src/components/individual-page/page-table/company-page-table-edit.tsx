@@ -9,7 +9,7 @@ export const CompanyPageTableEdit: React.FC<{ companyId: string }> = ({
 
   const ctx = api.useUtils();
 
-  const { mutate: deleteProject } = api.company.deleteOne.useMutation({
+  const { mutate: deleteProject } = api.company.delete.useMutation({
     onMutate: () => {
       setDeleteLoading(true);
     },

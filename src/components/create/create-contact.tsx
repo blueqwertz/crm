@@ -51,7 +51,7 @@ export const AddContact = () => {
     },
   });
 
-  const { mutate: addCompany } = api.company.addOne.useMutation({
+  const { mutate: addCompany } = api.company.add.useMutation({
     onSuccess: (companies) => {
       form.setValue("companyIds", [
         ...(form.getValues("companyIds") ?? []),
