@@ -5,6 +5,9 @@ import type { NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Layout } from "~/components/layout";
+import { Badge } from "~/components/ui/badge";
+import { statusMaps } from "~/utils/maps";
+import { EditProject } from "~/components/individual-page/edit-button/edit-project";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: projectData, isLoading } = api.project.get.useQuery({
@@ -63,45 +66,34 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   );
 };
 
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import type { GetServerSidePropsContext } from "next";
-import superjson from "superjson";
-import { appRouter } from "~/server/api/root";
-import { getSession } from "next-auth/react";
-import { db } from "~/server/db";
-import { EditProject } from "~/components/individual-page/edit-button/edit-project";
-import { statusMaps } from "~/utils/maps";
-import { Badge } from "~/components/ui/badge";
-import EventEmitter from "events";
-
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ id: string }>
-) {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: { db, session: await getSession(context), ee: new EventEmitter() },
-    transformer: superjson,
-  });
-  const id = context.params?.id ?? "";
-  /*
-   * Prefetching the `post.byId` query.
-   * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
-   */
-  await helpers.project.get.fetch({
-    id,
-    include: {
-      activities: true,
-      companies: true,
-      contacts: true,
-    },
-  });
-  // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-  return {
-    props: {
-      trpcState: helpers.dehydrate(),
-      id,
-    },
-  };
-}
+// export async function getServerSideProps(
+//   context: GetServerSidePropsContext<{ id: string }>
+// ) {
+//   const helpers = createServerSideHelpers({
+//     router: appRouter,
+//     ctx: { db, session: await getSession(context), ee: new EventEmitter() },
+//     transformer: superjson,
+//   });
+//   const id = context.params?.id ?? "";
+//   /*
+//    * Prefetching the `post.byId` query.
+//    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
+//    */
+//   await helpers.project.get.fetch({
+//     id,
+//     include: {
+//       activities: true,
+//       companies: true,
+//       contacts: true,
+//     },
+//   });
+//   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
+//   return {
+//     props: {
+//       trpcState: helpers.dehydrate(),
+//       id,
+//     },
+//   };
+// }
 
 export default ProjectPage;
