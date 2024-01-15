@@ -2,7 +2,7 @@ import Head from "next/head";
 
 import { api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
-import type { NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
 import { CompanyIndividualPage } from "~/components/individual-page/company-individual-page";
 import { Layout } from "~/components/layout";
@@ -99,5 +99,21 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
 //     },
 //   };
 // }
+
+export const getStaticProps: GetStaticProps = (context) => {
+  const id = context.params?.id;
+
+  if (typeof id != "string") throw new Error("no id provided");
+
+  return {
+    props: {
+      id,
+    },
+  };
+};
+
+export const getStaticPaths = () => {
+  return { paths: [], fallback: "blocking" };
+};
 
 export default CompanyPage;
