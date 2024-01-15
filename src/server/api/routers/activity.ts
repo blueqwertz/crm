@@ -1,6 +1,7 @@
 import { ActivityType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -22,21 +23,7 @@ export const activityRouer = createTRPCRouter({
             !values?.companyIds?.length &&
             !values?.projectIds?.length
           ) {
-            ctx.addIssue({
-              message: "Either company, contact or project must be selected",
-              code: z.ZodIssueCode.custom,
-              path: ["contactIds"],
-            });
-            ctx.addIssue({
-              message: "Either company, contact or project must be selected",
-              code: z.ZodIssueCode.custom,
-              path: ["companyIds"],
-            });
-            ctx.addIssue({
-              message: "Either company, contact or project must be selected",
-              code: z.ZodIssueCode.custom,
-              path: ["projectIds"],
-            });
+            throw new TRPCError({ code: "BAD_REQUEST" });
           }
         })
     )
@@ -56,18 +43,33 @@ export const activityRouer = createTRPCRouter({
             connect: input.companyIds?.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "company",
+                operation: "edit",
+              }),
             })),
           },
           contacts: {
             connect: input.contactIds?.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "contact",
+                operation: "edit",
+              }),
             })),
           },
           projects: {
             connect: input.projectIds?.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "project",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -82,35 +84,11 @@ export const activityRouer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.id,
           // POLICY
-          ...(!ctx.session.user.role.canDeleteAllActivity
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canDeleteConnectedActivity
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canDeleteAllActivity
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canDelete: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "activity",
+            operation: "delete",
+          }),
         },
       });
     }),

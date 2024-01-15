@@ -45,7 +45,7 @@ export const ProjectPageTableRow: React.FC<{
   const [statusLoading, setStatusLoading] = useState(false);
   const [status, setStatus] = useState<ProjectStatus>(project.status);
 
-  const { mutate: updateStatus } = api.project.updateOne.useMutation({
+  const { mutate: updateStatus } = api.project.update.useMutation({
     onMutate: () => {
       setStatusLoading(true);
     },

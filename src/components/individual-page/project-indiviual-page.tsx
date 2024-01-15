@@ -10,6 +10,15 @@ export const ProjectIndividualPage: React.FC<{
 }> = ({ projectId, project }) => {
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">
+      <div className="flex flex-grow flex-col gap-3">
+        <span className="font-semibold">Activities</span>
+        <div className="w-full rounded-md border grow flex flex-col">
+          <ActivitiesTable
+            activityData={project?.activities ?? []}
+            pageData={{ type: "Project", id: projectId }}
+          />
+        </div>
+      </div>
       <div className="flex flex-col gap-6">
         <div className="flex flex-grow flex-col gap-3">
           <span className="font-semibold">Contacts</span>
@@ -28,15 +37,6 @@ export const ProjectIndividualPage: React.FC<{
               companyData={project?.companies ?? []}
             />
           </div>
-        </div>
-      </div>
-      <div className="flex flex-grow flex-col gap-3">
-        <span className="font-semibold">Activities</span>
-        <div className="w-full rounded-md border grow flex flex-col">
-          <ActivitiesTable
-            activityData={project?.activities ?? []}
-            pageData={{ type: "Project", id: projectId }}
-          />
         </div>
       </div>
     </div>

@@ -78,11 +78,11 @@ export const PolicyQuery = ({
       ...(rolePolicyQuery.role.connected[entity][operation]
         ? [
             ...{
-              contact: { include: ["projects"] },
+              contact: { include: ["projects", "companies"] },
               company: { include: ["projects"] },
               project: { include: [] },
               activity: {
-                include: ["companies", "contacts", "projects"],
+                include: ["contacts", "companies", "projects"],
               },
             }[entity].include.flatMap((entry) => [
               {

@@ -49,7 +49,7 @@ export const EditProject: React.FC<{
     info: z.union([z.string().max(200).optional(), z.literal("")]),
   });
 
-  const { mutate: saveChanges } = api.project.updateOne.useMutation({
+  const { mutate: saveChanges } = api.project.update.useMutation({
     onMutate: () => {
       setLoading(true);
     },

@@ -11,7 +11,7 @@ export const ProjectPageTableEdit: React.FC<{ project: Project }> = ({
 
   const ctx = api.useUtils();
 
-  const { mutate: deleteProject } = api.project.deleteOne.useMutation({
+  const { mutate: deleteProject } = api.project.delete.useMutation({
     onMutate: () => {
       setDeleteLoading(true);
     },

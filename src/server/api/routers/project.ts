@@ -1,7 +1,7 @@
 import { ProjectStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { PolicyQuery } from "~/utils/policyQuery";
+import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -38,19 +38,32 @@ export const projectRotuer = createTRPCRouter({
           }),
         },
         include: {
-          contacts: input?.include?.contacts
-            ? {
-                take: 4,
-              }
-            : false,
-          activities: input?.include?.activities
-            ? {
-                orderBy: {
-                  date: "desc",
-                },
-              }
-            : false,
-          companies: input?.include?.companies,
+          contacts: IncludePolicyQuery({
+            include: input?.include?.contacts ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+            args: {
+              take: 4,
+            },
+          }),
+          activities: IncludePolicyQuery({
+            include: input?.include?.activities ?? false,
+            session: ctx.session,
+            entity: "activity",
+            operation: "read",
+            args: {
+              orderBy: {
+                date: "desc",
+              },
+            },
+          }),
+          companies: IncludePolicyQuery({
+            include: input?.include?.companies ?? false,
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+          }),
           _count: Object.values(input?.include?.count ?? {}).some(
             (value) => value
           ) && {
@@ -85,46 +98,36 @@ export const projectRotuer = createTRPCRouter({
           id: input.id,
           headId: ctx.session.user.head.id,
           // POLICY
-          ...(!ctx.session.user.role.canReadAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canReadConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canReadAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canRead: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "read",
+          }),
         },
         include: {
-          contacts: input.include?.contacts,
-          activities: input?.include?.activities
-            ? {
-                orderBy: {
-                  date: "desc",
-                },
-              }
-            : false,
-          companies: input.include?.companies,
+          contacts: IncludePolicyQuery({
+            include: input?.include?.contacts ?? false,
+            session: ctx.session,
+            entity: "contact",
+            operation: "read",
+          }),
+          activities: IncludePolicyQuery({
+            include: input?.include?.activities ?? false,
+            session: ctx.session,
+            entity: "activity",
+            operation: "read",
+            args: {
+              orderBy: {
+                date: "desc",
+              },
+            },
+          }),
+          companies: IncludePolicyQuery({
+            include: input?.include?.companies ?? false,
+            session: ctx.session,
+            entity: "company",
+            operation: "read",
+          }),
         },
         orderBy: {
           createdAt: "desc",
@@ -157,7 +160,7 @@ export const projectRotuer = createTRPCRouter({
       });
     }),
 
-  deleteOne: protectedProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.db.project.delete({
@@ -165,40 +168,16 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.id,
           // POLICY
-          ...(!ctx.session.user.role.canDeleteAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canDeleteConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canDeleteAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canDelete: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "delete",
+          }),
         },
       });
     }),
 
-  updateOne: protectedProcedure
+  update: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -215,35 +194,11 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.id,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "edit",
+          }),
         },
         data: {
           name: input.data.name,
@@ -266,41 +221,22 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.projectId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "edit",
+          }),
         },
         data: {
           contacts: {
             connect: input.contactIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "contact",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -320,41 +256,22 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.projectId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "edit",
+          }),
         },
         data: {
           contacts: {
             disconnect: input.contactIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "contact",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -374,41 +291,22 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.projectId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "edit",
+          }),
         },
         data: {
           companies: {
             connect: input.companyIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "company",
+                operation: "edit",
+              }),
             })),
           },
         },
@@ -427,41 +325,22 @@ export const projectRotuer = createTRPCRouter({
           headId: ctx.session.user.head.id,
           id: input.projectId,
           // POLICY
-          ...(!ctx.session.user.role.canEditAllProject
-            ? {
-                OR: [
-                  {
-                    ...(ctx.session.user.role.canEditConnectedProject
-                      ? {
-                          contacts: {
-                            some: {
-                              userId: ctx.session.user.id,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                  {
-                    ...(!ctx.session.user.role.canEditAllProject
-                      ? {
-                          policies: {
-                            some: {
-                              userId: ctx.session.user.id,
-                              canEdit: true,
-                            },
-                          },
-                        }
-                      : {}),
-                  },
-                ],
-              }
-            : {}),
+          ...PolicyQuery({
+            session: ctx.session,
+            entity: "project",
+            operation: "edit",
+          }),
         },
         data: {
           companies: {
             disconnect: input.companyIds.map((id) => ({
               id,
               headId: ctx.session.user.head.id,
+              ...PolicyQuery({
+                session: ctx.session,
+                entity: "company",
+                operation: "edit",
+              }),
             })),
           },
         },
