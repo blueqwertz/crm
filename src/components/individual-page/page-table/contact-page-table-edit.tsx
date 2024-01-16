@@ -12,12 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { Button } from "../../ui/button";
@@ -26,9 +20,10 @@ import { Input } from "../../ui/input";
 import { Contact, ContactPolicy } from "@prisma/client";
 import { EditContact } from "../edit-button/edit-contact";
 import { useSession } from "next-auth/react";
+import { CanDoOperation } from "~/utils/policyQuery";
 
 export const ContactPageTableEdit: React.FC<{
-  contact: Contact & { policy: ContactPolicy | undefined };
+  contact: Contact & { policies: ContactPolicy[] };
 }> = ({ contact }) => {
   const { data: sessionData } = useSession();
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -80,8 +75,12 @@ export const ContactPageTableEdit: React.FC<{
         event.preventDefault();
       }}
     >
-      {((sessionData?.user.role.canEditAllContact ?? false) ||
-        (contact.policy?.canEdit ?? false)) && (
+      {CanDoOperation({
+        session: sessionData,
+        policies: contact.policies,
+        entity: "contact",
+        operation: "edit",
+      }) && (
         <>
           <EditContact contact={contact}>
             <div className="box-content cursor-pointer rounded-none border-r last:border-r-0 p-2 text-muted-foreground transition-colors hover:bg-accent">
@@ -170,8 +169,12 @@ export const ContactPageTableEdit: React.FC<{
           </Popover>
         </>
       )}
-      {((sessionData?.user.role.canDeleteAllContact ?? false) ||
-        (contact.policy?.canDelete ?? false)) && (
+      {CanDoOperation({
+        session: sessionData,
+        policies: contact.policies,
+        entity: "contact",
+        operation: "delete",
+      }) && (
         <div
           className="box-content border-r last:border-r-0 h-4 w-4 cursor-pointer p-2 text-red-500 transition-colors hover:bg-accent"
           onClick={() => {

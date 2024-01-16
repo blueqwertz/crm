@@ -23,23 +23,28 @@ import {
   Company,
   Contact,
   Project,
+  ProjectPolicy,
   ProjectStatus,
 } from "@prisma/client";
 import { useState } from "react";
 import initials from "initials";
 import { cn } from "~/utils/cn";
+import { useSession } from "next-auth/react";
+import { CanDoOperation } from "~/utils/policyQuery";
 
 export const ProjectPageTableRow: React.FC<{
   project: Project & {
     companies: Company[];
     contacts: Contact[];
     activities: Activity[];
+    policies: ProjectPolicy[];
     _count: {
       contacts: number;
       companies: number;
     };
   };
 }> = ({ project }) => {
+  const { data: sessionData } = useSession();
   const ctx = api.useUtils();
 
   const [statusLoading, setStatusLoading] = useState(false);
@@ -70,33 +75,49 @@ export const ProjectPageTableRow: React.FC<{
       <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
         <div className="flex h-8 items-center gap-2 text-base">
           <span className="font-semibold">{project.name}</span>
-          <Select
-            disabled={statusLoading}
-            defaultValue={status}
-            onValueChange={(value: ProjectStatus) => {
-              setStatus(value);
-              updateStatus({
-                id: project.id,
-                data: {
-                  status: value,
-                },
-              });
-            }}
-          >
-            <SelectTrigger className="w-auto h-auto inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-[3px] font-medium transition-colors border text-foreground text-xs leading-3 truncate">
-              {statusMaps[status].icon}
-              {statusMaps[status].title}
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(ProjectStatus).map((status) => {
-                return (
-                  <SelectItem key={status} value={status}>
-                    {statusMaps[status].title}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+          {CanDoOperation({
+            session: sessionData,
+            policies: project.policies,
+            entity: "project",
+            operation: "edit",
+          }) ? (
+            <>
+              <Select
+                disabled={statusLoading}
+                defaultValue={status}
+                onValueChange={(value: ProjectStatus) => {
+                  setStatus(value);
+                  updateStatus({
+                    id: project.id,
+                    data: {
+                      status: value,
+                    },
+                  });
+                }}
+              >
+                <SelectTrigger className="w-auto h-auto inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-[3px] font-medium transition-colors border text-foreground text-xs leading-3 truncate">
+                  {statusMaps[status].icon}
+                  {statusMaps[status].title}
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(ProjectStatus).map((status) => {
+                    return (
+                      <SelectItem key={status} value={status}>
+                        {statusMaps[status].title}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </>
+          ) : (
+            <>
+              <Badge variant={"outline"}>
+                {statusMaps[status].icon}
+                {statusMaps[status].title}
+              </Badge>
+            </>
+          )}
         </div>
         <span className="mb-1 text-sm empty:hidden">{project.info}</span>
 
@@ -238,6 +259,7 @@ export const ProjectPageTable = () => {
     include: {
       contacts: true,
       companies: true,
+      policies: true,
       count: {
         companies: true,
         contacts: true,

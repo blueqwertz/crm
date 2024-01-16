@@ -14,6 +14,7 @@ export const CompanyPageTable = () => {
   const { data: companyData } = api.company.getAll.useQuery({
     include: {
       lastActivity: true,
+      policies: true,
       count: {
         contacts: true,
         projects: true,
@@ -102,7 +103,7 @@ export const CompanyPageTable = () => {
                   )}
                 </div>
               </div>
-              <CompanyPageTableEdit companyId={company.id} />
+              <CompanyPageTableEdit company={company} />
             </Link>
           );
         })}

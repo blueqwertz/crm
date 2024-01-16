@@ -65,8 +65,8 @@ export const AuthButton = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[205px]" align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
+                  {/* <DropdownMenuSeparator /> */}
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
                       <User className="mr-2 h-4 w-4" />

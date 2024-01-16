@@ -8,6 +8,16 @@ import { Layout } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { statusMaps } from "~/utils/maps";
 import { EditProject } from "~/components/individual-page/edit-button/edit-project";
+import { useState } from "react";
+import { Project, ProjectPolicy, ProjectStatus } from "@prisma/client";
+import { CanDoOperation } from "~/utils/policyQuery";
+import { useSession } from "next-auth/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "~/components/ui/select";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: projectData, isLoading } = api.project.get.useQuery({
@@ -16,8 +26,11 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
       activities: true,
       companies: true,
       contacts: true,
+      policies: true,
     },
   });
+
+  const { data: sessionData } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -36,15 +49,17 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                {!projectData && <Skeleton className="h-7 text-transparent" />}
+                {!projectData && (
+                  <>
+                    <Skeleton className="h-7 text-transparent w-32" />
+                    <Skeleton className="h-6 text-transparent w-24" />
+                  </>
+                )}
                 {!!projectData && (
                   <h1 className="text-xl font-bold">{projectData.name}</h1>
                 )}
                 {!!projectData?.status && (
-                  <Badge variant={"outline"}>
-                    {statusMaps[projectData?.status].icon}
-                    {statusMaps[projectData?.status].title}
-                  </Badge>
+                  <ProjectStatusEdit project={projectData} />
                 )}
               </div>
               <span className="text-sm text-muted-foreground">
@@ -55,8 +70,12 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
                 )}
               </span>
             </div>
-
-            <EditProject project={projectData ?? null} />
+            {CanDoOperation({
+              session: sessionData,
+              policies: projectData?.policies,
+              entity: "project",
+              operation: "edit",
+            }) && <EditProject project={projectData ?? null} />}
           </div>
           <Breadcrumbs lastItem={projectData?.name ?? "..."} />
           <ProjectIndividualPage projectId={id} project={projectData ?? null} />
@@ -66,35 +85,78 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
   );
 };
 
-// export async function getServerSideProps(
-//   context: GetServerSidePropsContext<{ id: string }>
-// ) {
-//   const helpers = createServerSideHelpers({
-//     router: appRouter,
-//     ctx: { db, session: await getSession(context), ee: new EventEmitter() },
-//     transformer: superjson,
-//   });
-//   const id = context.params?.id ?? "";
-//   /*
-//    * Prefetching the `post.byId` query.
-//    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
-//    */
-//   await helpers.project.get.fetch({
-//     id,
-//     include: {
-//       activities: true,
-//       companies: true,
-//       contacts: true,
-//     },
-//   });
-//   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-//   return {
-//     props: {
-//       trpcState: helpers.dehydrate(),
-//       id,
-//     },
-//   };
-// }
+const ProjectStatusEdit = ({
+  project,
+}: {
+  project: Project & { policies: ProjectPolicy[] };
+}) => {
+  const { data: sessionData } = useSession();
+
+  const ctx = api.useUtils();
+
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [status, setStatus] = useState<ProjectStatus>(project.status);
+
+  const { mutate: updateStatus } = api.project.update.useMutation({
+    onMutate: () => {
+      setStatusLoading(true);
+    },
+    onSuccess: async () => {
+      await ctx.project.getAll.invalidate();
+      setStatusLoading(false);
+    },
+    onError: () => {
+      setStatusLoading(false);
+    },
+  });
+  return (
+    <>
+      {CanDoOperation({
+        session: sessionData,
+        policies: project.policies,
+        entity: "project",
+        operation: "edit",
+      }) ? (
+        <>
+          <Select
+            disabled={statusLoading}
+            defaultValue={status}
+            onValueChange={(value: ProjectStatus) => {
+              setStatus(value);
+              updateStatus({
+                id: project.id,
+                data: {
+                  status: value,
+                },
+              });
+            }}
+          >
+            <SelectTrigger className="w-auto h-auto inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-[3px] font-medium transition-colors border text-foreground text-xs leading-3 truncate">
+              {statusMaps[status].icon}
+              {statusMaps[status].title}
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(ProjectStatus).map((status) => {
+                return (
+                  <SelectItem key={status} value={status}>
+                    {statusMaps[status].title}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </>
+      ) : (
+        <>
+          <Badge variant={"outline"}>
+            {statusMaps[project.status].icon}
+            {statusMaps[project.status].title}
+          </Badge>
+        </>
+      )}
+    </>
+  );
+};
 
 export const getStaticProps: GetStaticProps = (context) => {
   const id = context.params?.id;

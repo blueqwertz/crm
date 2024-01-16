@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Circle,
   Clipboard,
+  Loader2,
   Mail,
   PauseCircle,
   Presentation,
@@ -39,6 +40,11 @@ export const statusMaps = {
     title: "Cancelled",
     icon: <XCircle className="h-3.5 w-3.5" />,
     iconLarge: <XCircle className="h-4 w-4" />,
+  },
+  Loading: {
+    title: "Loading...",
+    icon: <Loader2 className="h-3.5 w-3.5 animate-spin" />,
+    iconLarge: <Loader2 className="h-4 w-4 animate-spin" />,
   },
 };
 

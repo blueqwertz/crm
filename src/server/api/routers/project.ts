@@ -15,6 +15,7 @@ export const projectRotuer = createTRPCRouter({
               contacts: z.boolean().optional().default(false),
               activities: z.boolean().optional().default(false),
               companies: z.boolean().optional().default(false),
+              policies: z.boolean().optional().default(false),
               count: z
                 .object({
                   contacts: z.boolean().optional().default(false),
@@ -64,6 +65,13 @@ export const projectRotuer = createTRPCRouter({
             entity: "company",
             operation: "read",
           }),
+          policies: input?.include?.policies
+            ? {
+                where: {
+                  userId: ctx.session.user.id,
+                },
+              }
+            : undefined,
           _count: Object.values(input?.include?.count ?? {}).some(
             (value) => value
           ) && {
@@ -88,6 +96,7 @@ export const projectRotuer = createTRPCRouter({
             contacts: z.boolean().optional().default(false),
             activities: z.boolean().optional().default(false),
             companies: z.boolean().optional().default(false),
+            policies: z.boolean().optional().default(false),
           })
           .optional(),
       })
@@ -128,6 +137,13 @@ export const projectRotuer = createTRPCRouter({
             entity: "company",
             operation: "read",
           }),
+          policies: input?.include?.policies
+            ? {
+                where: {
+                  userId: ctx.session.user.id,
+                },
+              }
+            : undefined,
         },
         orderBy: {
           createdAt: "desc",

@@ -165,9 +165,7 @@ export const ContactPageTable = () => {
                   )}
                 </div>
               </div>
-              <ContactPageTableEdit
-                contact={{ ...contact, policy: contact.policies?.[0] }}
-              />
+              <ContactPageTableEdit contact={contact} />
             </Link>
           );
         })}

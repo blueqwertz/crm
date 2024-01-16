@@ -95,6 +95,7 @@ export const contactRotuer = createTRPCRouter({
             activities: z.boolean().default(false).optional(),
             projects: z.boolean().default(false).optional(),
             relations: z.boolean().default(false).optional(),
+            policies: z.boolean().default(false).optional(),
           })
           .optional(),
       })
@@ -226,6 +227,13 @@ export const contactRotuer = createTRPCRouter({
             entity: "contact",
             operation: "read",
           }),
+          policies: input.include?.policies
+            ? {
+                where: {
+                  userId: ctx.session.user.id,
+                },
+              }
+            : undefined,
         },
       });
     }),

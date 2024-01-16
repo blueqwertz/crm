@@ -8,7 +8,9 @@ import {
   AlertTriangle,
   Archive,
   ArchiveRestore,
+  Ban,
   Bell,
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
   ChevronsDown,
@@ -22,7 +24,6 @@ import {
 import "@/utils/relative";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { api } from "~/utils/api";
-import { CheckCircle } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
 import { Notification } from "@prisma/client";
@@ -302,9 +303,9 @@ export const NotificationItem: React.FC<{ data: Notification }> = ({
   const TypeIcons = {
     INFO: <Info className="h-4 w-4" />,
     DEBUG: <Wrench className="h-4 w-4" />,
-    SUCCESS: <CheckCircle className="h-4 w-4" />,
+    SUCCESS: <CheckCircle2 className="h-4 w-4" />,
     WARNING: <AlertTriangle className="h-4 w-4" />,
-    ERROR: <ServerCrash className="h-4 w-4" />,
+    ERROR: <Ban className="h-4 w-4" />,
   };
   const PriorityIcons = {
     MIN: (

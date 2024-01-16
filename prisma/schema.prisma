@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider     = "postgres"
   url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_DATABASE_URL")
   relationMode = "foreignKeys"
 }
 
@@ -441,8 +442,8 @@ enum NotificationType {
 
 model Notification {
   id        String               @id @default(cuid())
-  userId    String?
-  user      User?                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt DateTime             @default(now())
   message   String
   priority  NotificationPriority @default(DEFAULT)

@@ -8,17 +8,23 @@ import { Layout } from "~/components/layout";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import initials from "initials";
 import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
+import { CanDoOperation } from "~/utils/policyQuery";
+import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: contactData, isLoading } = api.contact.get.useQuery({
+  const { data: contact, isLoading } = api.contact.get.useQuery({
     id,
     include: {
       activities: true,
       companies: true,
       projects: true,
       relations: true,
+      policies: true,
     },
   });
+
+  const { data: session } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -38,67 +44,41 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
             <div className="flex items-center gap-2">
               <Avatar className="h-12 w-12 text-lg">
                 <AvatarImage
-                  src={contactData?.image ?? contactData?.user?.image ?? ""}
+                  src={contact?.image ?? contact?.user?.image ?? ""}
                   alt=""
                 />
                 <AvatarFallback>
-                  {initials(contactData?.name ?? "").toUpperCase()}
+                  {initials(contact?.name ?? "").toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                {!contactData && <Skeleton className="h-7 text-transparent" />}
-                {!!contactData && (
-                  <h1 className="text-xl font-bold">{contactData.name}</h1>
+                {!contact && <Skeleton className="h-7 text-transparent" />}
+                {!!contact && (
+                  <h1 className="text-xl font-bold">{contact.name}</h1>
                 )}
                 <span className="text-sm text-muted-foreground">
-                  {!!contactData?.info?.length ? (
-                    contactData?.info
+                  {!!contact?.info?.length ? (
+                    contact?.info
                   ) : (
                     <>View contact details.</>
                   )}
                 </span>
               </div>
             </div>
-            <EditContact contact={contactData ?? null} />
+            {CanDoOperation({
+              session: session,
+              entity: "contact",
+              operation: "edit",
+              policies: contact?.policies,
+            }) && <EditContact contact={contact ?? null} />}
           </div>
-          <Breadcrumbs lastItem={contactData?.name} />
-          <ContactIndividualPage contactId={id} contact={contactData ?? null} />
+          <Breadcrumbs lastItem={contact?.name} />
+          <ContactIndividualPage contactId={id} contact={contact ?? null} />
         </div>
       </Layout>
     </>
   );
 };
-
-// export async function getServerSideProps(
-//   context: GetServerSidePropsContext<{ id: string }>
-// ) {
-//   const helpers = createServerSideHelpers({
-//     router: appRouter,
-//     ctx: { db, session: await getSession(context), ee: new EventEmitter() },
-//     transformer: superjson,
-//   });
-//   const id = context.params?.id ?? "";
-//   /*
-//    * Prefetching the `post.byId` query.
-//    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
-//    */
-//   await helpers.contact.get.fetch({
-//     id,
-//     include: {
-//       activities: true,
-//       companies: true,
-//       projects: true,
-//       relations: true,
-//     },
-//   });
-//   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-//   return {
-//     props: {
-//       trpcState: helpers.dehydrate(),
-//       id,
-//     },
-//   };
-// }
 
 export const getStaticProps: GetStaticProps = (context) => {
   const id = context.params?.id;

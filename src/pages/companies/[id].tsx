@@ -9,6 +9,8 @@ import { Layout } from "~/components/layout";
 import { EditCompany } from "~/components/individual-page/edit-button/edit-company";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import initials from "initials";
+import { CanDoOperation } from "~/utils/policyQuery";
+import { useSession } from "next-auth/react";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: companyData, isLoading } = api.company.get.useQuery({
@@ -19,6 +21,8 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
       activities: true,
     },
   });
+
+  const { data: session } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -60,7 +64,12 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
                 </span>
               </div>
             </div>
-            <EditCompany company={companyData ?? null} />
+            {CanDoOperation({
+              session,
+              entity: "company",
+              operation: "edit",
+              policies: companyData?.policies,
+            }) && <EditCompany company={companyData ?? null} />}
           </div>
           <Breadcrumbs lastItem={companyData?.name ?? id} />
           <CompanyIndividualPage companyId={id} company={companyData ?? null} />
@@ -69,36 +78,6 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
     </>
   );
 };
-
-// export async function getServerSideProps(
-//   context: GetServerSidePropsContext<{ id: string }>
-// ) {
-//   const helpers = createServerSideHelpers({
-//     router: appRouter,
-//     ctx: { db, session: await getSession(context), ee: new EventEmitter() },
-//     transformer: superjson,
-//   });
-//   const id = context.params?.id ?? "";
-//   /*
-//    * Prefetching the `post.byId` query.
-//    * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
-//    */
-//   await helpers.company.get.fetch({
-//     id,
-//     include: {
-//       contacts: true,
-//       projects: true,
-//       activities: true,
-//     },
-//   });
-//   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-//   return {
-//     props: {
-//       trpcState: helpers.dehydrate(),
-//       id,
-//     },
-//   };
-// }
 
 export const getStaticProps: GetStaticProps = (context) => {
   const id = context.params?.id;
