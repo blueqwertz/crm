@@ -1,265 +1,265 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "postgres"
-  url          = env("DATABASE_URL")
-  directUrl    = env("DIRECT_DATABASE_URL")
-  relationMode = "foreignKeys"
+    provider     = "postgres"
+    url          = env("DATABASE_URL")
+    // directUrl    = env("DIRECT_DATABASE_URL")
+    relationMode = "foreignKeys"
 }
 
 // #region NextAuth
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
-  @@index([userId])
+    @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+    @@index([userId])
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+    id            String    @id @default(cuid())
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    password      String?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
 
-  headId     String?
-  head       Head?   @relation("HeadMembers", fields: [headId], references: [id])
-  ownedHeads Head[]  @relation("HeadOwner")
+    headId     String?
+    head       Head?   @relation("HeadMembers", fields: [headId], references: [id])
+    ownedHeads Head[]  @relation("HeadOwner")
 
-  teams      Team[] @relation("TeamMembers")
-  ownedTeams Team[] @relation("TeamOwner")
+    teams      Team[] @relation("TeamMembers")
+    ownedTeams Team[] @relation("TeamOwner")
 
-  roleId Int  @default(1)
-  role   Role @relation(fields: [roleId], references: [id])
+    roleId Int  @default(1)
+    role   Role @relation(fields: [roleId], references: [id])
 
-  contact        Contact?
-  createdInvites HeadInvite[]   @relation("creator")
-  usedInvite     HeadInvite[]   @relation("user")
-  feedback       Feedback[]
-  notifications  Notification[]
+    contact        Contact?
+    createdInvites HeadInvite[]   @relation("creator")
+    usedInvite     HeadInvite[]   @relation("user")
+    feedback       Feedback[]
+    notifications  Notification[]
 
-  activityPolicy ActivityPolicy[]
-  companyPolicy  CompanyPolicy[]
-  contactPolicy  ContactPolicy[]
-  headPolicy     HeadPolicy[]
-  projectPolicy  ProjectPolicy[]
+    activityPolicy ActivityPolicy[]
+    companyPolicy  CompanyPolicy[]
+    contactPolicy  ContactPolicy[]
+    headPolicy     HeadPolicy[]
+    projectPolicy  ProjectPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
+    @@index([headId])
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+    identifier String
+    token      String   @unique
+    expires    DateTime
 
-  @@unique([identifier, token])
+    @@unique([identifier, token])
 }
 
 // #endregion
 
 // #region Application
 model Head {
-  id      String  @id @default(cuid())
-  ownerId String
-  owner   User    @relation("HeadOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  name    String
-  info    String?
-  image   String?
+    id      String  @id @default(cuid())
+    ownerId String
+    owner   User    @relation("HeadOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    name    String
+    info    String?
+    image   String?
 
-  members    User[]       @relation("HeadMembers")
-  activities Activity[]
-  companies  Company[]
-  contacts   Contact[]
-  projects   Project[]
-  teams      Team[]
-  invites    HeadInvite[]
+    members    User[]       @relation("HeadMembers")
+    activities Activity[]
+    companies  Company[]
+    contacts   Contact[]
+    projects   Project[]
+    teams      Team[]
+    invites    HeadInvite[]
 
-  activityPolicy ActivityPolicy[]
-  companyPolicy  CompanyPolicy[]
-  contactPolicy  ContactPolicy[]
-  headPolicy     HeadPolicy[]
-  projectPolicy  ProjectPolicy[]
+    activityPolicy ActivityPolicy[]
+    companyPolicy  CompanyPolicy[]
+    contactPolicy  ContactPolicy[]
+    headPolicy     HeadPolicy[]
+    projectPolicy  ProjectPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model HeadInvite {
-  id     String @id @unique @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade)
+    id     String @id @unique @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade)
 
-  creatorId String?
-  creator   User?   @relation("creator", fields: [creatorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    creatorId String?
+    creator   User?   @relation("creator", fields: [creatorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-  userId String?
-  user   User?     @relation("user", fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  usedAt DateTime?
+    userId String?
+    user   User?     @relation("user", fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    usedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
-  @@index([creatorId])
-  @@index([userId])
+    @@index([headId])
+    @@index([creatorId])
+    @@index([userId])
 }
 
 model Team {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  ownerId String
-  owner   User   @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    ownerId String
+    owner   User   @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  members User[] @relation("TeamMembers")
+    members User[] @relation("TeamMembers")
 
-  name  String
-  info  String?
-  image String?
+    name  String
+    info  String?
+    image String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Contact {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String? @unique
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    userId String? @unique
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-  name   String
-  email  String?
-  image  String?
-  info   String?
-  mobile String?
+    name   String
+    email  String?
+    image  String?
+    info   String?
+    mobile String?
 
-  activities Activity[]
-  companies  Company[]
-  projects   Project[]
+    activities Activity[]
+    companies  Company[]
+    projects   Project[]
 
-  outgoingRelations Contact[] @relation("ContactToContact")
-  incomingRelations Contact[] @relation("ContactToContact")
+    outgoingRelations Contact[] @relation("ContactToContact")
+    incomingRelations Contact[] @relation("ContactToContact")
 
-  policies ContactPolicy[]
+    policies ContactPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
+    @@index([headId])
 }
 
 model Company {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  name  String
-  image String?
-  info  String?
-  field String?
+    name  String
+    image String?
+    info  String?
+    field String?
 
-  activities Activity[]
-  contacts   Contact[]
-  projects   Project[]
+    activities Activity[]
+    contacts   Contact[]
+    projects   Project[]
 
-  policies CompanyPolicy[]
+    policies CompanyPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
+    @@index([headId])
 }
 
 enum ProjectStatus {
-  NotStarted
-  OnHold
-  InProgress
-  Completed
-  Cancelled
+    NotStarted
+    OnHold
+    InProgress
+    Completed
+    Cancelled
 }
 
 model Project {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  name   String
-  image  String?
-  info   String?
-  status ProjectStatus @default(NotStarted)
-  date   DateTime      @default(now())
+    name   String
+    image  String?
+    info   String?
+    status ProjectStatus @default(NotStarted)
+    date   DateTime      @default(now())
 
-  activities Activity[]
-  companies  Company[]
-  contacts   Contact[]
+    activities Activity[]
+    companies  Company[]
+    contacts   Contact[]
 
-  policies ProjectPolicy[]
+    policies ProjectPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
+    @@index([headId])
 }
 
 enum ActivityType {
-  Call
-  Meeting
-  Email
-  FollowUp
-  Task
+    Call
+    Meeting
+    Email
+    FollowUp
+    Task
 }
 
 model Activity {
-  id          String       @id @default(cuid())
-  headId      String
-  head        Head         @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  description String?
-  type        ActivityType @default(Call)
-  date        DateTime     @default(now())
+    id          String       @id @default(cuid())
+    headId      String
+    head        Head         @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    description String?
+    type        ActivityType @default(Call)
+    date        DateTime     @default(now())
 
-  companies Company[]
-  contacts  Contact[]
-  projects  Project[]
+    companies Company[]
+    contacts  Contact[]
+    projects  Project[]
 
-  policies ActivityPolicy[]
+    policies ActivityPolicy[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([headId])
+    @@index([headId])
 }
 
 // #endregion
@@ -267,141 +267,141 @@ model Activity {
 // #region Access Control
 
 model ActivityPolicy {
-  id     String @id @default(cuid())
-  headId String
-  Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  activityId String
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    activityId String
+    activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  canRead   Boolean @default(false)
-  canEdit   Boolean @default(false)
-  canDelete Boolean @default(false)
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
 
-  @@unique([headId, userId, activityId])
+    @@unique([headId, userId, activityId])
 }
 
 model CompanyPolicy {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  companyId String
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    companyId String
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  canRead   Boolean @default(false)
-  canEdit   Boolean @default(false)
-  canDelete Boolean @default(false)
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
 
-  @@unique([headId, userId, companyId])
+    @@unique([headId, userId, companyId])
 }
 
 model ContactPolicy {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  contactId String
-  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    contactId String
+    contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  canRead   Boolean @default(false)
-  canEdit   Boolean @default(false)
-  canDelete Boolean @default(false)
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
 
-  @@unique([headId, userId, contactId])
+    @@unique([headId, userId, contactId])
 }
 
 model HeadPolicy {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  canRead   Boolean @default(false)
-  canEdit   Boolean @default(false)
-  canDelete Boolean @default(false)
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
 
-  @@unique([userId, headId])
+    @@unique([userId, headId])
 }
 
 model ProjectPolicy {
-  id     String @id @default(cuid())
-  headId String
-  head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    id     String @id @default(cuid())
+    headId String
+    head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  canRead   Boolean @default(false)
-  canEdit   Boolean @default(false)
-  canDelete Boolean @default(false)
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
 
-  @@unique([headId, userId, projectId])
+    @@unique([headId, userId, projectId])
 }
 
 model Role {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  members     User[]
+    id          Int     @id @default(autoincrement())
+    name        String
+    description String?
+    members     User[]
 
-  // HEAD
-  canInviteUserHead Boolean @default(false)
-  canRemoveUserHead Boolean @default(false)
+    // HEAD
+    canInviteUserHead Boolean @default(false)
+    canRemoveUserHead Boolean @default(false)
 
-  // CONTACT
-  canCreateContact          Boolean @default(false)
-  canReadAllContact         Boolean @default(false)
-  canReadConnectedContact   Boolean @default(false)
-  canEditAllContact         Boolean @default(false)
-  canEditConnectedContact   Boolean @default(false)
-  canDeleteAllContact       Boolean @default(false)
-  canDeleteConnectedContact Boolean @default(false)
-  canLinkAllContact         Boolean @default(false)
-  canLinkConnectedContact   Boolean @default(false)
-  canUnlinkAllContact       Boolean @default(false)
-  canUnlinkConnectedContact Boolean @default(false)
+    // CONTACT
+    canCreateContact          Boolean @default(false)
+    canReadAllContact         Boolean @default(false)
+    canReadConnectedContact   Boolean @default(false)
+    canEditAllContact         Boolean @default(false)
+    canEditConnectedContact   Boolean @default(false)
+    canDeleteAllContact       Boolean @default(false)
+    canDeleteConnectedContact Boolean @default(false)
+    canLinkAllContact         Boolean @default(false)
+    canLinkConnectedContact   Boolean @default(false)
+    canUnlinkAllContact       Boolean @default(false)
+    canUnlinkConnectedContact Boolean @default(false)
 
-  // COMPANY
-  canCreateCompany          Boolean @default(false)
-  canReadAllCompany         Boolean @default(false)
-  canReadConnectedCompany   Boolean @default(false)
-  canEditAllCompany         Boolean @default(false)
-  canEditConnectedCompany   Boolean @default(false)
-  canDeleteAllCompany       Boolean @default(false)
-  canDeleteConnectedCompany Boolean @default(false)
+    // COMPANY
+    canCreateCompany          Boolean @default(false)
+    canReadAllCompany         Boolean @default(false)
+    canReadConnectedCompany   Boolean @default(false)
+    canEditAllCompany         Boolean @default(false)
+    canEditConnectedCompany   Boolean @default(false)
+    canDeleteAllCompany       Boolean @default(false)
+    canDeleteConnectedCompany Boolean @default(false)
 
-  // PROJECT
-  canCreateProject          Boolean @default(false)
-  canReadAllProject         Boolean @default(false)
-  canReadConnectedProject   Boolean @default(false)
-  canEditAllProject         Boolean @default(false)
-  canEditConnectedProject   Boolean @default(false)
-  canDeleteAllProject       Boolean @default(false)
-  canDeleteConnectedProject Boolean @default(false)
+    // PROJECT
+    canCreateProject          Boolean @default(false)
+    canReadAllProject         Boolean @default(false)
+    canReadConnectedProject   Boolean @default(false)
+    canEditAllProject         Boolean @default(false)
+    canEditConnectedProject   Boolean @default(false)
+    canDeleteAllProject       Boolean @default(false)
+    canDeleteConnectedProject Boolean @default(false)
 
-  // ACTIVITY
-  canCreateActivity          Boolean @default(false)
-  canReadAllActivity         Boolean @default(false)
-  canReadConnectedActivity   Boolean @default(false)
-  canEditAllActivity         Boolean @default(false)
-  canEditConnectedActivity   Boolean @default(false)
-  canDeleteAllActivity       Boolean @default(false)
-  canDeleteConnectedActivity Boolean @default(false)
+    // ACTIVITY
+    canCreateActivity          Boolean @default(false)
+    canReadAllActivity         Boolean @default(false)
+    canReadConnectedActivity   Boolean @default(false)
+    canEditAllActivity         Boolean @default(false)
+    canEditConnectedActivity   Boolean @default(false)
+    canDeleteAllActivity       Boolean @default(false)
+    canDeleteConnectedActivity Boolean @default(false)
 }
 
 // #endregion
@@ -409,51 +409,51 @@ model Role {
 // #region Additional
 
 model Feedback {
-  id String @id @default(cuid())
+    id String @id @default(cuid())
 
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-  message String
-  rating  Int     @default(0)
-  page    String?
+    message String
+    rating  Int     @default(0)
+    page    String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  @@index([userId])
+    @@index([userId])
 }
 
 enum NotificationPriority {
-  MIN
-  LOW
-  DEFAULT
-  HIGH
-  MAX
+    MIN
+    LOW
+    DEFAULT
+    HIGH
+    MAX
 }
 
 enum NotificationType {
-  DEBUG
-  INFO
-  SUCCESS
-  WARNING
-  ERROR
+    DEBUG
+    INFO
+    SUCCESS
+    WARNING
+    ERROR
 }
 
 model Notification {
-  id        String               @id @default(cuid())
-  userId    String
-  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdAt DateTime             @default(now())
-  message   String
-  priority  NotificationPriority @default(DEFAULT)
-  type      NotificationType     @default(INFO)
-  read      Boolean              @default(false)
-  archived  Boolean              @default(false)
-  visible   Boolean              @default(true)
-  href      String               @default("")
+    id        String               @id @default(cuid())
+    userId    String
+    user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime             @default(now())
+    message   String
+    priority  NotificationPriority @default(DEFAULT)
+    type      NotificationType     @default(INFO)
+    read      Boolean              @default(false)
+    archived  Boolean              @default(false)
+    visible   Boolean              @default(true)
+    href      String               @default("")
 
-  @@index([userId])
+    @@index([userId])
 }
 
 // #endregion

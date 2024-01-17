@@ -3,11 +3,10 @@ import { api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ProjectIndividualPage } from "~/components/individual-page/project-indiviual-page";
 import { Layout } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { statusMaps } from "~/utils/maps";
-import { EditProject } from "~/components/individual-page/edit-button/edit-project";
+import { EditProject } from "~/components/edit-button/edit-project";
 import { useState } from "react";
 import { Project, ProjectPolicy, ProjectStatus } from "@prisma/client";
 import { CanDoOperation } from "~/utils/policyQuery";
@@ -18,9 +17,14 @@ import {
   SelectItem,
   SelectTrigger,
 } from "~/components/ui/select";
+import React from "react";
+import { RouterOutputs } from "~/utils/api";
+import { ActivitiesTable } from "~/components/tables/activities-table";
+import { ContactsTable } from "~/components/tables/contacts-table";
+import { CompanyTable } from "~/components/tables/company-table";
 
 const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: projectData, isLoading } = api.project.get.useQuery({
+  const { data: project, isLoading } = api.project.get.useQuery({
     id,
     include: {
       activities: true,
@@ -29,8 +33,6 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
       policies: true,
     },
   });
-
-  const { data: sessionData } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -45,43 +47,46 @@ const ProjectPage: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <Layout>
         <div className="flex flex-grow flex-col p-5">
-          {/* HEADER */}
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                {!projectData && (
-                  <>
-                    <Skeleton className="h-7 text-transparent w-32" />
-                    <Skeleton className="h-6 text-transparent w-24" />
-                  </>
-                )}
-                {!!projectData && (
-                  <h1 className="text-xl font-bold">{projectData.name}</h1>
-                )}
-                {!!projectData?.status && (
-                  <ProjectStatusEdit project={projectData} />
-                )}
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {!!projectData?.info?.length ? (
-                  projectData?.info
-                ) : (
-                  <>View contact details.</>
-                )}
-              </span>
-            </div>
-            {CanDoOperation({
-              session: sessionData,
-              policies: projectData?.policies,
-              entity: "project",
-              operation: "edit",
-            }) && <EditProject project={projectData ?? null} />}
-          </div>
-          <Breadcrumbs lastItem={projectData?.name ?? "..."} />
-          <ProjectIndividualPage projectId={id} project={projectData ?? null} />
+          <ProjectHeader project={project} />
+          <Breadcrumbs lastItem={project?.name ?? "..."} />
+          <ProjectIndividualPage projectId={id} project={project ?? null} />
         </div>
       </Layout>
     </>
+  );
+};
+
+const ProjectHeader = ({
+  project,
+}: {
+  project: RouterOutputs["project"]["get"] | undefined;
+}) => {
+  const { data: session } = useSession();
+
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          {!project && (
+            <>
+              <Skeleton className="h-7 text-transparent w-32" />
+              <Skeleton className="h-6 text-transparent w-24" />
+            </>
+          )}
+          {!!project && <h1 className="text-xl font-bold">{project.name}</h1>}
+          {!!project?.status && <ProjectStatusEdit project={project} />}
+        </div>
+        <span className="text-sm text-muted-foreground">
+          {!!project?.info?.length ? project?.info : <>View contact details.</>}
+        </span>
+      </div>
+      {CanDoOperation({
+        session,
+        policies: project?.policies,
+        entity: "project",
+        operation: "edit",
+      }) && <EditProject project={project ?? null} />}
+    </div>
   );
 };
 
@@ -90,7 +95,7 @@ const ProjectStatusEdit = ({
 }: {
   project: Project & { policies: ProjectPolicy[] };
 }) => {
-  const { data: sessionData } = useSession();
+  const { data: session } = useSession();
 
   const ctx = api.useUtils();
 
@@ -112,7 +117,7 @@ const ProjectStatusEdit = ({
   return (
     <>
       {CanDoOperation({
-        session: sessionData,
+        session,
         policies: project.policies,
         entity: "project",
         operation: "edit",
@@ -155,6 +160,48 @@ const ProjectStatusEdit = ({
         </>
       )}
     </>
+  );
+};
+
+const ProjectIndividualPage = ({
+  projectId,
+  project,
+}: {
+  projectId: string;
+  project: RouterOutputs["project"]["get"];
+}) => {
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-6">
+      <div className="flex flex-grow flex-col gap-3">
+        <span className="font-semibold">Activities</span>
+        <div className="w-full rounded-md border grow flex flex-col">
+          <ActivitiesTable
+            activityData={project?.activities ?? []}
+            pageData={{ type: "Project", id: projectId }}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-grow flex-col gap-3">
+          <span className="font-semibold">Contacts</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ContactsTable
+              pageData={{ type: "Project", id: projectId }}
+              contactData={project?.contacts ?? []}
+            />
+          </div>
+        </div>
+        <div className="flex flex-grow flex-col gap-3">
+          <span className="font-semibold">Companies</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <CompanyTable
+              pageData={{ type: "Project", id: projectId }}
+              companyData={project?.companies ?? []}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

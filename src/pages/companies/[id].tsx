@@ -1,19 +1,23 @@
 import Head from "next/head";
 
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { CompanyIndividualPage } from "~/components/individual-page/company-individual-page";
 import { Layout } from "~/components/layout";
-import { EditCompany } from "~/components/individual-page/edit-button/edit-company";
+import { EditCompany } from "~/components/edit-button/edit-company";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import initials from "initials";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { useSession } from "next-auth/react";
+import React from "react";
+import { Activity, Contact, Project } from "@prisma/client";
+import { ContactsTable } from "~/components/tables/contacts-table";
+import { ProjectsTable } from "~/components/tables/projects-table";
+import { ActivitiesTable } from "~/components/tables/activities-table";
 
 const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: companyData, isLoading } = api.company.get.useQuery({
+  const { data: company, isLoading } = api.company.get.useQuery({
     id,
     include: {
       contacts: true,
@@ -21,8 +25,6 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
       activities: true,
     },
   });
-
-  const { data: session } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -37,45 +39,142 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <Layout>
         <div className="flex flex-grow flex-col p-5">
-          {/* HEADER */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-12 w-12 text-lg">
-                <AvatarImage src={companyData?.image ?? ""} alt="" />
-                <AvatarFallback>
-                  {initials(companyData?.name ?? "").toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                {!companyData && <Skeleton className="h-7 text-transparent" />}
-                {!!companyData && (
-                  <h1 className="text-xl font-bold">{companyData.name}</h1>
-                )}
-                <span className="text-sm text-muted-foreground">
-                  {!!companyData?.info?.length || companyData?.field?.length ? (
-                    <>
-                      {companyData.info}{" "}
-                      {companyData.info && companyData.field && <>&#x2022;</>}{" "}
-                      {companyData.field}
-                    </>
-                  ) : (
-                    <>View contact details.</>
-                  )}
-                </span>
-              </div>
-            </div>
-            {CanDoOperation({
-              session,
-              entity: "company",
-              operation: "edit",
-              policies: companyData?.policies,
-            }) && <EditCompany company={companyData ?? null} />}
-          </div>
-          <Breadcrumbs lastItem={companyData?.name ?? id} />
-          <CompanyIndividualPage companyId={id} company={companyData ?? null} />
+          <CompanyHeader company={company} />
+          <Breadcrumbs lastItem={company?.name ?? id} />
+          <CompanyIndividualPage companyId={id} company={company ?? null} />
         </div>
       </Layout>
     </>
+  );
+};
+
+const CompanyHeader = ({
+  company,
+}: {
+  company: RouterOutputs["company"]["get"] | undefined;
+}) => {
+  const { data: session } = useSession();
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-12 w-12 text-lg">
+            <AvatarImage src={company?.image ?? ""} alt="" />
+            <AvatarFallback>
+              {initials(company?.name ?? "").toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            {!company && <Skeleton className="h-7 text-transparent" />}
+            {!!company && <h1 className="text-xl font-bold">{company.name}</h1>}
+            <span className="text-sm text-muted-foreground">
+              {!!company?.info?.length || company?.field?.length ? (
+                <>
+                  {company.info}{" "}
+                  {company.info && company.field && <>&#x2022;</>}{" "}
+                  {company.field}
+                </>
+              ) : (
+                <>View contact details.</>
+              )}
+            </span>
+          </div>
+        </div>
+        {CanDoOperation({
+          session,
+          entity: "company",
+          operation: "edit",
+          policies: company?.policies,
+        }) && <EditCompany company={company ?? null} />}
+      </div>
+    </>
+  );
+};
+
+const CompanyIndividualPage: React.FC<{
+  companyId: string;
+  company: RouterOutputs["company"]["get"];
+}> = ({ companyId, company }) => {
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-6">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Contacts</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ContactsTable
+              pageData={{ type: "Company", id: companyId }}
+              contactData={company?.contacts ?? []}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Projects</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ProjectsTable
+              pageData={{ type: "Company", id: companyId }}
+              projectData={company?.projects ?? []}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-3">
+        <span className="font-semibold">Activities</span>
+        <div className="flex w-full grow flex-col rounded-md border">
+          <ActivitiesTable
+            activityData={[
+              ...(company?.activities ?? []),
+              ...(company?.projects?.flatMap(
+                (
+                  project: Project & {
+                    activities?: Activity[];
+                    _count?: {
+                      contacts: number;
+                      companies: number;
+                    };
+                  }
+                ) =>
+                  project.activities?.map((activity) => ({
+                    ...activity,
+                    project: {
+                      id: project.id,
+                      name: project.name,
+                      createdAt: project.createdAt,
+                      count: {
+                        contacts: project?._count?.contacts,
+                        companies: project?._count?.companies,
+                      },
+                    },
+                  })) ?? []
+              ) ?? []),
+              ...(company?.contacts?.flatMap(
+                (
+                  contact: Contact & {
+                    activities?: Activity[];
+                    _count?: {
+                      companies: number;
+                      projects: number;
+                    };
+                  }
+                ) =>
+                  contact.activities?.map((activity) => ({
+                    ...activity,
+                    contact: {
+                      id: contact.id,
+                      name: contact.name,
+                      createdAt: contact.createdAt,
+                      count: {
+                        companies: contact?._count?.companies,
+                        projects: contact?._count?.projects,
+                      },
+                    },
+                  })) ?? []
+              ) ?? []),
+            ]}
+            pageData={{ type: "Company", id: companyId }}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 

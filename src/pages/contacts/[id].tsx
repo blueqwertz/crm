@@ -1,16 +1,20 @@
 import Head from "next/head";
-import { api } from "~/utils/api";
+import { RouterOutputs, api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ContactIndividualPage } from "~/components/individual-page/contact-individual-page";
 import { Layout } from "~/components/layout";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import initials from "initials";
-import { EditContact } from "~/components/individual-page/edit-button/edit-contact";
+import { EditContact } from "~/components/edit-button/edit-contact";
 import { CanDoOperation } from "~/utils/policyQuery";
-import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import React from "react";
+import { Activity, Company, Contact, Project } from "@prisma/client";
+import { ProjectsTable } from "~/components/tables/projects-table";
+import { CompanyTable } from "~/components/tables/company-table";
+import { RelationsTable } from "~/components/tables/relations-table";
+import { ActivitiesTable } from "~/components/tables/activities-table";
 
 const ContactPage: NextPage<{ id: string }> = ({ id }) => {
   const { data: contact, isLoading } = api.contact.get.useQuery({
@@ -23,8 +27,6 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
       policies: true,
     },
   });
-
-  const { data: session } = useSession();
 
   if (isLoading) {
     console.log("is loading!!!");
@@ -39,43 +41,157 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
       </Head>
       <Layout>
         <div className="flex flex-grow flex-col p-5">
-          {/* HEADER */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-12 w-12 text-lg">
-                <AvatarImage
-                  src={contact?.image ?? contact?.user?.image ?? ""}
-                  alt=""
-                />
-                <AvatarFallback>
-                  {initials(contact?.name ?? "").toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                {!contact && <Skeleton className="h-7 text-transparent" />}
-                {!!contact && (
-                  <h1 className="text-xl font-bold">{contact.name}</h1>
-                )}
-                <span className="text-sm text-muted-foreground">
-                  {!!contact?.info?.length ? (
-                    contact?.info
-                  ) : (
-                    <>View contact details.</>
-                  )}
-                </span>
-              </div>
-            </div>
-            {CanDoOperation({
-              session: session,
-              entity: "contact",
-              operation: "edit",
-              policies: contact?.policies,
-            }) && <EditContact contact={contact ?? null} />}
-          </div>
+          <ContactHeader contact={contact} />
           <Breadcrumbs lastItem={contact?.name} />
           <ContactIndividualPage contactId={id} contact={contact ?? null} />
         </div>
       </Layout>
+    </>
+  );
+};
+
+const ContactHeader = ({
+  contact,
+}: {
+  contact: RouterOutputs["contact"]["get"] | undefined;
+}) => {
+  const { data: session } = useSession();
+
+  return (
+    <>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Avatar className="h-12 w-12 text-lg">
+            <AvatarImage
+              src={contact?.image ?? contact?.user?.image ?? ""}
+              alt=""
+            />
+            <AvatarFallback>
+              {initials(contact?.name ?? "").toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            {!contact && <Skeleton className="h-7 text-transparent" />}
+            {!!contact && <h1 className="text-xl font-bold">{contact.name}</h1>}
+            <span className="text-sm text-muted-foreground">
+              {!!contact?.info?.length ? (
+                contact?.info
+              ) : (
+                <>View contact details.</>
+              )}
+            </span>
+          </div>
+        </div>
+        {CanDoOperation({
+          session: session,
+          entity: "contact",
+          operation: "edit",
+          policies: contact?.policies,
+        }) && <EditContact contact={contact ?? null} />}
+      </div>
+    </>
+  );
+};
+
+const ContactIndividualPage = ({
+  contactId,
+  contact,
+}: {
+  contactId: string;
+  contact: RouterOutputs["contact"]["get"];
+}) => {
+  return (
+    <>
+      <div className="mt-3 grid grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Projects</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <ProjectsTable
+                pageData={{ type: "Contact", id: contactId }}
+                projectData={contact?.projects ?? []}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Companies</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <CompanyTable
+                pageData={{ type: "Contact", id: contactId }}
+                companyData={contact?.companies ?? []}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Relations</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <RelationsTable
+                pageData={{ type: "Contact", id: contactId }}
+                contact={contact as Contact}
+                outgoingRelations={contact?.outgoingRelations ?? []}
+                incomingRelations={contact?.incomingRelations ?? []}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-grow flex-col gap-3">
+          <span className="font-semibold">Activities</span>
+          <div className="flex w-full grow flex-col rounded-md border">
+            <ActivitiesTable
+              activityData={[
+                ...(contact?.activities ?? []),
+                ...(contact?.projects?.flatMap(
+                  (
+                    project: Project & {
+                      activities?: Activity[];
+                      _count?: {
+                        contacts: number;
+                        companies: number;
+                      };
+                    }
+                  ) =>
+                    project.activities?.map((activity) => ({
+                      ...activity,
+                      project: {
+                        id: project.id,
+                        name: project.name,
+                        createdAt: project.createdAt,
+                        count: {
+                          contacts: project?._count?.contacts,
+                          companies: project?._count?.companies,
+                        },
+                      },
+                    })) ?? []
+                ) ?? []),
+                ...(contact?.companies?.flatMap(
+                  (
+                    company: Company & {
+                      activities?: Activity[];
+                      _count?: {
+                        contacts: number;
+                        projects: number;
+                      };
+                    }
+                  ) =>
+                    company.activities?.map((activity) => ({
+                      ...activity,
+                      company: {
+                        id: company.id,
+                        name: company.name,
+                        createdAt: company.createdAt,
+                        count: {
+                          contacts: company?._count?.contacts,
+                          companies: company?._count?.projects,
+                        },
+                      },
+                    })) ?? []
+                ) ?? []),
+              ]}
+              pageData={{ type: "Contact", id: contactId }}
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 };
