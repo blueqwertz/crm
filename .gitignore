@@ -45,6 +45,5 @@ yarn-error.log*
 .env*
 .flaskenv*
 !.env.project
-!.env.vault
 
 .VSCodeCounter/
