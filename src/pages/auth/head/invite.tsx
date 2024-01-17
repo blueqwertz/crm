@@ -1,4 +1,4 @@
-import { Button } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { api } from "~/utils/api";
 import { useEffect, useState } from "react";
@@ -7,6 +7,8 @@ import Head from "next/head";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { cn } from "~/utils/cn";
 
 export default function AuthenticationPage() {
   const [checkLoading, setCheckLoading] = useState(false);
@@ -80,10 +82,11 @@ export default function AuthenticationPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Join a team to enter the CRM
+                Join an organization to enter the CRM
               </h1>
               <p className="text-sm text-muted-foreground">
-                Enter the invite code provided to you by the team's admin
+                Enter the invite code provided to you by the organization's
+                admin
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -119,6 +122,12 @@ export default function AuthenticationPage() {
                 Enter
               </Button>
             </div>
+            <Link
+              href={"/auth/head/create"}
+              className={cn(buttonVariants({ variant: "link" }))}
+            >
+              Create your own
+            </Link>
             <Button
               variant={"link"}
               className="text-muted-foreground"

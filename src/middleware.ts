@@ -15,8 +15,8 @@ export default withAuth(
       req.nextUrl.pathname.startsWith(value)
     );
 
-    const isInvitePage = ["/auth/invite"].find((value) =>
-      req.nextUrl.pathname.startsWith(value)
+    const isAfterLoginPage = ["/auth/head/invite", "/auth/head/create"].find(
+      (value) => req.nextUrl.pathname.startsWith(value)
     );
 
     // const requiresAuthPage = ["/dashboard"].find((value) =>
@@ -31,11 +31,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/auth/login", req.url));
     }
 
-    if (isAuth && !hasHead && !isInvitePage && !isAuthPage) {
-      return NextResponse.redirect(new URL("/auth/invite", req.url));
+    if (isAuth && !hasHead && !isAfterLoginPage && !isAuthPage) {
+      return NextResponse.redirect(new URL("/auth/head/invite", req.url));
     }
 
-    if (hasHead && isInvitePage) {
+    if (hasHead && isAfterLoginPage) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
