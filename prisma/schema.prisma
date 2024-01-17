@@ -110,6 +110,11 @@ model Head {
     headPolicy     HeadPolicy[]
     projectPolicy  ProjectPolicy[]
 
+    teamActivityPolicy TeamActivityPolicy[]
+    teamCompanyPolicy  TeamCompanyPolicy[]
+    teamConactPolicy   TeamContactPolicy[]
+    teamProjectPolicy  TeamProjectPolicy[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -148,6 +153,11 @@ model Team {
     info  String?
     image String?
 
+    teamActivityPolicy TeamActivityPolicy[]
+    teamCompanyPolicy  TeamCompanyPolicy[]
+    teamConactPolicy   TeamContactPolicy[]
+    teamProjectPolicy  TeamProjectPolicy[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
@@ -173,7 +183,8 @@ model Contact {
     outgoingRelations Contact[] @relation("ContactToContact")
     incomingRelations Contact[] @relation("ContactToContact")
 
-    policies ContactPolicy[]
+    policies     ContactPolicy[]
+    teamPolicies TeamContactPolicy[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -195,7 +206,8 @@ model Company {
     contacts   Contact[]
     projects   Project[]
 
-    policies CompanyPolicy[]
+    policies     CompanyPolicy[]
+    teamPolicies TeamCompanyPolicy[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -226,7 +238,8 @@ model Project {
     companies  Company[]
     contacts   Contact[]
 
-    policies ProjectPolicy[]
+    policies     ProjectPolicy[]
+    teamPolicies TeamProjectPolicy[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -254,7 +267,8 @@ model Activity {
     contacts  Contact[]
     projects  Project[]
 
-    policies ActivityPolicy[]
+    policies     ActivityPolicy[]
+    teamPolicies TeamActivityPolicy[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -266,6 +280,7 @@ model Activity {
 
 // #region Access Control
 
+// USER
 model ActivityPolicy {
     id     String @id @default(cuid())
     headId String
@@ -402,6 +417,79 @@ model Role {
     canEditConnectedActivity   Boolean @default(false)
     canDeleteAllActivity       Boolean @default(false)
     canDeleteConnectedActivity Boolean @default(false)
+}
+
+// TEAM
+model TeamActivityPolicy {
+    id     String @id @default(cuid())
+    headId String
+    Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    activityId String
+    activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    teamId String
+    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
+
+    @@unique([headId, teamId, activityId])
+}
+
+model TeamCompanyPolicy {
+    id     String @id @default(cuid())
+    headId String
+    Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    companyId String
+    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    teamId String
+    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
+
+    @@unique([headId, teamId, companyId])
+}
+
+model TeamContactPolicy {
+    id     String @id @default(cuid())
+    headId String
+    Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    contactId String
+    contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    teamId String
+    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
+
+    @@unique([headId, teamId, contactId])
+}
+
+model TeamProjectPolicy {
+    id     String @id @default(cuid())
+    headId String
+    Head   Head   @relation(fields: [headId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    teamId String
+    team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+    canRead   Boolean @default(false)
+    canEdit   Boolean @default(false)
+    canDelete Boolean @default(false)
+
+    @@unique([headId, teamId, projectId])
 }
 
 // #endregion

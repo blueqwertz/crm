@@ -107,8 +107,24 @@ export const PolicyQuery = ({
           ]
         : []),
       {
+        teamPolicies: {
+          some: {
+            headId: session.user.head.id,
+            team: {
+              members: {
+                some: {
+                  id: session.user.id,
+                },
+              },
+            },
+            ...rolePolicyQuery.policy[operation],
+          },
+        },
+      },
+      {
         policies: {
           some: {
+            headId: session.user.head.id,
             userId: session.user.id,
             ...rolePolicyQuery.policy[operation],
           },
