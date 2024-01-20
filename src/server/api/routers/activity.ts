@@ -1,7 +1,7 @@
 import { ActivityType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
+import { PolicyQuery } from "~/utils/policyQuery";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
@@ -17,7 +17,7 @@ export const activityRouer = createTRPCRouter({
           type: z.nativeEnum(ActivityType).optional(),
           date: z.date().optional(),
         })
-        .superRefine((values, ctx) => {
+        .superRefine((values) => {
           if (
             !values?.contactIds?.length &&
             !values?.companyIds?.length &&

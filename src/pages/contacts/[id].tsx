@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { RouterOutputs, api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -10,7 +10,7 @@ import { EditContact } from "~/components/edit-button/edit-contact";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { Activity, Company, Contact, Project } from "@prisma/client";
+import type { Activity, Company, Contact, Project } from "@prisma/client";
 import { ProjectsTable } from "~/components/tables/projects-table";
 import { CompanyTable } from "~/components/tables/company-table";
 import { RelationsTable } from "~/components/tables/relations-table";
@@ -26,6 +26,7 @@ const ContactPage: NextPage<{ id: string }> = ({ id }) => {
       relations: true,
       policies: true,
     },
+    operation: "read",
   });
 
   if (isLoading) {
@@ -87,7 +88,8 @@ const ContactHeader = ({
           entity: "contact",
           operation: "edit",
           policies: contact?.policies,
-        }) && <EditContact contact={contact ?? null} />}
+        }) &&
+          !!contact && <EditContact contact={contact} />}
       </div>
     </>
   );
@@ -103,37 +105,6 @@ const ContactIndividualPage = ({
   return (
     <>
       <div className="mt-3 grid grid-cols-2 gap-6">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <span className="font-semibold">Projects</span>
-            <div className="w-full overflow-hidden rounded-md border">
-              <ProjectsTable
-                pageData={{ type: "Contact", id: contactId }}
-                projectData={contact?.projects ?? []}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <span className="font-semibold">Companies</span>
-            <div className="w-full overflow-hidden rounded-md border">
-              <CompanyTable
-                pageData={{ type: "Contact", id: contactId }}
-                companyData={contact?.companies ?? []}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            <span className="font-semibold">Relations</span>
-            <div className="w-full overflow-hidden rounded-md border">
-              <RelationsTable
-                pageData={{ type: "Contact", id: contactId }}
-                contact={contact as Contact}
-                outgoingRelations={contact?.outgoingRelations ?? []}
-                incomingRelations={contact?.incomingRelations ?? []}
-              />
-            </div>
-          </div>
-        </div>
         <div className="flex flex-grow flex-col gap-3">
           <span className="font-semibold">Activities</span>
           <div className="flex w-full grow flex-col rounded-md border">
@@ -189,6 +160,37 @@ const ContactIndividualPage = ({
               ]}
               pageData={{ type: "Contact", id: contactId }}
             />
+          </div>
+        </div>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Projects</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <ProjectsTable
+                pageData={{ type: "Contact", id: contactId }}
+                projectData={contact?.projects ?? []}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Companies</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <CompanyTable
+                pageData={{ type: "Contact", id: contactId }}
+                companyData={contact?.companies ?? []}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <span className="font-semibold">Relations</span>
+            <div className="w-full overflow-hidden rounded-md border">
+              <RelationsTable
+                pageData={{ type: "Contact", id: contactId }}
+                contact={contact as Contact}
+                outgoingRelations={contact?.outgoingRelations ?? []}
+                incomingRelations={contact?.incomingRelations ?? []}
+              />
+            </div>
           </div>
         </div>
       </div>

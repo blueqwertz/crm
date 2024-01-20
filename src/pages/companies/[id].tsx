@@ -1,6 +1,5 @@
 import Head from "next/head";
-
-import { RouterOutputs, api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { Breadcrumbs } from "~/components/breadcrumbs";
 import type { GetStaticProps, NextPage } from "next";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -11,7 +10,7 @@ import initials from "initials";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { Activity, Contact, Project } from "@prisma/client";
+import type { Activity, Contact, Project } from "@prisma/client";
 import { ContactsTable } from "~/components/tables/contacts-table";
 import { ProjectsTable } from "~/components/tables/projects-table";
 import { ActivitiesTable } from "~/components/tables/activities-table";
@@ -85,7 +84,8 @@ const CompanyHeader = ({
           entity: "company",
           operation: "edit",
           policies: company?.policies,
-        }) && <EditCompany company={company ?? null} />}
+        }) &&
+          !!company && <EditCompany company={company} />}
       </div>
     </>
   );
@@ -97,26 +97,6 @@ const CompanyIndividualPage: React.FC<{
 }> = ({ companyId, company }) => {
   return (
     <div className="mt-3 grid grid-cols-2 gap-6">
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <span className="font-semibold">Contacts</span>
-          <div className="w-full overflow-hidden rounded-md border">
-            <ContactsTable
-              pageData={{ type: "Company", id: companyId }}
-              contactData={company?.contacts ?? []}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-3">
-          <span className="font-semibold">Projects</span>
-          <div className="w-full overflow-hidden rounded-md border">
-            <ProjectsTable
-              pageData={{ type: "Company", id: companyId }}
-              projectData={company?.projects ?? []}
-            />
-          </div>
-        </div>
-      </div>
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Activities</span>
         <div className="flex w-full grow flex-col rounded-md border">
@@ -172,6 +152,26 @@ const CompanyIndividualPage: React.FC<{
             ]}
             pageData={{ type: "Company", id: companyId }}
           />
+        </div>
+      </div>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Contacts</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ContactsTable
+              pageData={{ type: "Company", id: companyId }}
+              contactData={company?.contacts ?? []}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-3">
+          <span className="font-semibold">Projects</span>
+          <div className="w-full overflow-hidden rounded-md border">
+            <ProjectsTable
+              pageData={{ type: "Company", id: companyId }}
+              projectData={company?.projects ?? []}
+            />
+          </div>
         </div>
       </div>
     </div>

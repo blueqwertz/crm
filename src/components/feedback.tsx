@@ -1,4 +1,4 @@
-import { MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { api } from "~/utils/api";
@@ -9,12 +9,21 @@ export const Feedback = () => {
   const [open, setOpen] = useState(false);
 
   const [feedbackInput, setFeedbackInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const pathname = usePathname();
 
   const { mutate: submitFeedback } = api.feedback.submitFeedback.useMutation({
     onSuccess: () => {
       setOpen(false);
+      setFeedbackInput("");
+      setLoading(false);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onError: () => {
+      setLoading(false);
     },
   });
   return (
@@ -45,26 +54,26 @@ export const Feedback = () => {
               onChange={(e) => {
                 setFeedbackInput(e.target.value);
               }}
-              placeholder="Write your thoughts on this page..."
+              placeholder="Write your feedback..."
               className="bg-muted/30 outline-none text-sm rounded-md focus-visible:ring p-2 h-40 resize-none border"
             ></textarea>
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant={"outline"} size={"sm"}>
-                Cancel
-              </Button>
-              <Button
-                size={"sm"}
-                disabled={!feedbackInput.length}
-                onClick={() => {
-                  submitFeedback({
-                    message: feedbackInput,
-                    page: pathname,
-                  });
-                }}
-              >
-                Send feedback
-              </Button>
-            </div>
+            <Button
+              size={"sm"}
+              disabled={!feedbackInput.length || loading}
+              onClick={() => {
+                submitFeedback({
+                  message: feedbackInput,
+                  page: pathname,
+                });
+              }}
+            >
+              {loading && (
+                <div>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                </div>
+              )}
+              Send feedback
+            </Button>
           </div>
         </PopoverContent>
       </Popover>

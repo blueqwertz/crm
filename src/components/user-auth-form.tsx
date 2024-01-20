@@ -8,13 +8,15 @@ import { Button } from "./ui/button";
 import { Github, Loader2, Mailbox, Send } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { api } from "~/utils/api";
+import Image from "next/image";
+import { OAuthButton } from "./oauth-button";
 
 export function UserAuthForm({
   mode = "login",
 }: {
   mode?: "login" | "signup";
 }) {
-  const [githubLoading, setGithubLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [emailLoading, setEmailLoading] = React.useState<boolean>(false);
 
   const [username, setUsername] = React.useState<string>("");
@@ -35,22 +37,20 @@ export function UserAuthForm({
 
   return (
     <div className={cn("grid gap-6")}>
-      <Button
-        variant="outline"
-        type="button"
-        disabled={githubLoading || emailLoading}
-        onClick={() => {
-          void signIn("github", { callbackUrl: "/" });
-          setGithubLoading(true);
-        }}
-      >
-        {githubLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          <Github className="mr-2 h-4 w-4" />
-        )}
-        Github
-      </Button>
+      <div className="grid gap-2.5">
+        <OAuthButton
+          provider="google"
+          displayName="Google"
+          loading={loading}
+          setLoading={setLoading}
+        />
+        <OAuthButton
+          provider="github"
+          displayName="GitHub"
+          loading={loading}
+          setLoading={setLoading}
+        />
+      </div>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -114,7 +114,7 @@ export function UserAuthForm({
         </div>
         <Button
           disabled={
-            !(email.length && password.length) || emailLoading || githubLoading
+            !(email.length && password.length) || emailLoading || loading
           }
           onClick={() => {
             if (mode == "login") {

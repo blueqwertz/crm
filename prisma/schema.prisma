@@ -506,6 +506,8 @@ model Feedback {
     rating  Int     @default(0)
     page    String?
 
+    seenAt DateTime?
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Brush } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
@@ -23,8 +23,8 @@ import {
   FormMessage,
 } from "../ui/form";
 import { api } from "~/utils/api";
-import { RouterOutputs } from "~/utils/api";
-import { Project, ProjectStatus } from "@prisma/client";
+import type { RouterOutputs } from "~/utils/api";
+import { type Project, ProjectStatus } from "@prisma/client";
 import {
   Select,
   SelectContent,
@@ -33,7 +33,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { statusMaps } from "~/utils/maps";
-import { set } from "date-fns";
 
 export const EditProject: React.FC<{
   children?: ReactNode;

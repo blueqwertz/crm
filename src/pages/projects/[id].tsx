@@ -7,18 +7,22 @@ import { Layout } from "~/components/layout";
 import { Badge } from "~/components/ui/badge";
 import { statusMaps } from "~/utils/maps";
 import { EditProject } from "~/components/edit-button/edit-project";
-import { useState } from "react";
-import { Project, ProjectPolicy, ProjectStatus } from "@prisma/client";
+// import { useEffect, useState } from "react";
+import {
+  type Project,
+  type ProjectPolicy,
+  // ProjectStatus,
+} from "@prisma/client";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { useSession } from "next-auth/react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "~/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+// } from "~/components/ui/select";
 import React from "react";
-import { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import { ActivitiesTable } from "~/components/tables/activities-table";
 import { ContactsTable } from "~/components/tables/contacts-table";
 import { CompanyTable } from "~/components/tables/company-table";
@@ -85,7 +89,8 @@ const ProjectHeader = ({
         policies: project?.policies,
         entity: "project",
         operation: "edit",
-      }) && <EditProject project={project ?? null} />}
+      }) &&
+        !!project && <EditProject project={project} />}
     </div>
   );
 };
@@ -95,28 +100,36 @@ const ProjectStatusEdit = ({
 }: {
   project: Project & { policies: ProjectPolicy[] };
 }) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
-  const ctx = api.useUtils();
+  // const ctx = api.useUtils();
 
-  const [statusLoading, setStatusLoading] = useState(false);
-  const [status, setStatus] = useState<ProjectStatus>(project.status);
+  // const [statusLoading, setStatusLoading] = useState(false);
+  // const [status, setStatus] = useState<ProjectStatus>(project.status);
 
-  const { mutate: updateStatus } = api.project.update.useMutation({
-    onMutate: () => {
-      setStatusLoading(true);
-    },
-    onSuccess: async () => {
-      await ctx.project.getAll.invalidate();
-      setStatusLoading(false);
-    },
-    onError: () => {
-      setStatusLoading(false);
-    },
-  });
+  // useEffect(() => {
+  //   setStatus(project.status);
+  // }, [project.status]);
+
+  // const { mutate: updateStatus } = api.project.update.useMutation({
+  //   onMutate: () => {
+  //     setStatusLoading(true);
+  //   },
+  //   onSuccess: async () => {
+  //     await ctx.project.getAll.invalidate();
+  //     setStatusLoading(false);
+  //   },
+  //   onError: () => {
+  //     setStatusLoading(false);
+  //   },
+  // });
   return (
     <>
-      {CanDoOperation({
+      <Badge variant={"outline"}>
+        {statusMaps[project.status].icon}
+        {statusMaps[project.status].title}
+      </Badge>
+      {/* {CanDoOperation({
         session,
         policies: project.policies,
         entity: "project",
@@ -158,7 +171,7 @@ const ProjectStatusEdit = ({
             {statusMaps[project.status].title}
           </Badge>
         </>
-      )}
+      )} */}
     </>
   );
 };

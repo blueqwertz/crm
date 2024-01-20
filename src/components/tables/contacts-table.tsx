@@ -7,7 +7,6 @@ import { Contact } from "@prisma/client";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
-import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
@@ -15,6 +14,66 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import initials from "initials";
+import { CanDoOperation } from "~/utils/policyQuery";
+import { useSession } from "next-auth/react";
+
+export const ContactsTable: React.FC<{
+  contactData: Contact[];
+  pageData: { type: "Company" | "Project"; id: string };
+}> = ({ contactData, pageData }) => {
+  const { data: session } = useSession();
+  return (
+    <>
+      <AddContactRelation pageData={pageData} contactData={contactData} />
+
+      {!contactData && (
+        <>
+          <div className="flex items-center gap-2 border-b px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+          <div className="flex items-center gap-2 px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+        </>
+      )}
+      {!!contactData && !contactData.length && (
+        <>
+          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
+            No contacts
+          </div>
+        </>
+      )}
+      {!!contactData && (
+        <>
+          {contactData.map((contact) => {
+            return (
+              <Link
+                key={contact.id}
+                href={`/contacts/${contact.id}`}
+                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
+              >
+                <Avatar className="h-7 w-7 border">
+                  <AvatarImage src={contact.image!} />
+                  <AvatarFallback className="text-[11px]">
+                    {initials(contact.name).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-base font-medium">{contact.name}</span>
+                {CanDoOperation({
+                  session,
+                  operation: "edit",
+                  entity: "contact",
+                }) && <ContactEdit id={contact.id} pageData={pageData} />}
+              </Link>
+            );
+          })}
+        </>
+      )}
+    </>
+  );
+};
 
 const ContactEdit: React.FC<{
   id: string;
@@ -23,6 +82,7 @@ const ContactEdit: React.FC<{
   const [loading, setLoading] = useState(false);
 
   const ctx = api.useUtils();
+
   const { mutate: deleteContactFromProject } =
     api.project.deleteContact.useMutation({
       onMutate: () => {
@@ -82,58 +142,6 @@ const ContactEdit: React.FC<{
           <TooltipContent>Remove contact</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </>
-  );
-};
-
-export const ContactsTable: React.FC<{
-  contactData: Contact[];
-  pageData: { type: "Company" | "Project"; id: string };
-}> = ({ contactData, pageData }) => {
-  return (
-    <>
-      <AddContactRelation pageData={pageData} contactData={contactData} />
-      {!contactData && (
-        <>
-          <div className="flex items-center gap-2 border-b px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-          <div className="flex items-center gap-2 px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-        </>
-      )}
-      {!!contactData && !contactData.length && (
-        <>
-          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No contacts
-          </div>
-        </>
-      )}
-      {!!contactData && (
-        <>
-          {contactData.map((contact) => {
-            return (
-              <Link
-                key={contact.id}
-                href={`/contacts/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
-              >
-                <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={contact.image!} />
-                  <AvatarFallback className="text-[11px]">
-                    {initials(contact.name).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-base font-medium">{contact.name}</span>
-                <ContactEdit id={contact.id} pageData={pageData} />
-              </Link>
-            );
-          })}
-        </>
-      )}
     </>
   );
 };

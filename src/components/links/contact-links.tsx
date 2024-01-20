@@ -4,9 +4,9 @@ import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
 import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
-import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
-import { Contact } from "@prisma/client";
+// import { Skeleton } from "../ui/skeleton";
+// import { toast } from "sonner";
+import type { Contact } from "@prisma/client";
 
 export const AddContactRelation: React.FC<{
   pageData: { type: "Company" | "Project"; id: string };
@@ -18,7 +18,9 @@ export const AddContactRelation: React.FC<{
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data } = api.contact.getAll.useQuery();
+  const { data } = api.contact.getAll.useQuery({
+    operation: "edit",
+  });
 
   const ctx = api.useUtils();
 

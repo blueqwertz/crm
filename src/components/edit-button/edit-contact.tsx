@@ -23,8 +23,8 @@ import {
   FormMessage,
 } from "../ui/form";
 import { api } from "~/utils/api";
-import { RouterOutputs } from "~/utils/api";
-import { Contact } from "@prisma/client";
+import type { RouterOutputs } from "~/utils/api";
+import type { Contact } from "@prisma/client";
 
 export const EditContact: React.FC<{
   children?: ReactNode;

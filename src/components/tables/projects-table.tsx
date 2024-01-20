@@ -15,6 +15,8 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import initials from "initials";
+import { CanDoOperation } from "~/utils/policyQuery";
+import { useSession } from "next-auth/react";
 
 const ProjectEdit: React.FC<{
   id: string;
@@ -90,9 +92,12 @@ export const ProjectsTable: React.FC<{
   projectData: Project[];
   pageData: { type: "Company" | "Contact"; id: string };
 }> = ({ projectData, pageData }) => {
+  const { data: session } = useSession();
+
   return (
     <>
       <AddProjectRelation pageData={pageData} projectData={projectData} />
+
       {!projectData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-3">

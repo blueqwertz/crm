@@ -17,6 +17,19 @@ const config = {
   //   locales: ["en"],
   //   defaultLocale: "en",
   // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+    dangerouslyAllowSVG: true,
+  },
 };
 
 export default config;

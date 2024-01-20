@@ -28,12 +28,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
-import { Contact, ContactPolicy } from "@prisma/client";
+import type { Contact, ContactPolicy } from "@prisma/client";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { EditContact } from "~/components/edit-button/edit-contact";
 
 export default function Contacts() {
-  const { data: sessionData } = useSession();
+  const { data: session } = useSession();
   return (
     <>
       <Head>
@@ -51,7 +51,11 @@ export default function Contacts() {
                 View all of your contacts.
               </span>
             </div>
-            {sessionData?.user.role.canCreateContact && <AddContact />}
+            {CanDoOperation({
+              session,
+              entity: "contact",
+              operation: "create",
+            }) && <AddContact />}
           </div>
           <Breadcrumbs />
           <ContactPageTable />
@@ -69,7 +73,7 @@ const ContactPageTable = () => {
       policies: true,
     },
   });
-  const { data: sessionData } = useSession();
+  const { data: session } = useSession();
 
   return (
     <>
@@ -151,7 +155,7 @@ const ContactPageTable = () => {
                     )} */}
                     <div className="flex gap-1">
                       {!!contact.user &&
-                        contact.user.id == sessionData?.user.id && (
+                        contact.user.id == session?.user.id && (
                           <Badge variant={"default"}>You</Badge>
                         )}
                       {!!contact.user && (

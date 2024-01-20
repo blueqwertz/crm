@@ -1,4 +1,4 @@
-import {
+import type {
   ActivityPolicy,
   CompanyPolicy,
   ContactPolicy,
@@ -81,6 +81,13 @@ export const PolicyQuery = ({
 
   return {
     OR: [
+      {
+        head: {
+          owner: {
+            id: session.user.id,
+          },
+        },
+      },
       ...(rolePolicyQuery.role.connected[entity][operation]
         ? [
             ...{
@@ -141,7 +148,7 @@ export const IncludePolicyQuery = ({
   operation,
   args,
 }: {
-  include: boolean;
+  include: boolean | undefined;
   session: Session;
   entity: "contact" | "company" | "project" | "activity";
   operation: "read" | "edit" | "delete";
@@ -166,20 +173,21 @@ export const CanDoOperation = ({
   operation,
 }: {
   session: Session | null;
-  policies:
+  policies?:
     | ContactPolicy[]
     | CompanyPolicy[]
     | ProjectPolicy[]
     | ActivityPolicy[]
     | undefined;
   entity: "contact" | "company" | "project" | "activity";
-  operation: "read" | "edit" | "delete";
+  operation: "read" | "edit" | "delete" | "create";
 }) => {
   const rolePolicyQuery = {
     policy: {
       read: policies?.some((policy) => policy.canRead),
       edit: policies?.some((policy) => policy.canEdit),
       delete: policies?.some((policy) => policy.canDelete),
+      create: null,
     },
     role: {
       all: {
@@ -187,21 +195,25 @@ export const CanDoOperation = ({
           read: session?.user.role.canReadAllContact,
           edit: session?.user.role.canEditAllContact,
           delete: session?.user.role.canDeleteAllContact,
+          create: session?.user.role.canCreateContact,
         },
         company: {
           read: session?.user.role.canReadAllCompany,
           edit: session?.user.role.canEditAllCompany,
           delete: session?.user.role.canDeleteAllCompany,
+          create: session?.user.role.canCreateCompany,
         },
         project: {
           read: session?.user.role.canReadAllProject,
           edit: session?.user.role.canEditAllProject,
           delete: session?.user.role.canDeleteAllProject,
+          create: session?.user.role.canCreateProject,
         },
         activity: {
           read: session?.user.role.canReadAllActivity,
           edit: session?.user.role.canEditAllActivity,
           delete: session?.user.role.canDeleteAllActivity,
+          create: session?.user.role.canCreateActivity,
         },
       },
     },

@@ -11,10 +11,27 @@ import Link from "next/link";
 import { cn } from "~/utils/cn";
 
 export default function AuthenticationPage() {
-  const [codeInput, setCodeInput] = useState("");
+  const [checkLoading, setCheckLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [input, setInput] = useState("");
 
   const router = useRouter();
   const { update } = useSession();
+
+  const { mutate: createHead } = api.head.add.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: async () => {
+      setLoading(false);
+      await update();
+      void router.push("/");
+    },
+    onError: () => {
+      setLoading(false);
+    },
+  });
 
   return (
     <>
@@ -37,9 +54,27 @@ export default function AuthenticationPage() {
               <h1 className="text-2xl font-semibold tracking-tight">
                 Create an organization
               </h1>
-              {/* <p className="text-sm text-muted-foreground"></p> */}
+              <p className="text-sm text-muted-foreground">
+                Enter the name of your organization
+              </p>
             </div>
-            <div className="flex flex-col gap-3"></div>
+            <div className="flex flex-col gap-3">
+              <Input
+                placeholder="Organization name"
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                }}
+              />
+              <Button
+                onClick={() => {
+                  createHead({ name: input });
+                }}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create
+              </Button>
+            </div>
             <Link
               href={"/auth/head/invite"}
               className={cn(buttonVariants({ variant: "link" }))}

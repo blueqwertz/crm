@@ -3,6 +3,8 @@ import { Role } from "@prisma/client";
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import AzureADProvider from "next-auth/providers/azure-ad";
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { env } from "~/env";
 import { db } from "~/server/db";
@@ -118,7 +120,19 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
     }),
-
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+    AzureADProvider({
+      clientId: `${env.AZURE_AD_CLIENT_ID}`,
+      clientSecret: `${env.AZURE_AD_CLIENT_SECRET}`,
+      tenantId: `${env.AZURE_AD_TENANT_ID}`,
+      authorization: {
+        params: { scope: "openid email profile User.Read  offline_access" },
+      },
+      httpOptions: { timeout: 10000 },
+    }),
     CredentialsProvider({
       name: "Sign in",
       credentials: {

@@ -8,14 +8,15 @@ export const contactRotuer = createTRPCRouter({
     .input(
       z
         .object({
+          operation: z.enum(["read", "edit", "delete"]).default("read"),
           include: z
             .object({
-              user: z.boolean().default(false).optional(),
-              companies: z.boolean().default(false).optional(),
-              activities: z.boolean().default(false).optional(),
-              projects: z.boolean().default(false).optional(),
-              policies: z.boolean().default(false).optional(),
-              relations: z.boolean().default(false).optional(),
+              user: z.boolean().default(false),
+              companies: z.boolean().default(false),
+              activities: z.boolean().default(false),
+              projects: z.boolean().default(false),
+              policies: z.boolean().default(false),
+              relations: z.boolean().default(false),
             })
             .optional(),
         })
@@ -29,7 +30,7 @@ export const contactRotuer = createTRPCRouter({
           ...PolicyQuery({
             session: ctx.session,
             entity: "contact",
-            operation: "read",
+            operation: input?.operation ?? "read",
           }),
         },
         include: {
@@ -88,14 +89,15 @@ export const contactRotuer = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
+        operation: z.enum(["read", "edit", "delete"]).default("read"),
         include: z
           .object({
-            user: z.boolean().default(false).optional(),
-            companies: z.boolean().default(false).optional(),
-            activities: z.boolean().default(false).optional(),
-            projects: z.boolean().default(false).optional(),
-            relations: z.boolean().default(false).optional(),
-            policies: z.boolean().default(false).optional(),
+            user: z.boolean().default(false),
+            companies: z.boolean().default(false),
+            activities: z.boolean().default(false),
+            projects: z.boolean().default(false),
+            relations: z.boolean().default(false),
+            policies: z.boolean().default(false),
           })
           .optional(),
       })
@@ -109,7 +111,7 @@ export const contactRotuer = createTRPCRouter({
           ...PolicyQuery({
             session: ctx.session,
             entity: "contact",
-            operation: "read",
+            operation: input.operation,
           }),
         },
         include: {

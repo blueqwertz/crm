@@ -14,6 +14,37 @@ const ratelimit = new Ratelimit({
 });
 
 export const headRouter = createTRPCRouter({
+  add: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(2).max(200),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          role: {
+            connect: {
+              id: 0,
+              name: "GLOBAL_ADMIN",
+            },
+          },
+          ownedHeads: {
+            create: {
+              name: input.name,
+              members: {
+                connect: {
+                  id: ctx.session.user.id,
+                },
+              },
+            },
+          },
+        },
+      });
+    }),
   checkInvite: protectedProcedure
     .input(z.object({ inviteCode: z.string() }))
     .mutation(async ({ ctx, input }) => {

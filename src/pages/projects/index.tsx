@@ -36,7 +36,7 @@ import { CanDoOperation } from "~/utils/policyQuery";
 import { Loader2, Trash } from "lucide-react";
 
 export default function Projects() {
-  const { data: sessionData } = useSession();
+  const { data: session } = useSession();
   return (
     <>
       <Head>
@@ -50,11 +50,15 @@ export default function Projects() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <h1 className="text-xl font-bold">Projects</h1>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 View all projects.
               </span>
             </div>
-            {sessionData?.user.role.canCreateProject && <AddProject />}
+            {CanDoOperation({
+              session,
+              operation: "create",
+              entity: "project",
+            }) && <AddProject />}
           </div>
           <Breadcrumbs />
           <ProjectPageTable />
@@ -94,7 +98,7 @@ const ProjectPageTable = () => {
         )}
         {!!projectData && !projectData.length && (
           <>
-            <div className="flex h-24 flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex h-24 flex-col items-center justify-center gap-2 text-sm">
               No projects
             </div>
           </>
@@ -122,24 +126,24 @@ const ProjectPageTableRow = ({
     };
   };
 }) => {
-  const { data: sessionData } = useSession();
-  const ctx = api.useUtils();
+  // const { data: sessionData } = useSession();
+  // const ctx = api.useUtils();
 
-  const [statusLoading, setStatusLoading] = useState(false);
-  const [status, setStatus] = useState<ProjectStatus>(project.status);
+  // const [statusLoading, setStatusLoading] = useState(false);
+  // const [status, setStatus] = useState<ProjectStatus>(project.status);
 
-  const { mutate: updateStatus } = api.project.update.useMutation({
-    onMutate: () => {
-      setStatusLoading(true);
-    },
-    onSuccess: async () => {
-      await ctx.project.getAll.invalidate();
-      setStatusLoading(false);
-    },
-    onError: () => {
-      setStatusLoading(false);
-    },
-  });
+  // const { mutate: updateStatus } = api.project.update.useMutation({
+  //   onMutate: () => {
+  //     setStatusLoading(true);
+  //   },
+  //   onSuccess: async () => {
+  //     await ctx.project.getAll.invalidate();
+  //     setStatusLoading(false);
+  //   },
+  //   onError: () => {
+  //     setStatusLoading(false);
+  //   },
+  // });
 
   const MAX_CONTACTS = 4;
   const MAX_COMPANIES = 4;
@@ -148,12 +152,16 @@ const ProjectPageTableRow = ({
     <Link
       passHref={true}
       href={`/projects/${project.id}`}
-      className="flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer hover:bg-muted/50"
+      className="hover:bg-muted/50 flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer"
     >
       <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
         <div className="flex h-8 items-center gap-2 text-base">
           <span className="font-semibold">{project.name}</span>
-          {CanDoOperation({
+          <Badge variant={"outline"}>
+            {statusMaps[project.status].icon}
+            {statusMaps[project.status].title}
+          </Badge>
+          {/* {CanDoOperation({
             session: sessionData,
             policies: project.policies,
             entity: "project",
@@ -173,7 +181,7 @@ const ProjectPageTableRow = ({
                   });
                 }}
               >
-                <SelectTrigger className="w-auto h-auto inline-flex items-center justify-center gap-x-1 rounded px-1.5 py-[3px] font-medium transition-colors border text-foreground text-xs leading-3 truncate">
+                <SelectTrigger className="text-foreground inline-flex h-auto w-auto items-center justify-center gap-x-1 truncate rounded border px-1.5 py-[3px] text-xs font-medium leading-3 transition-colors">
                   {statusMaps[status].icon}
                   {statusMaps[status].title}
                 </SelectTrigger>
@@ -195,7 +203,7 @@ const ProjectPageTableRow = ({
                 {statusMaps[status].title}
               </Badge>
             </>
-          )}
+          )} */}
         </div>
         <span className="mb-1 text-sm empty:hidden">{project.info}</span>
 
@@ -266,7 +274,7 @@ const ProjectPageTableRow = ({
                     </Avatar>
                   </>
                 )}
-                <span className="text-muted-foreground italic text-xs ml-1.5">
+                <span className="text-muted-foreground ml-1.5 text-xs italic">
                   {project._count.companies}{" "}
                   {project._count.companies > 1 ? "companies" : "company"}
                 </span>
@@ -318,7 +326,7 @@ const ProjectPageTableRow = ({
                     </Avatar>
                   </>
                 )}
-                <span className="text-muted-foreground italic text-xs ml-1.5">
+                <span className="text-muted-foreground ml-1.5 text-xs italic">
                   {project._count.contacts}{" "}
                   {project._count.contacts > 1 ? "contacts" : "contact"}
                 </span>
@@ -356,7 +364,7 @@ const ProjectPageTableEdit = ({
 
   return (
     <div
-      className="flex flex-col items-center justify-center mx-4 my-auto sm:px-6"
+      className="mx-4 my-auto flex flex-col items-center justify-center sm:px-6"
       onClick={(e) => {
         e.preventDefault();
       }}
@@ -375,7 +383,7 @@ const ProjectPageTableEdit = ({
           </div>
         </EditProject> */}
             <div
-              className="box-content h-4 w-4 cursor-pointer rounded-md border p-2 text-red-500 transition-colors hover:bg-accent"
+              className="hover:bg-accent box-content h-4 w-4 cursor-pointer rounded-md border p-2 text-red-500 transition-colors"
               onClick={(e) => {
                 e.preventDefault();
                 !deleteLoading && deleteProject({ id: project.id });

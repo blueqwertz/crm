@@ -24,6 +24,8 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Badge } from "../ui/badge";
+import { useSession } from "next-auth/react";
+import { CanDoOperation } from "~/utils/policyQuery";
 dayjs.extend(advancedFormat);
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {
@@ -101,9 +103,12 @@ export const ActivitiesTable: React.FC<{
   })[];
   pageData?: { type: "Company" | "Project" | "Contact"; id: string };
 }> = ({ activityData, pageData }) => {
+  const { data: session } = useSession();
+
   return (
     <>
       <AddActivity pageData={pageData} />
+
       {!activityData && (
         <>
           <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
@@ -373,8 +378,11 @@ export const ActivitiesTable: React.FC<{
                       </span>
                       {!activity.description && (
                         <span className="text-sm">
-                          {activity.type} on{" "}
-                          {dayjs(activity.date).format("MMMM Do, YYYY")}
+                          <span className="">{activity.type}</span>{" "}
+                          <span className="text-muted-foreground">on</span>{" "}
+                          <span className="">
+                            {dayjs(activity.date).format("MMMM Do, YYYY")}
+                          </span>
                         </span>
                       )}
                     </div>
