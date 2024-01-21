@@ -4,17 +4,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { createId } from "@paralleldrive/cuid2";
 import { Button } from "../ui/button";
-import {
-  Briefcase,
-  Home,
-  KanbanSquare,
-  User,
-  UserCog,
-  Users,
-  Workflow,
-} from "lucide-react";
+import { Briefcase, Home, User, UserCog, Users, Workflow } from "lucide-react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -55,20 +46,6 @@ export const NavItemArray: NavItem[] = [
     path: "/projects",
     // icon: <KanbanSquare className="h-4 w-4" />,
     icon: <Workflow className="h-4 w-4" />,
-  },
-  {
-    title: "User",
-    icon: <UserCog className="h-4 w-4" />,
-    children: [
-      {
-        title: "Profile",
-        path: "/user",
-      },
-      {
-        title: "All users",
-        path: "/user/all",
-      },
-    ],
   },
   {
     title: "Teams",

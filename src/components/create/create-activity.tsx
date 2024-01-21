@@ -46,7 +46,7 @@ import { ComboboxMulti } from "../ui/combobox-multi";
 import { api } from "~/utils/api";
 import { Skeleton } from "../ui/skeleton";
 import { ActivityType } from "@prisma/client";
-import { statusMaps, typeMaps } from "~/utils/maps";
+import { typeMaps } from "~/utils/maps";
 
 const ActivityForm: React.FC<{
   entry: {
@@ -173,14 +173,14 @@ const ActivityForm: React.FC<{
       <PopoverTrigger asChild>
         <Button
           className={cn(
-            "h-9 flex-grow rounded-none border-b border-r first:rounded-tl-sm last:rounded-tr-sm"
+            "h-9 flex-grow rounded-none border-b border-r last:border-r-0"
           )}
           variant={"ghost"}
         >
           {!!entry.icon && entry.icon}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px]" align="end">
+      <PopoverContent className="w-[400px]" align="center">
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
             <div className="grid grid-cols-2 space-x-3">
@@ -563,7 +563,9 @@ export const AddActivity: React.FC<{
     <>
       <div className="flex text-sm">
         {typeArray.map((entry) => {
-          return <ActivityForm entry={entry} pageData={pageData} />;
+          return (
+            <ActivityForm key={entry.type} entry={entry} pageData={pageData} />
+          );
         })}
       </div>
     </>

@@ -4,8 +4,7 @@ import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
 import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
-import { Skeleton } from "../ui/skeleton";
-import { Company } from "@prisma/client";
+import type { Company } from "@prisma/client";
 
 export const AddCompanyRelation: React.FC<{
   pageData: { type: "Company" | "Project" | "Contact"; id: string };
@@ -17,7 +16,9 @@ export const AddCompanyRelation: React.FC<{
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data } = api.company.getAll.useQuery();
+  const { data } = api.company.getAll.useQuery({
+    operation: "edit",
+  });
 
   const ctx = api.useUtils();
 
@@ -96,6 +97,31 @@ export const AddCompanyRelation: React.FC<{
               },
             });
           }}
+          submitButton={
+            <Button
+              className="h-8 m-1 mt-0"
+              disabled={disabled || !selectedOption?.length}
+              onClick={() => {
+                if (!selectedOption?.length) {
+                  return;
+                }
+                if (pageData.type == "Contact") {
+                  addContactToProject({
+                    contactId: pageData.id,
+                    companyIds: selectedOption,
+                  });
+                } else if (pageData.type == "Project") {
+                  addCompanyToProject({
+                    projectId: pageData.id,
+                    companyIds: selectedOption,
+                  });
+                }
+              }}
+            >
+              {loading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+              {!loading && <>Submit</>}
+            </Button>
+          }
           setValue={(value) => {
             if (!value) {
               return;
@@ -135,30 +161,6 @@ export const AddCompanyRelation: React.FC<{
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </ComboboxMulti>
-        <Button
-          variant="ghost"
-          className="h-9 rounded-none rounded-tr-md border-b border-l"
-          disabled={disabled}
-          onClick={() => {
-            if (!selectedOption?.length) {
-              return;
-            }
-            if (pageData.type == "Contact") {
-              addContactToProject({
-                contactId: pageData.id,
-                companyIds: selectedOption,
-              });
-            } else if (pageData.type == "Project") {
-              addCompanyToProject({
-                projectId: pageData.id,
-                companyIds: selectedOption,
-              });
-            }
-          }}
-        >
-          {loading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-          {!loading && <>Submit</>}
-        </Button>
       </div>
     </>
   );

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { AddCompanyRelation } from "../links/company-links";
-import { Company } from "@prisma/client";
+import type { Company } from "@prisma/client";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
@@ -17,6 +17,65 @@ import {
 import initials from "initials";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { useSession } from "next-auth/react";
+
+export const CompanyTable: React.FC<{
+  companyData: Company[];
+  pageData: { type: "Project" | "Contact"; id: string };
+}> = ({ companyData, pageData }) => {
+  const { data: session } = useSession();
+
+  return (
+    <>
+      <AddCompanyRelation pageData={pageData} companyData={companyData} />
+
+      {!companyData && (
+        <>
+          <div className="flex items-center gap-2 border-b px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+          <div className="flex items-center gap-2 px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+        </>
+      )}
+      {!!companyData && !companyData.length && (
+        <>
+          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
+            No companies
+          </div>
+        </>
+      )}
+      {!!companyData && (
+        <>
+          {companyData.map((contact) => {
+            return (
+              <Link
+                key={contact.id}
+                href={`/companies/${contact.id}`}
+                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none hover:bg-muted/50"
+              >
+                <Avatar className="h-7 w-7 border">
+                  <AvatarImage src={contact.image!} />
+                  <AvatarFallback className="text-[11px]">
+                    {initials(contact.name).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-base font-medium">{contact.name}</span>
+                {CanDoOperation({
+                  session,
+                  operation: "edit",
+                  entity: "company",
+                }) && <CompanyEdit id={contact.id} pageData={pageData} />}
+              </Link>
+            );
+          })}
+        </>
+      )}
+    </>
+  );
+};
 
 const CompanyEdit: React.FC<{
   id: string;
@@ -84,61 +143,6 @@ const CompanyEdit: React.FC<{
           <TooltipContent>Remove company</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </>
-  );
-};
-
-export const CompanyTable: React.FC<{
-  companyData: Company[];
-  pageData: { type: "Project" | "Contact"; id: string };
-}> = ({ companyData, pageData }) => {
-  const { data: session } = useSession();
-
-  return (
-    <>
-      <AddCompanyRelation pageData={pageData} companyData={companyData} />
-
-      {!companyData && (
-        <>
-          <div className="flex items-center gap-2 border-b px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-          <div className="flex items-center gap-2 px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-        </>
-      )}
-      {!!companyData && !companyData.length && (
-        <>
-          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No companies
-          </div>
-        </>
-      )}
-      {!!companyData && (
-        <>
-          {companyData.map((contact) => {
-            return (
-              <Link
-                key={contact.id}
-                href={`/companies/${contact.id}`}
-                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none hover:bg-muted/50"
-              >
-                <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={contact.image!} />
-                  <AvatarFallback className="text-[11px]">
-                    {initials(contact.name).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-base font-medium">{contact.name}</span>
-                <CompanyEdit id={contact.id} pageData={pageData} />
-              </Link>
-            );
-          })}
-        </>
-      )}
     </>
   );
 };

@@ -8,6 +8,7 @@ export const companyRotuer = createTRPCRouter({
     .input(
       z
         .object({
+          operation: z.enum(["read", "edit", "delete"]).default("read"),
           include: z
             .object({
               contacts: z.boolean().optional().default(false),
@@ -34,7 +35,7 @@ export const companyRotuer = createTRPCRouter({
           ...PolicyQuery({
             session: ctx.session,
             entity: "company",
-            operation: "read",
+            operation: input?.operation ?? "read",
           }),
         },
         include: {

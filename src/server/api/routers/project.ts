@@ -24,6 +24,7 @@ export const projectRotuer = createTRPCRouter({
                 .optional(),
             })
             .optional(),
+          operation: z.enum(["read", "edit", "delete"]).default("read"),
         })
         .optional()
     )
@@ -35,7 +36,7 @@ export const projectRotuer = createTRPCRouter({
           ...PolicyQuery({
             session: ctx.session,
             entity: "project",
-            operation: "read",
+            operation: input?.operation ?? "read",
           }),
         },
         include: {
@@ -99,6 +100,7 @@ export const projectRotuer = createTRPCRouter({
             policies: z.boolean().optional().default(false),
           })
           .optional(),
+        operation: z.enum(["read", "edit", "delete"]).default("read"),
       })
     )
     .query(({ ctx, input }) => {
@@ -110,7 +112,7 @@ export const projectRotuer = createTRPCRouter({
           ...PolicyQuery({
             session: ctx.session,
             entity: "project",
-            operation: "read",
+            operation: input.operation ?? "read",
           }),
         },
         include: {

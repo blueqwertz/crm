@@ -1,6 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
-  ArrowRight,
   Barcode,
   CreditCard,
   LifeBuoy,
@@ -17,7 +16,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuGroup,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -51,7 +49,7 @@ export const AuthButton = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant={"outline"}
-                    className="mt-auto justify-start truncate pl-2.5"
+                    className="mt-auto justify-start truncate pl-2.5 max-w-[180px]"
                   >
                     <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
                       <AvatarImage src={sessionData.user?.image} />

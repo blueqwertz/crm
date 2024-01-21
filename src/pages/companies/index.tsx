@@ -4,7 +4,7 @@ import { AddCompany } from "~/components/create/create-company";
 import { Layout } from "~/components/layout";
 import { useSession } from "next-auth/react";
 import type { Company, CompanyPolicy } from "@prisma/client";
-import { Loader2, Trash } from "lucide-react";
+import { Contact, Loader2, Trash } from "lucide-react";
 import { useState } from "react";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { api } from "~/utils/api";
@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { ContactCard, ProjectCard } from "~/components/hover-cards";
 dayjs.extend(advancedFormat);
 
 export default function Companies() {
@@ -80,11 +81,11 @@ const CompanyPageTable = () => {
       <div className="mt-3 flex flex-col overflow-hidden rounded-md border">
         {!companies && (
           <>
-            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 border-b px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -105,7 +106,7 @@ const CompanyPageTable = () => {
               key={company.id}
               className="hover:bg-muted/50 flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer"
             >
-              <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
+              <div className="flex flex-col gap-1 px-2 py-3 sm:px-4">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-8 w-8 text-xs">
                     <AvatarImage src={company.image ?? ""} />
@@ -160,27 +161,16 @@ const CompanyPageTable = () => {
                           ? MAX_PROJECTS
                           : MAX_PROJECTS - 1
                       )
-                      .map((company) => {
+                      .map((project) => {
                         return (
-                          <TooltipProvider key={company.id}>
-                            <Tooltip delayDuration={100}>
-                              <TooltipTrigger asChild>
-                                <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
-                                  <AvatarImage src={company.image!} />
-                                  <AvatarFallback className="text-[10px]">
-                                    {initials(company.name).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <span>
-                                  <span className="font-semibold">
-                                    {company.name}
-                                  </span>
-                                </span>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <ProjectCard project={project}>
+                            <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                              <AvatarImage src={project.image!} />
+                              <AvatarFallback className="text-[10px]">
+                                {initials(project.name).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </ProjectCard>
                         );
                       })}
                     {company._count.projects > MAX_PROJECTS && (
@@ -214,25 +204,14 @@ const CompanyPageTable = () => {
                       )
                       .map((contact) => {
                         return (
-                          <TooltipProvider key={contact.id}>
-                            <Tooltip delayDuration={100}>
-                              <TooltipTrigger asChild>
-                                <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
-                                  <AvatarImage src={contact.image!} />
-                                  <AvatarFallback className="text-[10px]">
-                                    {initials(contact.name).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <span>
-                                  <span className="font-semibold">
-                                    {contact.name}
-                                  </span>
-                                </span>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                          <ContactCard contact={contact}>
+                            <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                              <AvatarImage src={contact.image!} />
+                              <AvatarFallback className="text-[10px]">
+                                {initials(contact.name).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          </ContactCard>
                         );
                       })}
                     {company._count.contacts > MAX_CONTACTS && (

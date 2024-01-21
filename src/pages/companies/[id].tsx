@@ -37,7 +37,7 @@ const CompanyPage: NextPage<{ id: string }> = ({ id }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex flex-grow flex-col p-5">
+        <div className="flex grow flex-col p-5">
           <CompanyHeader company={company} />
           <Breadcrumbs lastItem={company?.name ?? id} />
           <CompanyIndividualPage companyId={id} company={company ?? null} />
@@ -96,10 +96,10 @@ const CompanyIndividualPage: React.FC<{
   company: RouterOutputs["company"]["get"];
 }> = ({ companyId, company }) => {
   return (
-    <div className="mt-3 grid grid-cols-2 gap-6">
+    <div className="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Activities</span>
-        <div className="flex w-full grow flex-col rounded-md border">
+        <div className="flex w-full grow overflow-hidden flex-col rounded-md border">
           <ActivitiesTable
             activityData={[
               ...(company?.activities ?? []),

@@ -3,11 +3,10 @@ import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { AddProjectRelation } from "../links/project-links";
-import { Project } from "@prisma/client";
+import type { Project } from "@prisma/client";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
-import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
@@ -15,8 +14,70 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import initials from "initials";
-import { CanDoOperation } from "~/utils/policyQuery";
+
 import { useSession } from "next-auth/react";
+import { CanDoOperation } from "~/utils/policyQuery";
+
+export const ProjectsTable: React.FC<{
+  projectData: Project[];
+  pageData: { type: "Company" | "Contact"; id: string };
+}> = ({ projectData, pageData }) => {
+  const { data: session } = useSession();
+
+  return (
+    <>
+      <AddProjectRelation pageData={pageData} projectData={projectData} />
+
+      {!projectData && (
+        <>
+          <div className="flex items-center gap-2 border-b px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+          <div className="flex items-center gap-2 px-4 py-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-8 flex-grow rounded-md" />
+          </div>
+        </>
+      )}
+      {!!projectData && !projectData.length && (
+        <>
+          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
+            No projects
+          </div>
+        </>
+      )}
+      {!!projectData && (
+        <>
+          {projectData.map((project) => {
+            return (
+              <Link
+                key={project.id}
+                href={`/projects/${project.id}`}
+                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
+              >
+                <Avatar className="h-7 w-7 border">
+                  <AvatarImage src={project.image!} />
+                  <AvatarFallback className="text-[11px]">
+                    {initials(project.name).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="truncate text-base">
+                  <span className="font-medium">{project.name}</span>
+                </span>
+                {CanDoOperation({
+                  session,
+                  operation: "edit",
+                  entity: "project",
+                }) && <ProjectEdit id={project.id} pageData={pageData} />}
+              </Link>
+            );
+          })}
+        </>
+      )}
+    </>
+  );
+};
 
 const ProjectEdit: React.FC<{
   id: string;
@@ -84,63 +145,6 @@ const ProjectEdit: React.FC<{
           <TooltipContent>Remove project</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </>
-  );
-};
-
-export const ProjectsTable: React.FC<{
-  projectData: Project[];
-  pageData: { type: "Company" | "Contact"; id: string };
-}> = ({ projectData, pageData }) => {
-  const { data: session } = useSession();
-
-  return (
-    <>
-      <AddProjectRelation pageData={pageData} projectData={projectData} />
-
-      {!projectData && (
-        <>
-          <div className="flex items-center gap-2 border-b px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-          <div className="flex items-center gap-2 px-4 py-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <Skeleton className="h-8 flex-grow rounded-md" />
-          </div>
-        </>
-      )}
-      {!!projectData && !projectData.length && (
-        <>
-          <div className="flex h-24 items-center justify-center text-sm text-muted-foreground">
-            No projects
-          </div>
-        </>
-      )}
-      {!!projectData && (
-        <>
-          {projectData.map((project) => {
-            return (
-              <Link
-                key={project.id}
-                href={`/projects/${project.id}`}
-                className="flex items-center gap-2 border-b px-4 py-3 transition-colors last:border-none last:odd:col-span-2 hover:bg-muted/50"
-              >
-                <Avatar className="h-7 w-7 border">
-                  <AvatarImage src={project.image!} />
-                  <AvatarFallback className="text-[11px]">
-                    {initials(project.name).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="truncate text-base">
-                  <span className="font-medium">{project.name}</span>
-                </span>
-                <ProjectEdit id={project.id} pageData={pageData} />
-              </Link>
-            );
-          })}
-        </>
-      )}
     </>
   );
 };

@@ -13,27 +13,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { statusMaps } from "~/utils/maps";
 import { Skeleton } from "~/components/ui/skeleton";
-import {
+import type {
   Activity,
   Company,
   Contact,
   Project,
   ProjectPolicy,
-  ProjectStatus,
 } from "@prisma/client";
 import { useState } from "react";
 import initials from "initials";
 import { cn } from "~/utils/cn";
 import { CanDoOperation } from "~/utils/policyQuery";
 import { Loader2, Trash } from "lucide-react";
+import { CompanyCard, ContactCard } from "~/components/hover-cards";
 
 export default function Projects() {
   const { data: session } = useSession();
@@ -86,11 +80,11 @@ const ProjectPageTable = () => {
       <div className="mt-3 flex flex-col overflow-hidden rounded-md border">
         {!projectData && (
           <>
-            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 border-b px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -154,8 +148,8 @@ const ProjectPageTableRow = ({
       href={`/projects/${project.id}`}
       className="hover:bg-muted/50 flex justify-between gap-2 border-b transition-colors last:border-none hover:cursor-pointer"
     >
-      <div className="flex flex-col gap-1 px-4 py-4 sm:px-6">
-        <div className="flex h-8 items-center gap-2 text-base">
+      <div className="flex flex-col gap-1 px-2 py-3 sm:px-4">
+        <div className="flex items-center gap-2 text-base">
           <span className="font-semibold">{project.name}</span>
           <Badge variant={"outline"}>
             {statusMaps[project.status].icon}
@@ -241,25 +235,14 @@ const ProjectPageTableRow = ({
                   )
                   .map((company) => {
                     return (
-                      <TooltipProvider key={company.id}>
-                        <Tooltip delayDuration={100}>
-                          <TooltipTrigger asChild>
-                            <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
-                              <AvatarImage src={company.image!} />
-                              <AvatarFallback className="text-[10px]">
-                                {initials(company.name).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <span>
-                              <span className="font-semibold">
-                                {company.name}
-                              </span>
-                            </span>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <CompanyCard company={company}>
+                        <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                          <AvatarImage src={company.image!} />
+                          <AvatarFallback className="text-[10px]">
+                            {initials(company.name).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </CompanyCard>
                     );
                   })}
                 {project._count.companies > MAX_COMPANIES && (
@@ -293,25 +276,14 @@ const ProjectPageTableRow = ({
                   )
                   .map((contact) => {
                     return (
-                      <TooltipProvider key={contact.id}>
-                        <Tooltip delayDuration={100}>
-                          <TooltipTrigger asChild>
-                            <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
-                              <AvatarImage src={contact.image!} />
-                              <AvatarFallback className="text-[10px]">
-                                {initials(contact.name).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <span>
-                              <span className="font-semibold">
-                                {contact.name}
-                              </span>
-                            </span>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <ContactCard contact={contact}>
+                        <Avatar className="-ml-2 h-[26px] w-[26px] border first:ml-0">
+                          <AvatarImage src={contact.image!} />
+                          <AvatarFallback className="text-[10px]">
+                            {initials(contact.name).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </ContactCard>
                     );
                   })}
                 {project._count.contacts > MAX_CONTACTS && (

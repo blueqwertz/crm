@@ -28,6 +28,7 @@ type ComboboxInput = {
   className?: string;
   noResultsName?: string;
   noResultsClick?: (value: string) => void;
+  submitButton?: React.ReactNode;
   children?: React.ReactNode;
 };
 
@@ -39,6 +40,7 @@ export function ComboboxMulti({
   className,
   noResultsName,
   noResultsClick,
+  submitButton,
   children,
 }: ComboboxInput) {
   const [input, setInput] = React.useState("");
@@ -69,7 +71,7 @@ export function ComboboxMulti({
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0" align="start">
+      <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
           <CommandInput
             placeholder={placeholder}
@@ -84,32 +86,54 @@ export function ComboboxMulti({
             //   }
             // }}
           />
-          <CommandEmpty>
-            {!!noResultsName && !!input.length ? (
-              <span
-                onClick={() => {
-                  if (!!noResultsClick) {
-                    noResultsClick(input);
-                    setInput("");
-                  }
-                }}
-                className="hover:underline cursor-pointer"
-              >
-                Add {noResultsName} "
-                <span className="italic">{input.trim()}</span>"
-              </span>
-            ) : (
-              <span>No results found.</span>
-            )}
-          </CommandEmpty>
+          {!!options.length ? (
+            <CommandEmpty>
+              {!!noResultsName && !!input.length ? (
+                <span
+                  onClick={() => {
+                    if (!!noResultsClick) {
+                      noResultsClick(input);
+                      setInput("");
+                    }
+                  }}
+                  className="hover:underline cursor-pointer"
+                >
+                  Add {noResultsName} "
+                  <span className="italic">{input.trim()}</span>"
+                </span>
+              ) : (
+                <span>No results found.</span>
+              )}
+            </CommandEmpty>
+          ) : (
+            <div className="py-6 text-center text-sm">
+              {!!noResultsName && !!input.length ? (
+                <span
+                  onClick={() => {
+                    if (!!noResultsClick) {
+                      noResultsClick(input);
+                      setInput("");
+                    }
+                  }}
+                  className="hover:underline cursor-pointer"
+                >
+                  Add {noResultsName} "
+                  <span className="italic">{input.trim()}</span>"
+                </span>
+              ) : (
+                <span>No results found.</span>
+              )}
+            </div>
+          )}
           {!!options.length && (
-            <CommandGroup className={cn("max-h-[250px] overflow-y-scroll")}>
+            <CommandGroup className={cn("max-h-[300px] overflow-y-scroll")}>
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
                   onSelect={() => {
                     setValue(option.value, option.label);
                   }}
+                  data-
                 >
                   <Check
                     className={cn(
@@ -124,6 +148,7 @@ export function ComboboxMulti({
               ))}
             </CommandGroup>
           )}
+          {!!options.length && !!submitButton && submitButton}
         </Command>
       </PopoverContent>
     </Popover>

@@ -4,9 +4,7 @@ import { cn } from "~/utils/cn";
 import { Button } from "../ui/button";
 import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { api } from "~/utils/api";
-import { Skeleton } from "../ui/skeleton";
-import { toast } from "sonner";
-import { Project } from "@prisma/client";
+import type { Project } from "@prisma/client";
 
 export const AddProjectRelation: React.FC<{
   pageData: { type: "Company" | "Contact"; id: string };
@@ -18,7 +16,9 @@ export const AddProjectRelation: React.FC<{
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const { data } = api.project.getAll.useQuery();
+  const { data } = api.project.getAll.useQuery({
+    operation: "edit",
+  });
 
   const ctx = api.useUtils();
 
@@ -97,6 +97,31 @@ export const AddProjectRelation: React.FC<{
               },
             });
           }}
+          submitButton={
+            <Button
+              className="h-8 m-1 mt-0"
+              disabled={disabled || !selectedOption?.length}
+              onClick={() => {
+                if (!selectedOption?.length) {
+                  return;
+                }
+                if (pageData.type == "Contact") {
+                  addProjectToContact({
+                    contactId: pageData.id,
+                    projectIds: selectedOption,
+                  });
+                } else if (pageData.type == "Company") {
+                  addProjectToCompany({
+                    companyId: pageData.id,
+                    projectIds: selectedOption,
+                  });
+                }
+              }}
+            >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {!loading && <>Submit</>}
+            </Button>
+          }
           setValue={(value) => {
             if (!value) {
               return;
@@ -114,7 +139,7 @@ export const AddProjectRelation: React.FC<{
             variant="ghost"
             role="combobox"
             className={cn(
-              "h-9 w-full justify-between rounded-none rounded-tl-md border-b px-3 font-medium"
+              "h-9 w-full justify-between rounded-none border-b px-3 font-medium"
             )}
           >
             {!!selectedOption && selectedOption.length ? (
@@ -136,30 +161,6 @@ export const AddProjectRelation: React.FC<{
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </ComboboxMulti>
-        <Button
-          variant="ghost"
-          className="h-9 rounded-none rounded-tr-md border-b border-l"
-          disabled={disabled}
-          onClick={() => {
-            if (!selectedOption?.length) {
-              return;
-            }
-            if (pageData.type == "Contact") {
-              addProjectToContact({
-                contactId: pageData.id,
-                projectIds: selectedOption,
-              });
-            } else if (pageData.type == "Company") {
-              addProjectToCompany({
-                companyId: pageData.id,
-                projectIds: selectedOption,
-              });
-            }
-          }}
-        >
-          {loading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-          {!loading && <>Submit</>}
-        </Button>
       </div>
     </>
   );

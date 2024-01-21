@@ -42,7 +42,7 @@ export default function Contacts() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div className="flex flex-grow flex-col overflow-y-scroll p-5">
+        <div className="flex flex-grow flex-col p-5">
           {/* HEADER */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
@@ -77,14 +77,14 @@ const ContactPageTable = () => {
 
   return (
     <>
-      <div className="mt-3 flex flex-col rounded-md border">
+      <div className="mt-3 flex flex-col rounded-md border divide-y divide-border">
         {!contacts && (
           <>
-            <div className="flex items-center gap-2 border-b px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
-            <div className="flex items-center gap-2 px-4 py-4 sm:px-6">
+            <div className="flex items-center gap-2 px-2 py-3 sm:px-4">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-8 flex-grow rounded-md" />
             </div>
@@ -104,10 +104,10 @@ const ContactPageTable = () => {
               href={`/contacts/${contact.id}`}
               key={contact.id}
               className={cn(
-                "group relative flex justify-between border-b transition-colors first:rounded-t-md last:rounded-b-md last:border-none hover:bg-muted/50"
+                "group relative flex justify-between transition-colors hover:bg-muted/50"
               )}
             >
-              <div className="flex shrink gap-2 px-4 py-4 hover:cursor-pointer sm:px-6">
+              <div className="flex shrink gap-2 px-2 py-3 hover:cursor-pointer sm:px-4">
                 <Avatar className="h-8 w-8 text-xs">
                   <AvatarImage
                     src={contact.image ?? contact.user?.image ?? ""}
@@ -243,7 +243,9 @@ const ContactPageTableEdit = ({
   const [linkIndex, setLinkIndex] = useState(0);
   const [linkValue, setLinkValue] = useState<string | undefined>(undefined);
 
-  const { data: contactData } = api.contact.getAll.useQuery();
+  const { data: contactData } = api.contact.getAll.useQuery({
+    operation: "edit",
+  });
 
   const ctx = api.useUtils();
 

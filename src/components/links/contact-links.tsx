@@ -100,6 +100,31 @@ export const AddContactRelation: React.FC<{
               },
             });
           }}
+          submitButton={
+            <Button
+              className="h-9 m-1 mt-0"
+              disabled={disabled || !selectedOption?.length}
+              onClick={() => {
+                if (!selectedOption?.length) {
+                  return;
+                }
+                if (pageData.type == "Company") {
+                  addContactToCompany({
+                    companyId: pageData.id,
+                    contactIds: selectedOption,
+                  });
+                } else if (pageData.type == "Project") {
+                  addContactToProject({
+                    projectId: pageData.id,
+                    contactIds: selectedOption,
+                  });
+                }
+              }}
+            >
+              {loading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
+              {!loading && <>Submit</>}
+            </Button>
+          }
           setValue={(value) => {
             if (!value) {
               return;
@@ -139,30 +164,6 @@ export const AddContactRelation: React.FC<{
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </ComboboxMulti>
-        <Button
-          variant="ghost"
-          className="h-9 rounded-none rounded-tr-md border-b border-l shrink-0"
-          disabled={disabled}
-          onClick={() => {
-            if (!selectedOption?.length) {
-              return;
-            }
-            if (pageData.type == "Company") {
-              addContactToCompany({
-                companyId: pageData.id,
-                contactIds: selectedOption,
-              });
-            } else if (pageData.type == "Project") {
-              addContactToProject({
-                projectId: pageData.id,
-                contactIds: selectedOption,
-              });
-            }
-          }}
-        >
-          {loading && <Loader2 className="mr-1 h-4 w-4 animate-spin" />}
-          {!loading && <>Submit</>}
-        </Button>
       </div>
     </>
   );

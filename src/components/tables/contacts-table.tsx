@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { AddContactRelation } from "../links/contact-links";
-import { Contact } from "@prisma/client";
+import type { Contact } from "@prisma/client";
 import { Button } from "../ui/button";
 import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";

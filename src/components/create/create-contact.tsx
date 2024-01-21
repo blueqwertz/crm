@@ -19,7 +19,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Skeleton } from "../ui/skeleton";
 
 export const AddContact = () => {
-  const { data: companies } = api.company.getAll.useQuery();
+  const { data: companies } = api.company.getAll.useQuery({
+    operation: "edit",
+  });
 
   const [open, setOpen] = useState(false);
 

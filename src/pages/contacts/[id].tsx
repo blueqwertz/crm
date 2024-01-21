@@ -104,10 +104,10 @@ const ContactIndividualPage = ({
 }) => {
   return (
     <>
-      <div className="mt-3 grid grid-cols-2 gap-6">
+      <div className="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="flex flex-grow flex-col gap-3">
           <span className="font-semibold">Activities</span>
-          <div className="flex w-full grow flex-col rounded-md border">
+          <div className="flex w-full grow flex-col rounded-md overflow-hidden border">
             <ActivitiesTable
               activityData={[
                 ...(contact?.activities ?? []),

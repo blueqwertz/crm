@@ -47,13 +47,78 @@ export const userRouter = createTRPCRouter({
       return account;
     }),
 
-  get: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.user.findFirst({
-      where: {
-        id: ctx.session.user.id,
-      },
-    });
-  }),
+  get: protectedProcedure
+    .input(
+      z
+        .object({
+          include: z
+            .object({
+              policies: z
+                .object({
+                  project: z
+                    .object({
+                      id: z.string(),
+                    })
+                    .optional(),
+                  company: z
+                    .object({
+                      id: z.string(),
+                    })
+                    .optional(),
+                  contact: z
+                    .object({
+                      id: z.string(),
+                    })
+                    .optional(),
+                  activity: z
+                    .object({
+                      id: z.string(),
+                    })
+                    .optional(),
+                })
+                .optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.user.findFirst({
+        where: {
+          id: ctx.session.user.id,
+        },
+        include: {
+          projectPolicy: input?.include?.policies?.project
+            ? {
+                where: {
+                  projectId: input?.include?.policies?.project?.id,
+                },
+              }
+            : undefined,
+          companyPolicy: input?.include?.policies?.company
+            ? {
+                where: {
+                  companyId: input?.include?.policies?.company?.id,
+                },
+              }
+            : undefined,
+          contactPolicy: input?.include?.policies?.contact
+            ? {
+                where: {
+                  contactId: input?.include?.policies?.contact?.id,
+                },
+              }
+            : undefined,
+          activityPolicy: input?.include?.policies?.activity
+            ? {
+                where: {
+                  activityId: input?.include?.policies?.activity?.id,
+                },
+              }
+            : undefined,
+        },
+      });
+    }),
 
   delete: protectedProcedure.mutation(({ ctx }) => {
     return ctx.db.user.delete({
