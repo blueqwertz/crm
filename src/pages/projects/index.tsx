@@ -7,12 +7,6 @@ import { api } from "~/utils/api";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { statusMaps } from "~/utils/maps";
 import { Skeleton } from "~/components/ui/skeleton";
 import type {
