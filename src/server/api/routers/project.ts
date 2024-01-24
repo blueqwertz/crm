@@ -1,7 +1,7 @@
 import { ProjectStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
+import { IncludePolicyQuery, PolicyQuery } from "~/utils/policy";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 

@@ -19,7 +19,7 @@ import type {
 import { useState } from "react";
 import initials from "initials";
 import { cn } from "~/utils/cn";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { Loader2, Trash } from "lucide-react";
 import { CompanyCard, ContactCard } from "~/components/hover-cards";
 

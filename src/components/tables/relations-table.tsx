@@ -3,10 +3,12 @@ import { Loader2, MoveHorizontal, MoveLeft, MoveRight, X } from "lucide-react";
 import { cn } from "~/utils/cn";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
-import { Contact } from "@prisma/client";
+import type { Contact } from "@prisma/client";
 import { AddContactRelationLink } from "../links/contact-relation-links";
-import { RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 import React, { useState } from "react";
+import { CanDoOperation } from "~/utils/policy";
+import { useSession } from "next-auth/react";
 
 const RelationItem: React.FC<{
   relation: {
@@ -15,6 +17,7 @@ const RelationItem: React.FC<{
     mode: number;
   };
 }> = ({ relation }) => {
+  const { data: session } = useSession();
   const ctx = api.useUtils();
   const [loading, setLoading] = useState(false);
   const { mutate: deleteContactRelation } = api.contact.deleteLink.useMutation({
@@ -31,61 +34,69 @@ const RelationItem: React.FC<{
   });
 
   return (
-    <div className="flex grow justify-between items-center gap-3 border-b p-2 last:border-none">
-      <div
-        className={cn(
-          buttonVariants({ variant: "outline", size: "sm" }),
-          "pointer-events-none h-[40px] flex-1 justify-start",
-          {
-            "text-muted-foreground": relation.mode != 2,
-          }
-        )}
-      >
-        {relation.outgoingContact.name}
-      </div>
-
-      <Button size={"icon"} variant={"outline"} className="pointer-events-none">
-        {
-          [
-            <MoveHorizontal className="h-5 w-5" />,
-            <MoveRight className="h-5 w-5" />,
-            <MoveLeft className="h-5 w-5" />,
-          ][relation.mode]
-        }
-      </Button>
-
-      <Link
-        href={`/contacts/${relation.incomingContact.id}`}
-        className={cn(
-          buttonVariants({ variant: "outline", size: "sm" }),
-          "h-[40px] flex-1 justify-start",
-          {
-            "text-muted-foreground": relation.mode == 2,
-          }
-        )}
-      >
-        {relation.incomingContact.name}
-      </Link>
-      <Button
-        className="w-7 h-7 text-muted-foreground bg-transparent hover:bg-transparent"
-        variant={"ghost"}
-        size={"icon"}
-        onClick={() => {
-          deleteContactRelation({
-            contactOne: relation.outgoingContact.id,
-            contactTwo: relation.incomingContact.id,
-            mode: relation.mode,
-          });
-        }}
-      >
-        <div>
-          {loading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <X className="h-4 w-4" />
+    <div className="flex items-center">
+      <div className="flex grow justify-between items-center gap-2 py-2 pl-2">
+        <div
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "pointer-events-none h-[40px] flex-1 justify-start",
+            {
+              "text-muted-foreground": relation.mode != 2,
+            }
           )}
+        >
+          {relation.outgoingContact.name}
         </div>
-      </Button>
+
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          className="pointer-events-none"
+        >
+          {
+            [
+              <MoveHorizontal className="h-5 w-5" />,
+              <MoveRight className="h-5 w-5" />,
+              <MoveLeft className="h-5 w-5" />,
+            ][relation.mode]
+          }
+        </Button>
+
+        <Link
+          href={`/contacts/${relation.incomingContact.id}`}
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "h-[40px] flex-1 justify-start",
+            {
+              "text-muted-foreground": relation.mode == 2,
+            }
+          )}
+        >
+          {relation.incomingContact.name}
+        </Link>
+      </div>
+      {CanDoOperation({ session, entity: "contact", operation: "edit" }) && (
+        <Button
+          className="w-7 h-7 text-muted-foreground bg-transparent hover:bg-transparent mx-1"
+          variant={"ghost"}
+          size={"icon"}
+          onClick={() => {
+            deleteContactRelation({
+              contactOne: relation.outgoingContact.id,
+              contactTwo: relation.incomingContact.id,
+              mode: relation.mode,
+            });
+          }}
+        >
+          <div>
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <X className="h-4 w-4" />
+            )}
+          </div>
+        </Button>
+      )}
     </div>
   );
 };

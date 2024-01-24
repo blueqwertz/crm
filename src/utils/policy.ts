@@ -187,7 +187,7 @@ export const CanDoOperation = ({
       read: policies?.some((policy) => policy.canRead),
       edit: policies?.some((policy) => policy.canEdit),
       delete: policies?.some((policy) => policy.canDelete),
-      create: null,
+      create: undefined,
     },
     role: {
       all: {

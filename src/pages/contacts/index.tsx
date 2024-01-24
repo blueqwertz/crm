@@ -29,7 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Combobox } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import type { Contact, ContactPolicy } from "@prisma/client";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { EditContact } from "~/components/edit-button/edit-contact";
 
 export default function Contacts() {

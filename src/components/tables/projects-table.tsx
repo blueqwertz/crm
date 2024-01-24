@@ -16,7 +16,7 @@ import {
 import initials from "initials";
 
 import { useSession } from "next-auth/react";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 
 export const ProjectsTable: React.FC<{
   projectData: Project[];

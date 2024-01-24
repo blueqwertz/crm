@@ -13,7 +13,7 @@ import {
   type ProjectPolicy,
   // ProjectStatus,
 } from "@prisma/client";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { useSession } from "next-auth/react";
 // import {
 //   Select,

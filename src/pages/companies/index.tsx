@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import type { Company, CompanyPolicy } from "@prisma/client";
 import { Contact, Loader2, Trash } from "lucide-react";
 import { useState } from "react";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { api } from "~/utils/api";
 // import { Badge } from "~/components/ui/badge";
 import Link from "next/link";

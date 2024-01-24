@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { IncludePolicyQuery, PolicyQuery } from "~/utils/policyQuery";
+import { IncludePolicyQuery, PolicyQuery } from "~/utils/policy";
 
 export const companyRotuer = createTRPCRouter({
   getAll: protectedProcedure

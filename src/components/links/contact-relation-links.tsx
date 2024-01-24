@@ -20,7 +20,9 @@ export const AddContactRelationLink: React.FC<{ id: string }> = ({ id }) => {
   const [linkIndex, setLinkIndex] = useState(0);
   const [linkValue, setLinkValue] = useState<string | undefined>(undefined);
 
-  const { data: contactData } = api.contact.getAll.useQuery();
+  const { data: contactData } = api.contact.getAll.useQuery({
+    operation: "edit",
+  });
 
   const ctx = api.useUtils();
 

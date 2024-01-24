@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { AddActivity } from "../create/create-activity";
 import { Button } from "../ui/button";
-import { CalendarDays, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { api } from "~/utils/api";
 import {
   Tooltip,
@@ -17,14 +17,7 @@ import { Separator } from "../ui/separator";
 import type { Activity } from "@prisma/client";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
-import Link from "next/link";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { Badge } from "../ui/badge";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { useSession } from "next-auth/react";
 import { CompanyCard, ContactCard, ProjectCard } from "../hover-cards";
 dayjs.extend(advancedFormat);
@@ -186,11 +179,12 @@ export const ActivitiesTable: React.FC<{
                       </span>
                       {!activity.description && (
                         <span className="text-sm">
-                          <span className="">{activity.type}</span>{" "}
-                          <span className="text-muted-foreground">on</span>{" "}
-                          <span className="">
+                          <span className="font-semibold">{activity.type}</span>{" "}
+                          <span>on</span>{" "}
+                          <span>
                             {dayjs(activity.date).format("MMMM Do, YYYY")}
                           </span>
+                          {!activity.contact}
                         </span>
                       )}
                     </div>

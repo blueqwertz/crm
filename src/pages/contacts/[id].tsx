@@ -7,7 +7,7 @@ import { Layout } from "~/components/layout";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import initials from "initials";
 import { EditContact } from "~/components/edit-button/edit-contact";
-import { CanDoOperation } from "~/utils/policyQuery";
+import { CanDoOperation } from "~/utils/policy";
 import { useSession } from "next-auth/react";
 import React from "react";
 import type { Activity, Company, Contact, Project } from "@prisma/client";
