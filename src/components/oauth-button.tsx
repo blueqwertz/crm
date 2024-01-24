@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState, ReactNode } from "react";
 import { Button } from "./ui/button";
 import { signIn } from "next-auth/react";
 import { Loader2 } from "lucide-react";
@@ -9,6 +9,7 @@ export const OAuthButton = ({
   prefix = "Login with",
   provider,
   imageUrl,
+  image,
   loading = false,
   setLoading,
 }: {
@@ -16,6 +17,7 @@ export const OAuthButton = ({
   prefix?: string;
   provider: string;
   imageUrl?: string;
+  image?: ReactNode;
   loading?: boolean;
   setLoading?: Dispatch<SetStateAction<boolean>>;
 }) => {
@@ -34,13 +36,15 @@ export const OAuthButton = ({
       {thisLoading ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : (
-        <Image
-          className="mr-2"
-          src={`https://authjs.dev/img/providers/${imageUrl ?? provider}.svg`}
-          width={16}
-          height={16}
-          alt=""
-        />
+        image ?? (
+          <Image
+            className="mr-2"
+            src={`https://authjs.dev/img/providers/${imageUrl ?? provider}.svg`}
+            width={16}
+            height={16}
+            alt=""
+          />
+        )
       )}
       <span className="font-light mr-1 empty:hidden">{prefix}</span>
       <span className="font-medium">{displayName ?? provider}</span>

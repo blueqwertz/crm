@@ -48,6 +48,7 @@ export function UserAuthForm({
           provider="github"
           displayName="GitHub"
           loading={loading}
+          image={<Github className="h-4 w-4 mr-2" />}
           setLoading={setLoading}
         />
       </div>
