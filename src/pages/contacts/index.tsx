@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import type { Contact, ContactPolicy } from "@prisma/client";
 import { CanDoOperation } from "~/utils/policy";
 import { EditContact } from "~/components/edit-button/edit-contact";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function Contacts() {
   const { data: session } = useSession();
@@ -403,3 +404,10 @@ const ContactPageTableEdit = ({
     </div>
   );
 };
+
+export const columns: ColumnDef<Contact>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+];

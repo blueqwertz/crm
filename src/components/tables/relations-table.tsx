@@ -35,7 +35,7 @@ const RelationItem: React.FC<{
 
   return (
     <div className="flex items-center">
-      <div className="flex grow justify-between items-center gap-2 py-2 pl-2">
+      <div className="flex grow justify-between items-center gap-2 p-2">
         <div
           className={cn(
             buttonVariants({ variant: "outline", size: "sm" }),
