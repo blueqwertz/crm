@@ -1,9 +1,6 @@
-import React from "react";
-import { SidebarAuth } from "./sidebar-auth";
 import { SidebarHeader } from "./sidebar-header";
 import { SidebarNav } from "./sidebar-navigation";
 import { SidebarSearch } from "./sidebar-search";
-import { Feedback } from "../feedback";
 
 export const Sidebar = () => {
   return (

@@ -58,7 +58,7 @@ export const SidebarNav = () => {
   const pathname = usePathname();
   return (
     <>
-      <div className="flex flex-col gap-1 overflow-scroll">
+      <div className="flex flex-col gap-1">
         {NavItemArray.map((item) => {
           return !item.children ? (
             <Link

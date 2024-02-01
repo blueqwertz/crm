@@ -22,6 +22,7 @@ export const ContactsTable: React.FC<{
   pageData: { type: "Company" | "Project"; id: string };
 }> = ({ contactData, pageData }) => {
   const { data: session } = useSession();
+
   return (
     <>
       <AddContactRelation pageData={pageData} contactData={contactData} />
