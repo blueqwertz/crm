@@ -14,6 +14,7 @@ export const contactRotuer = createTRPCRouter({
               user: z.boolean().default(false),
               companies: z.boolean().default(false),
               activities: z.boolean().default(false),
+              lastActivity: z.boolean().default(false),
               projects: z.boolean().default(false),
               policies: z.boolean().default(false),
               relations: z.boolean().default(false),
@@ -42,7 +43,10 @@ export const contactRotuer = createTRPCRouter({
             operation: "read",
           }),
           activities: IncludePolicyQuery({
-            include: input?.include?.activities ?? false,
+            include:
+              (input?.include &&
+                (input?.include.activities || input?.include.lastActivity)) ??
+              false,
             session: ctx.session,
             entity: "company",
             operation: "read",
@@ -50,6 +54,11 @@ export const contactRotuer = createTRPCRouter({
               orderBy: {
                 date: "desc",
               },
+              ...(input?.include?.lastActivity
+                ? {
+                    take: 1,
+                  }
+                : undefined),
             },
           }),
           projects: IncludePolicyQuery({

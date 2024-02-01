@@ -159,7 +159,7 @@ const CompanyPageTable = () => {
                         0,
                         company._count.projects <= MAX_PROJECTS
                           ? MAX_PROJECTS
-                          : MAX_PROJECTS - 1
+                          : MAX_PROJECTS - 1,
                       )
                       .map((project) => {
                         return (
@@ -200,7 +200,7 @@ const CompanyPageTable = () => {
                         0,
                         company._count.contacts <= MAX_CONTACTS
                           ? MAX_CONTACTS
-                          : MAX_CONTACTS - 1
+                          : MAX_CONTACTS - 1,
                       )
                       .map((contact) => {
                         return (

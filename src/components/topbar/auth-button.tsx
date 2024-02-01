@@ -23,6 +23,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuPortal,
   DropdownMenuSubContent,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -47,24 +48,27 @@ export const AuthButton = () => {
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className="mt-auto justify-start truncate pl-2.5 max-w-[180px]"
-                  >
-                    <Avatar className="h-7 w-7 items-center rounded-full border mr-2">
-                      <AvatarImage src={sessionData.user?.image} />
-                      <AvatarFallback className="text-xs">
-                        {initials(sessionData.user?.name).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium truncate">
-                      {sessionData.user.name}
-                    </span>
-                  </Button>
+                  <Avatar className="h-9 w-9 items-center rounded-full border cursor-pointer select-none">
+                    <AvatarImage src={sessionData.user?.image} />
+                    <AvatarFallback className="text-xs">
+                      {initials(sessionData.user?.name).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-[205px]" align="end">
                   {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
                   {/* <DropdownMenuSeparator /> */}
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {sessionData.user.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground empty:hidden">
+                        {sessionData.user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
                       <User className="mr-2 h-4 w-4" />

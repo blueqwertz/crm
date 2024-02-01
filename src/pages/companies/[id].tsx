@@ -66,7 +66,7 @@ const CompanyHeader = ({
           <div className="flex flex-col">
             {!company && <Skeleton className="h-7 text-transparent" />}
             {!!company && <h1 className="text-xl font-bold">{company.name}</h1>}
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {!!company?.info?.length || company?.field?.length ? (
                 <>
                   {company.info}{" "}
@@ -96,10 +96,10 @@ const CompanyIndividualPage: React.FC<{
   company: RouterOutputs["company"]["get"];
 }> = ({ companyId, company }) => {
   return (
-    <div className="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="mt-3 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div className="flex flex-col gap-3">
         <span className="font-semibold">Activities</span>
-        <div className="flex w-full grow overflow-hidden flex-col rounded-md border">
+        <div className="flex w-full grow flex-col overflow-hidden rounded-md border">
           <ActivitiesTable
             activityData={[
               ...(company?.activities ?? []),
@@ -111,7 +111,7 @@ const CompanyIndividualPage: React.FC<{
                       contacts: number;
                       companies: number;
                     };
-                  }
+                  },
                 ) =>
                   project.activities?.map((activity) => ({
                     ...activity,
@@ -124,7 +124,7 @@ const CompanyIndividualPage: React.FC<{
                         companies: project?._count?.companies,
                       },
                     },
-                  })) ?? []
+                  })) ?? [],
               ) ?? []),
               ...(company?.contacts?.flatMap(
                 (
@@ -134,7 +134,7 @@ const CompanyIndividualPage: React.FC<{
                       companies: number;
                       projects: number;
                     };
-                  }
+                  },
                 ) =>
                   contact.activities?.map((activity) => ({
                     ...activity,
@@ -147,7 +147,7 @@ const CompanyIndividualPage: React.FC<{
                         projects: contact?._count?.projects,
                       },
                     },
-                  })) ?? []
+                  })) ?? [],
               ) ?? []),
             ]}
             pageData={{ type: "Company", id: companyId }}

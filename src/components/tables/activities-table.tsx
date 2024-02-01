@@ -16,10 +16,10 @@ import { typeMaps } from "~/utils/maps";
 import { Separator } from "../ui/separator";
 import type { Activity } from "@prisma/client";
 import dayjs from "dayjs";
-import advancedFormat from "dayjs/plugin/advancedFormat";
 import { CanDoOperation } from "~/utils/policy";
 import { useSession } from "next-auth/react";
 import { CompanyCard, ContactCard, ProjectCard } from "../hover-cards";
+import advancedFormat from "dayjs/plugin/advancedFormat";
 dayjs.extend(advancedFormat);
 
 const ActivityEdit: React.FC<{ id: string }> = ({ id }) => {

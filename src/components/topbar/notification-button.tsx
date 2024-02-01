@@ -131,7 +131,7 @@ export const NotificationButton: React.FC = () => {
         className="rounded-md bg-transparent outline-none"
         asChild
       >
-        <Button variant={"outline"} className="w-[40px]">
+        <Button variant={"outline"} className="w-9 h-9 rounded-full">
           <div>
             <Bell className="w-4 h-4" />
           </div>
